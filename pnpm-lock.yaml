@@ -966,7 +966,7 @@ packages:
     engines: {node: '>=0.4.0'}
 
   delta-comic-core@file:../delta-comic-core/dist/pack.tgz:
-    resolution: {integrity: sha512-SFvtC9kNzbewdKduc1aWwfKUej4QPaC+KOhfjuJn0BqqbGmErbGRH+7YRxN3PM9rIh3v6Vzc1fuosZirxd8I+A==, tarball: file:../delta-comic-core/dist/pack.tgz}
+    resolution: {integrity: sha512-q1KBg921rQgfJnkg2C3099kU+t3TEkl+c5zbCB+aPceKxfKcO2bJuzUaa4hFyRCeZFe1FoP3OcsLaMYz0158Mg==, tarball: file:../delta-comic-core/dist/pack.tgz}
     version: 0.5.0
 
   detect-libc@1.0.3:
