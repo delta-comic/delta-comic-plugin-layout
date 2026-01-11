@@ -7,6 +7,7 @@ import type { MediaOrientationLockRequestEvent } from 'vidstack'
 import "vidstack/icons"
 import "vidstack/bundle"
 import "hls.js"
+import "dashjs"
 import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
 import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
@@ -48,15 +49,13 @@ const $router = useRouter()
 $router.beforeEach(() => {
   unlockScreenOrientation()
 })
-const ScreenOrientation = window.$api.ScreenOrientation
 const handleScreenScreenOrientationLock = async (config: MediaOrientationLockRequestEvent) => {
   config.stopImmediatePropagation()
-  await ScreenOrientation.unlock()
-  return ScreenOrientation.lock(config.detail)
+
+  screen.orientation.unlock()
 }
 const unlockScreenOrientation = async () => {
-  await ScreenOrientation.unlock()
-  return ScreenOrientation.lock("portrait-primary")
+  screen.orientation.unlock()
 }
 window.$api.player = player
 onBeforeUnmount(() => {

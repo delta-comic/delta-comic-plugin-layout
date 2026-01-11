@@ -4,17 +4,21 @@ import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver, VantResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import _package from './package.json'
-import monkey from 'vite-plugin-monkey'
 import { browserslistToTargets } from 'lightningcss'
 import browserslist from 'browserslist'
-import external from 'vite-plugin-external'
 import { deltaComic } from 'delta-comic-core/vite'
+import { vite as vidstack } from 'vidstack/plugins'
 export default defineConfig(({ command }) => ({
   plugins: [
-    vue(),
-    vueJsx(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.startsWith('media-'),
+        },
+      },
+    }),
+    vidstack(),
     Components({
       dts: true,
       resolvers: [
@@ -26,11 +30,11 @@ export default defineConfig(({ command }) => ({
     deltaComic({
       description: _package.description,
       author: _package.author.name,
-      displayName: 'EHentai',
-      name: 'ehentai',
+      displayName: '基础布局组件',
+      name: 'layout',
       version: _package.version,
-      supportCoreVersion: '^0.4'
-    }, command)
+      supportCoreVersion: '^0.5'
+    }, command, _package)
   ],
   resolve: {
     alias: {

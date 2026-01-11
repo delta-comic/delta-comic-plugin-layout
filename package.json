@@ -13,6 +13,11 @@
   },
   "license": "AGPL-3.0-only",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./public/import.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -23,12 +28,13 @@
     "@vicons/antd": "^0.13.0",
     "@vicons/material": "^0.13.0",
     "@vueuse/core": "^14.1.0",
+    "dashjs": "^4.0.0",
     "delta-comic-core": "file:../delta-comic-core/dist/pack.tgz",
     "dompurify": "^3.3.1",
     "es-toolkit": "^1.43.0",
     "hls.js": "^1.6.15",
-    "media-icons": "^0.10.0",
-    "motion-v": "^1.7.5",
+    "media-icons": "^1.1.5",
+    "motion-v": "^1.8.1",
     "naive-ui": "^2.43.2",
     "swiper": "^12.0.3",
     "vant": "^4.9.22",
@@ -38,7 +44,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.18",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.0.6",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vue/tsconfig": "^0.8.1",
     "browserslist": "^4.28.1",
@@ -46,16 +52,13 @@
     "tailwindcss": "4.1.18",
     "typescript": "^5.9.3",
     "unplugin-vue-components": "30.0.0",
-    "vite": "npm:rolldown-vite@7.3.0",
+    "vite": "7.3.1",
     "vite-plugin-external": "^6.2.2",
     "vite-plugin-monkey": "^7.1.8",
-    "vue-component-type-helpers": "^3.2.1",
-    "vue-tsc": "^3.2.1"
+    "vue-component-type-helpers": "^3.2.2",
+    "vue-tsc": "^3.2.2"
   },
   "pnpm": {
-    "overrides": {
-      "vite": "npm:rolldown-vite@7.3.0"
-    },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
       "@tailwindcss/oxide",
