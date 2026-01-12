@@ -1,6 +1,6 @@
 # Delta Comic Plugin Layout
 
-[![GitHub](https://img.shields.io/github/license/wenxig/delta-comic-plugin-layout)](https://raw.githubusercontent.com/wenxig/delta-comic-plugin-layout/main/LICENSE)
+[![GitHub](https://img.shields.io/github/license/delta-comic/delta-comic-plugin-layout)](https://raw.githubusercontent.com/wenxig/delta-comic-plugin-layout/main/LICENSE)
 
 - [delta-comic](https://github.com/wenxig/delta-comic)的插件
 
@@ -16,7 +16,7 @@
 
 ### Delta Comic
 
-[![Readme Card](https://wenxig-grs.vercel.app/api/pin/?username=wenxig&repo=delta-comic&user&theme=transparent)](https://github.com/wenxig/delta-comic)  
+[![Readme Card](https://wenxig-grs.vercel.app/api/pin/?username=delta-comic&repo=delta-comic&user&theme=transparent)](https://github.com/wenxig/delta-comic)  
 
 ## Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=wenxig/delta-comic-plugin-layout&type=Date&12345)](https://www.star-history.com/#wenxig/delta-comic-plugin-layout&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=delta-comic/delta-comic-plugin-layout&type=Date&12345)](https://www.star-history.com/#wenxig/delta-comic-plugin-layout&Date)
