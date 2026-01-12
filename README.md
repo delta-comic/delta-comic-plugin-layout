@@ -16,8 +16,7 @@
 
 ### Delta Comic
 
-   [![Readme Card](https://github-readme-stats.vercel.app/api/pin/?username=wenxig&repo=delta-comic)](https://github.com/wenxig/delta-comic)  
+[![Readme Card](https://wenxig-grs.vercel.app/api/pin/?username=wenxig&repo=delta-comic&user&theme=transparent)](https://github.com/wenxig/delta-comic)  
 
 ## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=wenxig/delta-comic-plugin-layout&type=Date)](https://www.star-history.com/#wenxig/delta-comic-plugin-layout&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=wenxig/delta-comic-plugin-layout&type=Date&12345)](https://www.star-history.com/#wenxig/delta-comic-plugin-layout&Date)
