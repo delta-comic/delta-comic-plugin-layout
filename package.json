@@ -28,7 +28,7 @@
     "@vicons/antd": "^0.13.0",
     "@vicons/material": "^0.13.0",
     "@vueuse/core": "^14.1.0",
-    "dashjs": "^4.0.0",
+    "dashjs": "^5.1.1",
     "delta-comic-core": "file:../delta-comic-core/dist/pack.tgz",
     "dompurify": "^3.3.1",
     "es-toolkit": "^1.43.0",

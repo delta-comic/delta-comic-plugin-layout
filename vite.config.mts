@@ -18,7 +18,9 @@ export default defineConfig(({ command }) => ({
         },
       },
     }),
-    vidstack(),
+    vidstack({
+      include: './src/view/*'
+    }),
     Components({
       dts: true,
       resolvers: [

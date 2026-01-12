@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, onBeforeUnmount, shallowRef, useTemplateRef } from 'vue'
 import { watch } from 'vue'
-import { Comp, uni, Utils } from 'delta-comic-core'
+import { Comp, coreModule, requireDepend, uni, Utils } from 'delta-comic-core'
 import type { MediaPlayerElement } from 'vidstack/elements'
 import type { MediaOrientationLockRequestEvent } from 'vidstack'
 import "vidstack/icons"
@@ -84,6 +84,8 @@ const handleLike = async () => {
 defineSlots<{
   menu(): any
 }>()
+
+const { comp: CoreComp } = requireDepend(coreModule)
 </script>
 
 <template>
@@ -98,6 +100,7 @@ defineSlots<{
           class="absolute inset-0 block h-full w-full rounded-md bg-black opacity-0 transition-opacity data-visible:opacity-100 [&>img]:h-full [&>img]:w-full [&>img]:object-cover"
           :src="result" alt="封面" />
       </Comp.Await>
+
       <media-controls v-if="isFullScreen"
         class="pointer-events-none absolute text-white inset-0 z-10 flex h-full w-full flex-col bg-linear-to-t from-black/10 to-transparent opacity-0 transition-opacity data-visible:opacity-100">
         <media-controls-group
@@ -109,7 +112,7 @@ defineSlots<{
           <div class="flex justify-around items-center h-full absolute right-0 gap-6 pr-3 **:text-white! *:p-0!">
             <Comp.ToggleIcon size="23px" v-model="isLiked" @click="handleLike" :icon="LikeOutlined" />
 
-            <FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
+            <CoreComp.FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
 
             <media-pip-button>
               <media-icon type="picture-in-picture" class="size-7 block group-data-active:hidden"></media-icon>
@@ -209,13 +212,11 @@ defineSlots<{
           <div class="w-18"></div>
         </media-controls-group>
       </media-controls>
-
       <media-captions
         class="absolute inset-0 bottom-2 z-10 select-none wrap-break-word opacity-0 transition-[opacity,bottom] duration-300 media-captions:opacity-100 media-controls:bottom-21.25 media-preview:opacity-0"></media-captions>
 
       <media-gesture action="toggle:controls" event="pointerup"></media-gesture>
       <media-gesture action="toggle:paused" class="absolute top-0 left-0 size-full" event="dblclick"></media-gesture>
-
       <div class="pointer-events-none absolute inset-0 z-50 flex h-full w-full items-center justify-center">
         <media-spinner
           class="text-white opacity-0 transition-opacity duration-200 ease-linear media-buffering:animate-spin media-buffering:opacity-100 *:data-[part='track']:opacity-25"
