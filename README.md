@@ -1,4 +1,4 @@
-# Delta Comic Plugin Layout
+# Delta Comic Plugin Layout - _希望的涟漪_
 
 [![GitHub](https://img.shields.io/github/license/delta-comic/delta-comic-plugin-layout)](https://raw.githubusercontent.com/wenxig/delta-comic-plugin-layout/main/LICENSE)
 
