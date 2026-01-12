@@ -1,7 +1,7 @@
 {
   "name": "delta-comic-plugin-layout",
   "version": "0.1.0",
-  "description": "",
+  "description": "希望的涟漪",
   "author": {
     "name": "wenxig",
     "email": "wenxinguo12@gmail.com"
@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && zip -r plugin.zip dist/",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
   },
