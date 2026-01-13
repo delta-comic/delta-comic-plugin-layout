@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite'
 import _package from './package.json'
 import { browserslistToTargets } from 'lightningcss'
 import browserslist from 'browserslist'
-import { deltaComic } from 'delta-comic-core/vite'
+import { deltaComicPlus } from 'delta-comic-core/vite'
 import { vite as vidstack } from 'vidstack/plugins'
 export default defineConfig(({ command }) => ({
   plugins: [
@@ -29,14 +29,25 @@ export default defineConfig(({ command }) => ({
       ],
     }),
     tailwindcss(),
-    // deltaComic({
-    //   description: _package.description,
-    //   author: _package.author.name,
-    //   displayName: '基础布局组件',
-    //   name: 'layout',
-    //   version: _package.version,
-    //   supportCoreVersion: '^0.5'
-    // }, command, _package)
+    deltaComicPlus({
+      require: [{
+        id: 'core'
+      }],
+      author: _package.author.name,
+      beforeBoot: [],
+      description: _package.description,
+      entry: {
+        path: './src/main.ts'
+      },
+      name: {
+        display: '基础布局组件',
+        id: 'layout'
+      },
+      version: {
+        plugin: _package.version,
+        supportCore: '^0.5'
+      }
+    }, command)
   ],
   resolve: {
     alias: {
@@ -47,33 +58,6 @@ export default defineConfig(({ command }) => ({
     transformer: 'lightningcss',
     lightningcss: {
       targets: browserslistToTargets(browserslist('> 1%, last 2 versions, not ie <= 8'))
-    }
-  },
-  build: {
-    lib: {
-      entry: './src/main.ts',
-      fileName: 'index',
-      cssFileName: 'index',
-      name: '$$lib$$.DcLayout'
-    },
-    rollupOptions: {
-      external: [
-        'vue', 'axios', 'es-toolkit', 'naive-ui', 'vant', "motion-v", 'pinia', 'vue-router', 'crypto-js',
-        'vite-plugin-external', 'vite-plugin-monkey', 'vite', 'rolldown-vite'
-      ],
-      output: {
-        globals: {
-          vue: 'window.$$lib$$.Vue',
-          vant: 'window.$$lib$$.Vant',
-          'naive-ui': 'window.$$lib$$.Naive',
-          "motion-v": 'window.$$lib$$.Motion',
-          axios: 'window.$$lib$$.Axios',
-          'es-toolkit': 'window.$$lib$$.EsKits',
-          'pinia': 'window.$$lib$$.Pinia',
-          'vue-router': 'window.$$lib$$.VR',
-          'crypto-js': 'window.$$lib$$.Crypto'
-        },
-      },
     }
   },
   server: {

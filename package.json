@@ -20,7 +20,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && zip -r plugin.zip dist/",
+    "build": "vite build && cd ./dist && zip -r plugin.zip ./*",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
   },
