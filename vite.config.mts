@@ -37,7 +37,8 @@ export default defineConfig(({ command }) => ({
       beforeBoot: [],
       description: _package.description,
       entry: {
-        path: './src/main.ts'
+        path: './index.iife.js',
+        
       },
       name: {
         display: '基础布局组件',
