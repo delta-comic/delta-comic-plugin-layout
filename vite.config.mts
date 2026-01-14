@@ -37,8 +37,8 @@ export default defineConfig(({ command }) => ({
       beforeBoot: [],
       description: _package.description,
       entry: {
-        path: './index.iife.js',
-        
+        jsPath: './index.iife.js',
+        cssPath: './index.css'
       },
       name: {
         display: '基础布局组件',
@@ -48,7 +48,7 @@ export default defineConfig(({ command }) => ({
         plugin: _package.version,
         supportCore: '^0.5'
       }
-    }, command)
+    })
   ],
   resolve: {
     alias: {
