@@ -37,7 +37,7 @@ export default defineConfig(({ command }) => ({
       beforeBoot: [],
       description: _package.description,
       entry: {
-        jsPath: './index.iife.js',
+        jsPath: './index.js',
         cssPath: './index.css'
       },
       name: {
