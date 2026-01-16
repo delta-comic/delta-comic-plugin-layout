@@ -48,7 +48,7 @@ export default defineConfig(({ command }) => ({
         plugin: _package.version,
         supportCore: '^0.5'
       }
-    })
+    }, command)
   ],
   resolve: {
     alias: {
