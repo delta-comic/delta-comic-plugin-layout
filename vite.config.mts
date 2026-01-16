@@ -38,7 +38,7 @@ export default defineConfig(({ command }) => ({
       description: _package.description,
       entry: {
         jsPath: './index.js',
-        cssPath: './index.css'
+        cssPath: 'auto'
       },
       name: {
         display: '基础布局组件',

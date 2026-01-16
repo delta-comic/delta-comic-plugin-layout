@@ -7,7 +7,7 @@ import type { MediaOrientationLockRequestEvent } from 'vidstack'
 import "vidstack/icons"
 import "vidstack/bundle"
 import "hls.js"
-import "dashjs"
+// import "dashjs"
 import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
 import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
