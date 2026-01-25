@@ -22,18 +22,19 @@ try {
     const data = fs.readFileSync(fileName, 'utf8');
     const json = JSON.parse(data);
 
-    // 初始化 overrides 对象 (如果不存在)
-    if (!json.overrides) {
-        json.overrides = {};
-    }
-
     // 添加或更新目标条目
+    json.overrides ??= {}
     json.overrides['delta-comic-core'] = 'latest';
+    json.pnpm ??= {};
+    json.pnpm.overrides ??= {};
+    json.pnpm.overrides['delta-comic-core'] = 'latest';
 
     // 写回文件，使用 2 个空格缩进格式化
     fs.writeFileSync(fileName, JSON.stringify(json, null, 2) + '\n');
     
     console.log('✅ 成功: 已添加 delta-comic-core 到 overrides 字段。');
+
+    console.log(json);
 
 } catch (error) {
     console.error('❌ 失败: 处理 JSON 时发生错误:', error.message);
