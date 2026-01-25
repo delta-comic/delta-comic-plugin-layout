@@ -3,14 +3,14 @@ import { LikeFilled } from '@vicons/antd'
 import { ArrowBackRound, ArrowForwardIosOutlined, FolderOutlined, FullscreenRound, KeyboardArrowDownRound, PlayArrowRound, PlusRound, ReportGmailerrorredRound } from '@vicons/material'
 import { computedAsync, createReusableTemplate, useCssVar, useFullscreen } from '@vueuse/core'
 import { uni, Comp, Utils, requireDepend, coreModule, Store } from 'delta-comic-core'
-import { motion } from 'motion-v'
+import { AnimatePresence, motion } from 'motion-v'
 import { computed, shallowRef, useTemplateRef, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { sortBy } from 'es-toolkit/compat'
 import { PopoverAction } from 'vant'
 import { isString } from 'es-toolkit'
 import DOMPurify from 'dompurify'
-const { comp: { FavouriteSelect, AuthorIcon, Comment } } = requireDepend(coreModule)
+const { comp: { FavouriteSelect, AuthorIcon, Comment, ItemCard } } = requireDepend(coreModule)
 
 const $router = useRouter()
 const $route = useRoute()
@@ -46,8 +46,7 @@ const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)
 const slots = defineSlots<{
   view(): void
 }>()
-const { comp } = requireDepend(coreModule)
-const getItemCard = (contentType: uni.content.ContentType_) => uni.item.Item.itemCard.get(contentType) ?? comp.ItemCard
+const getItemCard = (contentType: uni.content.ContentType_) => uni.item.Item.itemCard.get(contentType) ?? ItemCard
 
 const handleChick = (preload: uni.item.RawItem) =>
   Utils.eventBus.SharedFunction.call('routeToContent', preload.contentType, preload.id, preload.thisEp.index, <any>preload)
@@ -89,22 +88,32 @@ const [DefineAvatar, Avatar] = createReusableTemplate<{
 
 const getActionInfo = (key: string) => uni.user.User.authorActions.get([union.value.$$plugin, key])!
 
-const getIsSubscribe = (author: uni.item.Author) => window.$api.useLiveQueryRef(async () =>
-  !!await window.$api.SubscribeDb.getByQuery('key = $1', [window.$api.subscribeKey.toString([author.$$plugin, author.label])])
-  , false, window.$api.SubscribeDb)
+const { db } = requireDepend(coreModule)
+
+const getIsSubscribe = (author: uni.item.Author) =>
+  db.value.selectFrom('subscribe')
+    .where('key', '=', `${author.$$plugin}:${author.label}`)
+    .selectAll()
+    .execute()
+    .then(v => v.length != 0)
 
 const showDetailUsers = shallowRef(false)
 
 const addSubscribe = (author: uni.item.Author) =>
   Utils.message.createLoadingMessage('关注中')
-    .bind(Utils.eventBus.SharedFunction.call('addAuthorSubscribe', author))
+    .bind(Utils.eventBus.SharedFunction.call('addAuthorSubscribe', author, author.$$plugin))
 const removeSubscribe = (author: uni.item.Author) =>
   Utils.message.createLoadingMessage('取消中')
-    .bind(Utils.eventBus.SharedFunction.call('removeAuthorSubscribe', author))
+    .bind(Utils.eventBus.SharedFunction.call('removeAuthorSubscribe', author, author.$$plugin))
 
 const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
   author: uni.item.Author
-  isSmall?: boolean
+  class?: any
+}>()
+
+
+const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
+  author: uni.item.Author
   class?: any
 }>()
 
@@ -141,27 +150,43 @@ const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
     </VanPopover>
   </DefineAvatar>
 
-  <DefineSubscribeRow v-slot="{ author, isSmall, class: className }">
+  <DefineSubscribeRow v-slot="{ author, class: className }">
     <div class="relative w-full" :class="className">
       <Avatar :author />
-      <Comp.Var :value="getIsSubscribe(author)" v-slot="{ value: isSubscribe }">
-        <NButton round type="primary" :color="isSubscribe.value ? '#6a7282' : undefined"
-          :class="[isSmall ? 'absolute! right-3 top-1/2 -translate-y-1/2' : 'px-0! aspect-square']" size="small"
-          @click.stop="isSubscribe.value
+      <Comp.Await :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+        <NButton round type="primary" :color="isSubscribe ? '#6a7282' : undefined"
+          class="absolute! right-3 top-1/2 -translate-y-1/2" size="small" @click.stop="isSubscribe
             ? removeSubscribe(author)
             : addSubscribe(author)">
           <template #icon>
-            <NIcon :class="isSubscribe.value ? 'rotate-45' : 'rotate-0'" class="transition-transform">
+            <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
               <PlusRound />
             </NIcon>
           </template>
-          <template #default v-if="!isSmall">
-            {{ isSubscribe.value ? '取关' : '关注' }}
+          <template #default>
+            {{ isSubscribe ? '取关' : '关注' }}
           </template>
         </NButton>
-      </Comp.Var>
+      </Comp.Await>
     </div>
   </DefineSubscribeRow>
+  <DefineSubscribeSmallRow v-slot="{ author, class: className }">
+    <div class="relative w-full" :class="className">
+      <Avatar :author />
+      <Comp.Await :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+        <NButton round type="primary" :color="isSubscribe ? '#6a7282' : undefined" class="px-0! aspect-square"
+          size="small" @click.stop="isSubscribe
+            ? removeSubscribe(author)
+            : addSubscribe(author)">
+          <template #icon>
+            <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
+              <PlusRound />
+            </NIcon>
+          </template>
+        </NButton>
+      </Comp.Await>
+    </div>
+  </DefineSubscribeSmallRow>
 
   <TitleDefine>
     <div class="text-xs mt-1 font-normal flex text-(--van-text-color-2) *:flex *:items-center gap-1">
@@ -238,7 +263,7 @@ const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
 
             <SubscribeRow :author="union.author[0]" v-if="union?.author.length === 1" class="mt-3" />
             <div v-else class="flex overflow-x-scroll overflow-y-hidden scroll" @click.stop>
-              <SubscribeRow class="flex text-nowrap gap-3 items-center" :author v-for="author of union?.author" />
+              <SubscribeSmallRow class="flex text-nowrap gap-3 items-center" :author v-for="author of union?.author" />
             </div>
           </div>
           <div class="w-[95%] mx-auto mt-2">
@@ -260,7 +285,7 @@ const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
                   <Title />
                   <div class="flex  font-light text-(--van-text-color-2) justify-start text-xs mt-0.5">
                     <div class="mr-2">
-                      {{ page.plugin }}{{ page.pid.content.data.value }}
+                      {{ page.pid.content.data.value }}
                     </div>
                   </div>
                   <Comp.Text :text="union.description" v-if="isString(union?.description)"
