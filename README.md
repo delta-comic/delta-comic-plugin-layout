@@ -1,8 +1,8 @@
 # Delta Comic Plugin Layout - _希望的涟漪_
 
-[![GitHub](https://img.shields.io/github/license/delta-comic/delta-comic-plugin-layout)](https://raw.githubusercontent.com/wenxig/delta-comic-plugin-layout/main/LICENSE)
+[![GitHub](https://img.shields.io/github/license/delta-comic/delta-comic-plugin-layout)](https://raw.githubusercontent.com/delta-comic/delta-comic-plugin-layout/main/LICENSE)
 
-- [delta-comic](https://github.com/wenxig/delta-comic)的插件
+- [delta-comic](https://github.com/delta-comic/delta-comic)的插件
 
 ## 功能
 
@@ -16,7 +16,8 @@
 
 ### Delta Comic
 
-[![Readme Card](https://wenxig-grs.vercel.app/api/pin/?username=delta-comic&repo=delta-comic&user&theme=transparent)](https://github.com/wenxig/delta-comic)  
+[![Readme Card](https://wenxig-grs.vercel.app/api/pin/?username=delta-comic&repo=delta-comic&user&theme=transparent)](https://github.com/delta-comic/delta-comic)  
 
 ## Star History
-[![Star History Chart](https://api.star-history.com/svg?repos=delta-comic/delta-comic-plugin-layout&type=Date&12345)](https://www.star-history.com/#wenxig/delta-comic-plugin-layout&Date)
+
+[![Star History Chart](https://api.star-history.com/svg?repos=delta-comic/delta-comic-plugin-layout&type=Date&12345)](https://www.star-history.com/#delta-comic/delta-comic-plugin-layout&Date)

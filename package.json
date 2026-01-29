@@ -1,15 +1,15 @@
 {
   "name": "delta-comic-plugin-layout",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "希望的涟漪",
   "author": {
     "name": "wenxig",
     "email": "wenxinguo12@gmail.com"
   },
-  "homepage": "https://github.com/wenxig/delta-comic-plugin-layout",
+  "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wenxig/delta-comic-plugin-layout.git"
+    "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
   },
   "license": "AGPL-3.0-only",
   "type": "module",
@@ -28,7 +28,7 @@
     "@vicons/antd": "^0.13.0",
     "@vicons/material": "^0.13.0",
     "@vueuse/core": "^14.1.0",
-    "delta-comic-core": "file:../delta-comic-core/dist/pack.tgz",
+    "delta-comic-core": "latest",
     "dompurify": "^3.3.1",
     "es-toolkit": "^1.43.0",
     "hls.js": "^1.6.15",
