@@ -1,23 +1,14 @@
-import "@/index.css"
-import { definePlugin } from "delta-comic-core"
-import { pluginName } from "./symbol"
-import { imageViewConfig } from "./config"
-import Image from "./view/image.vue"
-import Video from "./view/video.vue"
-import Default from "./layout/default.vue"
+import '@/index.css'
+import { definePlugin } from 'delta-comic-core'
 
-definePlugin({
+import { imageViewConfig } from './config'
+import Default from './layout/default.vue'
+import { pluginName } from './symbol'
+import Image from './view/image.vue'
+import Video from './view/video.vue'
+
+void definePlugin({
   name: pluginName,
-  onBooted: () => ({
-    view: {
-      Image,
-      Video
-    },
-    layout: {
-      Default
-    }
-  }),
-  config: [
-    imageViewConfig
-  ],
+  onBooted: () => ({ view: { Image, Video }, layout: { Default } }),
+  config: [imageViewConfig]
 })
