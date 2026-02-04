@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.2...0.1.3) (2026-02-04)
+
+
+### Bug Fixes
+
+* **pub:** ci release name ([409b23d](https://github.com/delta-comic/delta-comic-plugin-layout/commit/409b23d4e1021ba9be3965de1516bfe5b61ca2e4))
+
 ## [0.1.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.1...0.1.2) (2026-02-04)
 
 
