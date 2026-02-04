@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.1...0.1.2) (2026-02-04)
+
+
+### Bug Fixes
+
+* **pub:** ci assets ([1feb505](https://github.com/delta-comic/delta-comic-plugin-layout/commit/1feb50581331069de655302bc577caa57de6a791))
+
 ## [0.1.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.0...0.1.1) (2026-02-04)
 
 
