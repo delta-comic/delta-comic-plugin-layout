@@ -2,16 +2,16 @@
   "name": "delta-comic-plugin-layout",
   "version": "1.0.0",
   "description": "希望的涟漪",
+  "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
+  "license": "AGPL-3.0-only",
   "author": {
     "name": "wenxig",
     "email": "wenxinguo12@gmail.com"
   },
-  "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
   "repository": {
     "type": "git",
     "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
   },
-  "license": "AGPL-3.0-only",
   "type": "module",
   "exports": {
     ".": {

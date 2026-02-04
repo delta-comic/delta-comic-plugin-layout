@@ -1,12 +1,11 @@
 name: 构建和发布
 
 on:
-  push: 
-    branches: ["main"]
+  push:
+    branches: ['main']
 
 permissions:
   contents: write
-  
 
 jobs:
   build:
@@ -20,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
@@ -31,11 +30,11 @@ jobs:
         with:
           node-version: 24
           cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'   
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Change depends
         run: sh ./script/install.sh
-      
+
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 

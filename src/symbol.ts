@@ -1,2 +1,1 @@
-
 export const pluginName = 'layout'

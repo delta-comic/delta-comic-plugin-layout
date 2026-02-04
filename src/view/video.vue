@@ -1,49 +1,56 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { computed, onBeforeUnmount, shallowRef, useTemplateRef } from 'vue'
 import { watch } from 'vue'
 import { Comp, coreModule, requireDepend, uni, Utils } from 'delta-comic-core'
 import type { MediaPlayerElement } from 'vidstack/elements'
 import type { MediaOrientationLockRequestEvent } from 'vidstack'
-import "vidstack/icons"
-import "vidstack/bundle"
-import "hls.js"
+import 'vidstack/icons'
+import 'vidstack/bundle'
+import 'hls.js'
 // import "dashjs"
 import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
 import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
 
-const $props = defineProps<{
-  page: uni.content.ContentVideoPage
-}>()
+const $props = defineProps<{ page: uni.content.ContentVideoPage }>()
 const isFullScreen = defineModel<boolean>('isFullScreen', { required: true })
 const player = useTemplateRef<MediaPlayerElement>('player')
 const union = computed(() => $props.page.union.value)
 const videos = computed(() => $props.page.videos.content.data.value ?? [])
-defineExpose({
-  player
-})
+defineExpose({ player })
 
-watch(player, (player, _, onCleanup) => {
-  onCleanup(watch(isFullScreen, isFullScreen => {
-    if (player) {
-      console.log('<Player> isFullScreen change', isFullScreen)
-      if (isFullScreen) {
-        player.enterFullscreen()
-      } else {
-        player.exitFullscreen()
-      }
-    }
-  }, {
-    immediate: true
-  }))
-}, { immediate: true })
+watch(
+  player,
+  (player, _, onCleanup) => {
+    onCleanup(
+      watch(
+        isFullScreen,
+        isFullScreen => {
+          if (player) {
+            console.log('<Player> isFullScreen change', isFullScreen)
+            if (isFullScreen) {
+              player.enterFullscreen()
+            } else {
+              player.exitFullscreen()
+            }
+          }
+        },
+        { immediate: true }
+      )
+    )
+  },
+  { immediate: true }
+)
 
-watch(videos, videos => {
-  if (!player.value) return
-  player.value.textTracks.clear()
-  for (const textTrack of videos.textTrack ?? [])
-    player.value.textTracks.add(textTrack)
-}, { immediate: true })
+watch(
+  videos,
+  videos => {
+    if (!player.value) return
+    player.value.textTracks.clear()
+    for (const textTrack of videos.textTrack ?? []) player.value.textTracks.add(textTrack)
+  },
+  { immediate: true }
+)
 
 const $router = useRouter()
 $router.beforeEach(() => {
@@ -65,167 +72,228 @@ onBeforeUnmount(() => {
 })
 
 const src = shallowRef<uni.content.VideoConfig[number]>()
-watch(videos, videos => {
-  src.value = videos[0]
-}, { immediate: true })
+watch(
+  videos,
+  videos => {
+    src.value = videos[0]
+  },
+  { immediate: true }
+)
 
 const isLiked = shallowRef(union.value?.isLiked ?? false)
 const likeSignal = new Utils.request.SmartAbortController()
 const handleLike = async () => {
   likeSignal.abort()
   try {
-    union.value?.like(likeSignal.signal)
-      .then(v => isLiked.value = v)
+    union.value?.like(likeSignal.signal).then(v => (isLiked.value = v))
   } catch (error) {
     console.error('liked fail')
   }
 }
 
-defineSlots<{
-  menu(): any
-}>()
+defineSlots<{ menu(): any }>()
 
 const { comp: CoreComp } = requireDepend(coreModule)
 </script>
 
 <template>
-  <NSpin :show="!union" class="size-full *:first:size-full relative bg-black">
-    <media-player :title="union?.title" class="size-full relative z-1!" :src playsinline ref="player"
-      @media-orientation-unlock-request="unlockScreenOrientation()" keep-alive autoPlay
+  <NSpin :show="!union" class="relative size-full bg-black *:first:size-full">
+    <media-player
+      :title="union?.title"
+      class="relative z-1! size-full"
+      :src
+      playsinline
+      ref="player"
+      @media-orientation-unlock-request="unlockScreenOrientation()"
+      keep-alive
+      autoPlay
       @media-orientation-lock-request="handleScreenScreenOrientationLock($event)"
-      @fullscreen-change="isFullScreen = $event.detail">
+      @fullscreen-change="isFullScreen = $event.detail"
+    >
       <media-provider class="bg-black"></media-provider>
       <Comp.Await v-if="union" :promise="() => union!.$cover.getUrl()" v-slot="{ result }">
         <media-poster
           class="absolute inset-0 block h-full w-full rounded-md bg-black opacity-0 transition-opacity data-visible:opacity-100 [&>img]:h-full [&>img]:w-full [&>img]:object-cover"
-          :src="result" alt="封面" />
+          :src="result"
+          alt="封面"
+        />
       </Comp.Await>
 
-      <media-controls v-if="isFullScreen"
-        class="pointer-events-none absolute text-white inset-0 z-10 flex h-full w-full flex-col bg-linear-to-t from-black/10 to-transparent opacity-0 transition-opacity data-visible:opacity-100">
+      <media-controls
+        v-if="isFullScreen"
+        class="pointer-events-none absolute inset-0 z-10 flex h-full w-full flex-col bg-linear-to-t from-black/10 to-transparent text-white opacity-0 transition-opacity data-visible:opacity-100"
+      >
         <media-controls-group
-          class="pointer-events-auto flex size-full items-center h-14! relative bg-linear-to-b from-black/40 from-50% to-transparent">
+          class="pointer-events-auto relative flex size-full h-14! items-center bg-linear-to-b from-black/40 from-50% to-transparent"
+        >
           <NIcon color="white" size="1.5rem" class="mr-2 ml-3" @click="$router.back()">
             <ArrowBackIosRound />
           </NIcon>
-          <media-title class="text-[15px] text-nowrap van-ellipsis w-6/10 "></media-title>
-          <div class="flex justify-around items-center h-full absolute right-0 gap-6 pr-3 **:text-white! *:p-0!">
-            <Comp.ToggleIcon size="23px" v-model="isLiked" @click="handleLike" :icon="LikeOutlined" />
+          <media-title class="van-ellipsis w-6/10 text-[15px] text-nowrap"></media-title>
+          <div
+            class="absolute right-0 flex h-full items-center justify-around gap-6 pr-3 *:p-0! **:text-white!"
+          >
+            <Comp.ToggleIcon
+              size="23px"
+              v-model="isLiked"
+              @click="handleLike"
+              :icon="LikeOutlined"
+            />
 
             <CoreComp.FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
 
             <media-pip-button>
-              <media-icon type="picture-in-picture" class="size-7 block group-data-active:hidden"></media-icon>
-              <media-icon type="picture-in-picture-exit" class="hidden size-6 group-data-active:block"></media-icon>
+              <media-icon
+                type="picture-in-picture"
+                class="block size-7 group-data-active:hidden"
+              ></media-icon>
+              <media-icon
+                type="picture-in-picture-exit"
+                class="hidden size-6 group-data-active:block"
+              ></media-icon>
             </media-pip-button>
 
-            <media-icon type="menu-vertical" class="size-7 block z-100 mr-2"></media-icon>
+            <media-icon type="menu-vertical" class="z-100 mr-2 block size-7"></media-icon>
           </div>
         </media-controls-group>
-        <media-controls-group class="pointer-events-none! flex w-full items-center px-2 flex-1 relative">
-          <div class="flex items-center text-sm font-medium absolute bottom-3 left-6 text-white/80">
+        <media-controls-group
+          class="pointer-events-none! relative flex w-full flex-1 items-center px-2"
+        >
+          <div class="absolute bottom-3 left-6 flex items-center text-sm font-medium text-white/80">
             <media-time class="time" type="current"></media-time>
             <div class="mx-1">/</div>
             <media-time class="time" type="duration"></media-time>
           </div>
         </media-controls-group>
         <media-controls-group
-          class="pointer-events-auto flex w-full justify-around items-center h-14! flex-col bg-linear-to-t from-black/20 from-40% to-transparent">
+          class="pointer-events-auto flex h-14! w-full flex-col items-center justify-around bg-linear-to-t from-black/20 from-40% to-transparent"
+        >
           <media-time-slider
-            class="group relative inline-flex h-4 w-[calc(100%-60px)] cursor-pointer touch-none select-none items-center outline-none aria-hidden:hidden">
+            class="group relative inline-flex h-4 w-[calc(100%-60px)] cursor-pointer touch-none items-center outline-none select-none aria-hidden:hidden"
+          >
             <!-- Track -->
             <div class="relative z-0 h-0.75 w-full rounded-sm bg-white/30">
               <!-- Track Fill -->
-              <div class="absolute z-10 h-full w-(--slider-fill) rounded-sm bg-(--p-color) will-change-[width]">
-              </div>
+              <div
+                class="absolute z-10 h-full w-(--slider-fill) rounded-sm bg-(--p-color) will-change-[width]"
+              ></div>
               <!-- Progress -->
-              <div class="absolute h-full w-(--slider-progress) rounded-sm bg-white/50 will-change-[width]">
-              </div>
+              <div
+                class="absolute h-full w-(--slider-progress) rounded-sm bg-white/50 will-change-[width]"
+              ></div>
             </div>
             <!-- Thumb -->
             <div
-              class="absolute left-(--slider-fill) top-1/2 z-20 h-3 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-white transition-opacity will-change-[left]">
-            </div>
+              class="absolute top-1/2 left-(--slider-fill) z-20 h-3 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-white transition-opacity will-change-[left]"
+            ></div>
           </media-time-slider>
-          <div class="flex w-full h-14 items-center pl-3">
+          <div class="flex h-14 w-full items-center pl-3">
             <media-play-button
-              class="group relative flex size-10 cursor-pointer mr-1 items-center justify-center rounded-md outline-none text-white">
+              class="group relative mr-1 flex size-10 cursor-pointer items-center justify-center rounded-md text-white outline-none"
+            >
               <PauseRound class="size-10 group-data-paused:hidden" type="play" />
               <PlayArrowRound class="hidden size-10 group-data-paused:block" type="play" />
             </media-play-button>
           </div>
 
-          <div class="flex h-7.5 absolute right-6 items-end gap-4">
+          <div class="absolute right-6 flex h-7.5 items-end gap-4">
             <slot name="menu"></slot>
-            <VanPopover @select="q => src = q.label" placement="top-end" show theme="dark"
-              :actions="videos.map((v, index) => ({ text: `线路: ${index + 1}`, label: v }))" teleport="#popups">
+            <VanPopover
+              @select="q => (src = q.label)"
+              placement="top-end"
+              show
+              theme="dark"
+              :actions="videos.map((v, index) => ({ text: `线路: ${index + 1}`, label: v }))"
+              teleport="#popups"
+            >
               <template #reference>
-                <NButton color="#fff" strong size="large" text>线路:
-                  {{videos.findIndex(v => v == src) + 1}}
+                <NButton color="#fff" strong size="large" text
+                  >线路:
+                  {{ videos.findIndex(v => v == src) + 1 }}
                 </NButton>
               </template>
             </VanPopover>
           </div>
-
         </media-controls-group>
       </media-controls>
 
-      <media-controls v-else
-        class="pointer-events-none absolute inset-0 z-10 flex size-full flex-col bg-linear-to-t from-black/10 to-transparent opacity-0 transition-opacity data-visible:opacity-100">
+      <media-controls
+        v-else
+        class="pointer-events-none absolute inset-0 z-10 flex size-full flex-col bg-linear-to-t from-black/10 to-transparent opacity-0 transition-opacity data-visible:opacity-100"
+      >
         <media-controls-group
-          class="pointer-events-auto flex w-full items-center px-2 justify-end h-[calc(56px+var(--safe-area-inset-top))] pt-safe gap-3 bg-linear-to-b from-black to-transparent ">
+          class="pt-safe pointer-events-auto flex h-[calc(56px+var(--safe-area-inset-top))] w-full items-center justify-end gap-3 bg-linear-to-b from-black to-transparent px-2"
+        >
           <media-pip-button>
-            <media-icon type="picture-in-picture" class="size-7 block group-data-active:hidden"></media-icon>
-            <media-icon type="picture-in-picture-exit" class="hidden size-7 group-data-active:block"></media-icon>
+            <media-icon
+              type="picture-in-picture"
+              class="block size-7 group-data-active:hidden"
+            ></media-icon>
+            <media-icon
+              type="picture-in-picture-exit"
+              class="hidden size-7 group-data-active:block"
+            ></media-icon>
           </media-pip-button>
 
-          <media-icon type="menu-vertical" class="size-7 block z-100 mr-2"></media-icon>
+          <media-icon type="menu-vertical" class="z-100 mr-2 block size-7"></media-icon>
         </media-controls-group>
         <div class="flex-1"></div>
         <media-controls-group class="pointer-events-auto flex w-full items-center px-2">
-
         </media-controls-group>
         <div class="flex-1"></div>
-        <media-controls-group class="pointer-events-auto flex w-full justify-around items-center">
+        <media-controls-group class="pointer-events-auto flex w-full items-center justify-around">
           <media-play-button
-            class="group relative flex size-10 cursor-pointer mr-1 items-center justify-center rounded-md outline-none text-white">
+            class="group relative mr-1 flex size-10 cursor-pointer items-center justify-center rounded-md text-white outline-none"
+          >
             <PauseRound class="size-10 group-data-paused:hidden" type="play" />
             <PlayArrowRound class="hidden size-10 group-data-paused:block" type="play" />
           </media-play-button>
 
           <media-time-slider
-            class="group relative mx-[7.5px] inline-flex h-10 w-full cursor-pointer touch-none select-none items-center outline-none aria-hidden:hidden">
+            class="group relative mx-[7.5px] inline-flex h-10 w-full cursor-pointer touch-none items-center outline-none select-none aria-hidden:hidden"
+          >
             <!-- Track -->
             <div class="relative z-0 h-1.25 w-full rounded-sm bg-white/30">
               <!-- Track Fill -->
-              <div class="absolute z-10 h-full w-(--slider-fill) rounded-sm bg-(--p-color) will-change-[width]">
-              </div>
+              <div
+                class="absolute z-10 h-full w-(--slider-fill) rounded-sm bg-(--p-color) will-change-[width]"
+              ></div>
               <!-- Progress -->
-              <div class="absolute h-full w-(--slider-progress) rounded-sm bg-white/50 will-change-[width]">
-              </div>
+              <div
+                class="absolute h-full w-(--slider-progress) rounded-sm bg-white/50 will-change-[width]"
+              ></div>
             </div>
             <!-- Thumb -->
             <div
-              class="absolute left-(--slider-fill) top-1/2 z-20 h-3.75 w-4.25 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-white transition-opacity will-change-[left]">
-            </div>
+              class="absolute top-1/2 left-(--slider-fill) z-20 h-3.75 w-4.25 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-white transition-opacity will-change-[left]"
+            ></div>
           </media-time-slider>
           <div class="w-18"></div>
         </media-controls-group>
       </media-controls>
       <media-captions
-        class="absolute inset-0 bottom-2 z-10 select-none wrap-break-word opacity-0 transition-[opacity,bottom] duration-300 media-captions:opacity-100 media-controls:bottom-21.25 media-preview:opacity-0"></media-captions>
+        class="media-captions:opacity-100 media-controls:bottom-21.25 media-preview:opacity-0 absolute inset-0 bottom-2 z-10 wrap-break-word opacity-0 transition-[opacity,bottom] duration-300 select-none"
+      ></media-captions>
 
       <media-gesture action="toggle:controls" event="pointerup"></media-gesture>
-      <media-gesture action="toggle:paused" class="absolute top-0 left-0 size-full" event="dblclick"></media-gesture>
-      <div class="pointer-events-none absolute inset-0 z-50 flex h-full w-full items-center justify-center">
+      <media-gesture
+        action="toggle:paused"
+        class="absolute top-0 left-0 size-full"
+        event="dblclick"
+      ></media-gesture>
+      <div
+        class="pointer-events-none absolute inset-0 z-50 flex h-full w-full items-center justify-center"
+      >
         <media-spinner
-          class="text-white opacity-0 transition-opacity duration-200 ease-linear media-buffering:animate-spin media-buffering:opacity-100 *:data-[part='track']:opacity-25"
-          size="23" track-width="8"></media-spinner>
+          class="media-buffering:animate-spin media-buffering:opacity-100 text-white opacity-0 transition-opacity duration-200 ease-linear *:data-[part='track']:opacity-25"
+          size="23"
+          track-width="8"
+        ></media-spinner>
       </div>
     </media-player>
   </NSpin>
 </template>
-<style scoped lang='css'>
+<style scoped lang="css">
 :deep(*) {
   --van-popover-dark-background: rgba(0, 0, 0, 0.5) !important;
 

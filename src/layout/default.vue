@@ -1,6 +1,15 @@
-<script setup lang='ts'>
+<script setup lang="ts">
 import { LikeFilled } from '@vicons/antd'
-import { ArrowBackRound, ArrowForwardIosOutlined, FolderOutlined, FullscreenRound, KeyboardArrowDownRound, PlayArrowRound, PlusRound, ReportGmailerrorredRound } from '@vicons/material'
+import {
+  ArrowBackRound,
+  ArrowForwardIosOutlined,
+  FolderOutlined,
+  FullscreenRound,
+  KeyboardArrowDownRound,
+  PlayArrowRound,
+  PlusRound,
+  ReportGmailerrorredRound
+} from '@vicons/material'
 import { computedAsync, createReusableTemplate, useCssVar, useFullscreen } from '@vueuse/core'
 import { uni, Comp, Utils, requireDepend, coreModule, Store } from 'delta-comic-core'
 import { AnimatePresence, motion } from 'motion-v'
@@ -10,14 +19,13 @@ import { sortBy } from 'es-toolkit/compat'
 import { PopoverAction } from 'vant'
 import { isString } from 'es-toolkit'
 import DOMPurify from 'dompurify'
-const { comp: { FavouriteSelect, AuthorIcon, Comment, ItemCard } } = requireDepend(coreModule)
+const {
+  comp: { FavouriteSelect, AuthorIcon, Comment, ItemCard }
+} = requireDepend(coreModule)
 
 const $router = useRouter()
 const $route = useRoute()
-const $props = defineProps<{
-  page: uni.content.ContentPage
-  isR18g?: boolean
-}>()
+const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>()
 const { isFullscreen } = useFullscreen()
 const union = computed(() => $props.page.union.value!)
 const showTitleFull = shallowRef(false)
@@ -27,7 +35,10 @@ const isScrolled = shallowRef(false)
 const scrollbar = useTemplateRef('scrollbar')
 const epSelList = useTemplateRef('epSelList')
 const isShowEpSelectPopup = shallowRef(false)
-const eps = computedAsync(async () => sortBy(await $props.page.eps.content, v => Number(v.index)), [])
+const eps = computedAsync(
+  async () => sortBy(await $props.page.eps.content, v => Number(v.index)),
+  []
+)
 const nowEpId = $route.params.ep.toString()
 const nowEp = computed(() => eps.value.find(ep => ep.index === nowEpId))
 const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.index === nowEpId))
@@ -43,31 +54,39 @@ const openEpSelectPopup = async () => {
 const safeHeightTopCss = useCssVar('--safe-area-inset-top')
 const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)?.[0]))
 
-const slots = defineSlots<{
-  view(): void
-}>()
-const getItemCard = (contentType: uni.content.ContentType_) => uni.item.Item.itemCard.get(contentType) ?? ItemCard
+const slots = defineSlots<{ view(): void }>()
+const getItemCard = (contentType: uni.content.ContentType_) =>
+  uni.item.Item.itemCard.get(contentType) ?? ItemCard
 
 const handleChick = (preload: uni.item.RawItem) =>
-  Utils.eventBus.SharedFunction.call('routeToContent', preload.contentType, preload.id, preload.thisEp.index, <any>preload)
+  Utils.eventBus.SharedFunction.call(
+    'routeToContent',
+    preload.contentType,
+    preload.id,
+    preload.thisEp.index,
+    <any>preload
+  )
 const isLiked = shallowRef(union.value?.isLiked ?? false)
 const likeSignal = new Utils.request.SmartAbortController()
 const handleLike = async () => {
   likeSignal.abort()
   try {
-    union.value.like(likeSignal.signal)
-      .then(v => isLiked.value = v)
+    union.value.like(likeSignal.signal).then(v => (isLiked.value = v))
   } catch (error) {
     console.error('liked fail')
   }
 }
 
 const contentSource = Utils.data.PromiseContent.withResolvers<uni.item.Item>(true)
-watch($props.page.union, union => {
-  if (!union) return
-  console.log('resolve', union)
-  contentSource.resolve(union)
-}, { immediate: true })
+watch(
+  $props.page.union,
+  union => {
+    if (!union) return
+    console.log('resolve', union)
+    contentSource.resolve(union)
+  },
+  { immediate: true }
+)
 
 $props.page.detail.content.onError(err => {
   console.error('resolve catch', err)
@@ -82,16 +101,15 @@ $props.page.detail.content.onSuccess(data => {
 
 const config = Store.useConfig()
 
-const [DefineAvatar, Avatar] = createReusableTemplate<{
-  author: uni.item.Author
-}>()
+const [DefineAvatar, Avatar] = createReusableTemplate<{ author: uni.item.Author }>()
 
 const getActionInfo = (key: string) => uni.user.User.authorActions.get([union.value.$$plugin, key])!
 
 const { db } = requireDepend(coreModule)
 
 const getIsSubscribe = (author: uni.item.Author) =>
-  db.value.selectFrom('subscribe')
+  db.value
+    .selectFrom('subscribe')
     .where('key', '=', `${author.$$plugin}:${author.label}`)
     .selectAll()
     .execute()
@@ -100,10 +118,12 @@ const getIsSubscribe = (author: uni.item.Author) =>
 const showDetailUsers = shallowRef(false)
 
 const addSubscribe = (author: uni.item.Author) =>
-  Utils.message.createLoadingMessage('关注中')
+  Utils.message
+    .createLoadingMessage('关注中')
     .bind(Utils.eventBus.SharedFunction.call('addAuthorSubscribe', author, author.$$plugin))
 const removeSubscribe = (author: uni.item.Author) =>
-  Utils.message.createLoadingMessage('取消中')
+  Utils.message
+    .createLoadingMessage('取消中')
     .bind(Utils.eventBus.SharedFunction.call('removeAuthorSubscribe', author, author.$$plugin))
 
 const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
@@ -111,36 +131,40 @@ const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
   class?: any
 }>()
 
-
 const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
   author: uni.item.Author
   class?: any
 }>()
-
 </script>
 
 <template>
   <DefineAvatar v-slot="{ author }">
-    <VanPopover :actions="(author.actions ?? []).map(k => ({
-      text: getActionInfo(k).name,
-      icons: getActionInfo(k).icon,
-      key: k
-    }))" @select="q => getActionInfo(q.key).call(author)" placement="bottom-start">
+    <VanPopover
+      :actions="
+        (author.actions ?? []).map(k => ({
+          text: getActionInfo(k).name,
+          icons: getActionInfo(k).icon,
+          key: k
+        }))
+      "
+      @select="q => getActionInfo(q.key).call(author)"
+      placement="bottom-start"
+    >
       <template #reference>
-        <div class="van-ellipsis w-fit text-(--p-color) text-[16px] flex items-center pl-2">
+        <div class="van-ellipsis flex w-fit items-center pl-2 text-[16px] text-(--p-color)">
           <AuthorIcon :size-spacing="8.5" :author class="mx-2" />
-          <div class="flex flex-col w-full text-nowrap">
-            <div class="text-(--nui-primary-color) flex items-center">
+          <div class="flex w-full flex-col text-nowrap">
+            <div class="flex items-center text-(--nui-primary-color)">
               {{ author.label }}
             </div>
-            <div class="-mt-0.5 max-w-2/3 text-(--van-text-color-2) text-[11px] flex items-center">
+            <div class="-mt-0.5 flex max-w-2/3 items-center text-[11px] text-(--van-text-color-2)">
               {{ author.description }}
             </div>
           </div>
         </div>
       </template>
-      <template #action="{ action: { text, icons } }: { action: PopoverAction, index: number }">
-        <div class="flex items-center justify-center w-full text-nowrap relative gap-1">
+      <template #action="{ action: { text, icons } }: { action: PopoverAction; index: number }">
+        <div class="relative flex w-full items-center justify-center gap-1 text-nowrap">
           <NIcon color="var(--van-text-color)" class="flex! items-center!" size="18px">
             <component :is="icons" />
           </NIcon>
@@ -154,10 +178,14 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
     <div class="relative w-full" :class="className">
       <Avatar :author />
       <Comp.Await :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
-        <NButton round type="primary" :color="isSubscribe ? '#6a7282' : undefined"
-          class="absolute! right-3 top-1/2 -translate-y-1/2" size="small" @click.stop="isSubscribe
-            ? removeSubscribe(author)
-            : addSubscribe(author)">
+        <NButton
+          round
+          type="primary"
+          :color="isSubscribe ? '#6a7282' : undefined"
+          class="absolute! top-1/2 right-3 -translate-y-1/2"
+          size="small"
+          @click.stop="isSubscribe ? removeSubscribe(author) : addSubscribe(author)"
+        >
           <template #icon>
             <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
               <PlusRound />
@@ -174,10 +202,14 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
     <div class="relative w-full" :class="className">
       <Avatar :author />
       <Comp.Await :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
-        <NButton round type="primary" :color="isSubscribe ? '#6a7282' : undefined" class="px-0! aspect-square"
-          size="small" @click.stop="isSubscribe
-            ? removeSubscribe(author)
-            : addSubscribe(author)">
+        <NButton
+          round
+          type="primary"
+          :color="isSubscribe ? '#6a7282' : undefined"
+          class="aspect-square px-0!"
+          size="small"
+          @click.stop="isSubscribe ? removeSubscribe(author) : addSubscribe(author)"
+        >
           <template #icon>
             <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
               <PlusRound />
@@ -189,10 +221,12 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
   </DefineSubscribeSmallRow>
 
   <TitleDefine>
-    <div class="text-xs mt-1 font-normal flex text-(--van-text-color-2) *:flex *:items-center gap-1">
-      <div class="text-(--van-text-color-2) text-xs flex gap-1 items-center ">
+    <div
+      class="mt-1 flex gap-1 text-xs font-normal text-(--van-text-color-2) *:flex *:items-center"
+    >
+      <div class="flex items-center gap-1 text-xs text-(--van-text-color-2)">
         <span>
-          <VanIcon class="mr-0.5 " name="eye-o" size="14px" />
+          <VanIcon class="mr-0.5" name="eye-o" size="14px" />
           <span>{{ union?.viewNumber }}</span>
         </span>
         <span>
@@ -202,29 +236,52 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
     </div>
   </TitleDefine>
 
-  <NScrollbar ref="scrollbar" class="*:w-full h-full! bg-(--van-background-2)"
-    :style="{ '--van-background-2': isR18g ? 'color-mix(in oklab, var(--nui-error-color-hover) 5%, transparent)' : 'var(--nui-body-color)' }">
-    <div class="bg-black text-white h-[30vh] relative flex justify-center">
-      <div class="absolute z-3 pointer-events-none *:pointer-events-auto top-0 w-full flex h-14 items-center pt-safe">
+  <NScrollbar
+    ref="scrollbar"
+    class="h-full! bg-(--van-background-2) *:w-full"
+    :style="{
+      '--van-background-2': isR18g
+        ? 'color-mix(in oklab, var(--nui-error-color-hover) 5%, transparent)'
+        : 'var(--nui-body-color)'
+    }"
+  >
+    <div class="relative flex h-[30vh] justify-center bg-black text-white">
+      <div
+        class="pt-safe pointer-events-none absolute top-0 z-3 flex h-14 w-full items-center *:pointer-events-auto"
+      >
         <VanSticky>
-          <div class="h-[calc(56px+var(--safe-area-inset-top))] pt-safe transition-colors flex items-center w-screen"
-            :class="[isScrolled ? ' bg-(--p-color)' : 'bg-transparent']">
+          <div
+            class="pt-safe flex h-[calc(56px+var(--safe-area-inset-top))] w-screen items-center transition-colors"
+            :class="[isScrolled ? 'bg-(--p-color)' : 'bg-transparent']"
+          >
             <NIcon color="white" size="1.5rem" class="ml-5" @click="$router.back()">
               <ArrowBackRound />
             </NIcon>
             <NIcon color="white" size="1.5rem" class="ml-5" @click="$router.force.push('/')">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24">
-                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                viewBox="0 0 24 24"
+              >
+                <g
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path
-                    d="M19 8.71l-5.333-4.148a2.666 2.666 0 0 0-3.274 0L5.059 8.71a2.665 2.665 0 0 0-1.029 2.105v7.2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.2c0-.823-.38-1.6-1.03-2.105">
-                  </path>
+                    d="M19 8.71l-5.333-4.148a2.666 2.666 0 0 0-3.274 0L5.059 8.71a2.665 2.665 0 0 0-1.029 2.105v7.2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.2c0-.823-.38-1.6-1.03-2.105"
+                  ></path>
                   <path d="M16 15c-2.21 1.333-5.792 1.333-8 0"></path>
                 </g>
               </svg>
             </NIcon>
-            <div @click="scrollbar?.scrollTo({ behavior: 'smooth', top: 0, left: 0 })"
-              class="size-full text-[16px] flex items-center justify-center transition-opacity"
-              :class="[isScrolled || 'opacity-0']">
+            <div
+              @click="scrollbar?.scrollTo({ behavior: 'smooth', top: 0, left: 0 })"
+              class="flex size-full items-center justify-center text-[16px] transition-opacity"
+              :class="[isScrolled || 'opacity-0']"
+            >
               <NIcon size="2.5rem">
                 <PlayArrowRound />
               </NIcon>
@@ -236,9 +293,14 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
       <Teleport to="#cover" :disabled="!isFullscreen">
         <slot name="view" />
       </Teleport>
-      <VanRow class="absolute bottom-0 w-full z-2 pointer-events-none">
+      <VanRow class="pointer-events-none absolute bottom-0 z-2 w-full">
         <VanCol span="1" offset="21">
-          <NButton class="text-3xl! pointer-events-auto" @click="isFullscreen = true" text color="#fff">
+          <NButton
+            class="pointer-events-auto text-3xl!"
+            @click="isFullscreen = true"
+            text
+            color="#fff"
+          >
             <NIcon>
               <FullscreenRound />
             </NIcon>
@@ -246,32 +308,74 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
         </VanCol>
       </VanRow>
     </div>
-    <VanTabs shrink swipeable sticky :offset-top="56 + safeHeightTop" background="var(--nui-card-color)"
-      @scroll="({ isFixed }) => isScrolled = isFixed" class="min-h-[70vh]! tab">
-      <VanTab class="min-h-full relative van-hairline--top bg-(--nui-body-color)" title="简介" name="info">
-        <Comp.Content :source="contentSource.content" retriable @reset-retry="$props.page.reloadAll"
-          class="min-h-[60vh]">
-          <div class="flex relative text-nowrap mt-3 items-center pb-2" v-if="(union?.author.length ?? 0) > 1"
-            @click="showDetailUsers = true">
+    <VanTabs
+      shrink
+      swipeable
+      sticky
+      :offset-top="56 + safeHeightTop"
+      background="var(--nui-card-color)"
+      @scroll="({ isFixed }) => (isScrolled = isFixed)"
+      class="tab min-h-[70vh]!"
+    >
+      <VanTab
+        class="van-hairline--top relative min-h-full bg-(--nui-body-color)"
+        title="简介"
+        name="info"
+      >
+        <Comp.Content
+          :source="contentSource.content"
+          retriable
+          @reset-retry="$props.page.reloadAll"
+          class="min-h-[60vh]"
+        >
+          <div
+            class="relative mt-3 flex items-center pb-2 text-nowrap"
+            v-if="(union?.author.length ?? 0) > 1"
+            @click="showDetailUsers = true"
+          >
             <span class="ml-3 font-bold">创作团队</span>
-            <span class="absolute right-3 text-(--van-text-color-2)">共{{ union?.author.length }}位</span>
+            <span class="absolute right-3 text-(--van-text-color-2)"
+              >共{{ union?.author.length }}位</span
+            >
             <Comp.Popup v-model:show="showDetailUsers" position="bottom" round class="h-[50vh]">
-              <SubscribeRow :author v-for="author of union.author" class="py-2 van-hairline--bottom" />
+              <SubscribeRow
+                :author
+                v-for="author of union.author"
+                class="van-hairline--bottom py-2"
+              />
             </Comp.Popup>
           </div>
-          <div class="flex items-center text-nowrap overflow-x-auto" @pointerdown.stop @click.stop @pointermove.stop>
-
-            <SubscribeRow :author="union.author[0]" v-if="union?.author.length === 1" class="mt-3" />
-            <div v-else class="flex overflow-x-scroll overflow-y-hidden scroll" @click.stop>
-              <SubscribeSmallRow class="flex text-nowrap gap-3 items-center" :author v-for="author of union?.author" />
+          <div
+            class="flex items-center overflow-x-auto text-nowrap"
+            @pointerdown.stop
+            @click.stop
+            @pointermove.stop
+          >
+            <SubscribeRow
+              :author="union.author[0]"
+              v-if="union?.author.length === 1"
+              class="mt-3"
+            />
+            <div v-else class="scroll flex overflow-x-scroll overflow-y-hidden" @click.stop>
+              <SubscribeSmallRow
+                class="flex items-center gap-3 text-nowrap"
+                :author
+                v-for="author of union?.author"
+              />
             </div>
           </div>
-          <div class="w-[95%] mx-auto mt-2">
-            <div class="flex relative h-fit">
-              <div class="text-[17px] font-medium w-[89%] relative">
+          <div class="mx-auto mt-2 w-[95%]">
+            <div class="relative flex h-fit">
+              <div class="relative w-[89%] text-[17px] font-medium">
                 <AnimatePresence>
-                  <motion.div :initial="{ opacity: 0 }" :exit="{ opacity: 0 }" key="info" :animate="{ opacity: 1 }"
-                    v-if="!showTitleFull" class="flex flex-col absolute top-0 van-ellipsis w-full">
+                  <motion.div
+                    :initial="{ opacity: 0 }"
+                    :exit="{ opacity: 0 }"
+                    key="info"
+                    :animate="{ opacity: 1 }"
+                    v-if="!showTitleFull"
+                    class="van-ellipsis absolute top-0 flex w-full flex-col"
+                  >
                     <span @click="showTitleFull = !showTitleFull">
                       {{ union?.title }}
                     </span>
@@ -283,44 +387,86 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                     {{ union?.title }}
                   </span>
                   <Title />
-                  <div class="flex  font-light text-(--van-text-color-2) justify-start text-xs mt-0.5">
+                  <div
+                    class="mt-0.5 flex justify-start text-xs font-light text-(--van-text-color-2)"
+                  >
                     <div class="mr-2">
                       {{ page.pid.content.data.value }}
                     </div>
                   </div>
-                  <Comp.Text :text="union.description" v-if="isString(union?.description)"
-                    class="font-normal  mt-1 text-(--van-text-color-2) justify-start text-xs">
+                  <Comp.Text
+                    :text="union.description"
+                    v-if="isString(union?.description)"
+                    class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
+                  >
                   </Comp.Text>
-                  <Comp.Text :text="union.description.content" v-else-if="union?.description?.type == 'text'"
-                    class="font-normal  mt-1 text-(--van-text-color-2) justify-start text-xs">
+                  <Comp.Text
+                    :text="union.description.content"
+                    v-else-if="union?.description?.type == 'text'"
+                    class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
+                  >
                   </Comp.Text>
-                  <div v-html="DOMPurify.sanitize(union?.description?.content ?? '')" v-else
-                    class="font-normal  mt-1 text-(--van-text-color-2) justify-start text-xs max-w-full">
-                  </div>
-                  <div class="flex flex-col w-full"
-                    v-for="[name, categories] of Object.entries(Object.groupBy(union?.categories ?? [], v => v.group))">
-                    <NDivider class="text-xs! my-1! text-(--van-gray-7)! **:font-light!" title-placement="left">
+                  <div
+                    v-html="DOMPurify.sanitize(union?.description?.content ?? '')"
+                    v-else
+                    class="mt-1 max-w-full justify-start text-xs font-normal text-(--van-text-color-2)"
+                  ></div>
+                  <div
+                    class="flex w-full flex-col"
+                    v-for="[name, categories] of Object.entries(
+                      Object.groupBy(union?.categories ?? [], v => v.group)
+                    )"
+                  >
+                    <NDivider
+                      class="my-1! text-xs! text-(--van-gray-7)! **:font-light!"
+                      title-placement="left"
+                    >
                       {{ name }}
                     </NDivider>
                     <div class="flex flex-wrap gap-2.5 *:px-3! **:text-xs!">
-                      <NButton tertiary round type="tertiary" size="small"
-                        v-for="category of categories?.toSorted((a, b) => b.name.length - a.name.length).filter(Boolean)"
-                        @click="Utils.eventBus.SharedFunction.call('routeToSearch', category.search.keyword, [page.plugin, category.search.source], category.search.sort)">
+                      <NButton
+                        tertiary
+                        round
+                        type="tertiary"
+                        size="small"
+                        v-for="category of categories
+                          ?.toSorted((a, b) => b.name.length - a.name.length)
+                          .filter(Boolean)"
+                        @click="
+                          Utils.eventBus.SharedFunction.call(
+                            'routeToSearch',
+                            category.search.keyword,
+                            [page.plugin, category.search.source],
+                            category.search.sort
+                          )
+                        "
+                      >
                         {{ category.name }}
                       </NButton>
                     </div>
                   </div>
                 </NCollapseTransition>
               </div>
-              <NIcon size="2rem" color="var(--van-text-color-3)" class="absolute -top-0.5 -right-1 transition-transform"
-                :class="[showTitleFull && 'rotate-180!']" @click="showTitleFull = !showTitleFull">
+              <NIcon
+                size="2rem"
+                color="var(--van-text-color-3)"
+                class="absolute -top-0.5 -right-1 transition-transform"
+                :class="[showTitleFull && 'rotate-180!']"
+                @click="showTitleFull = !showTitleFull"
+              >
                 <KeyboardArrowDownRound />
               </NIcon>
             </div>
             <!-- action bar -->
             <div class="mt-8 mb-4 flex justify-around" v-if="union">
-              <Comp.ToggleIcon padding size="27px" v-model="isLiked" @click="handleLike" :icon="LikeFilled">
-                {{ ((union.likeNumber ?? 0) + (isLiked ? 1 : 0)) || '喜欢' }}
+              <Comp.ToggleIcon
+                padding
+                size="27px"
+                v-model="isLiked"
+                @click="handleLike"
+                :icon="LikeFilled"
+              >
+                {{ (union.likeNumber ?? 0) + (isLiked ? 1 : 0) || '喜欢' }}
               </Comp.ToggleIcon>
               <Comp.ToggleIcon padding size="27px" :icon="FolderOutlined" dis-changed>
                 缓存
@@ -332,49 +478,83 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
               <ShareButton :page />
             </div>
             <!-- ep select -->
-            <div class="relative mb-4 w-full flex items-center rounded pl-3 py-2 van-haptics-feedback"
-              :class="[isR18g ? (config.isDark ? '' : 'bg-(--van-gray-1)/70') : (config.isDark ? 'bg-(--van-gray-8)' : 'bg-(--van-gray-2)')]"
-              v-if="eps && eps.length > 1" @click="openEpSelectPopup">
+            <div
+              class="van-haptics-feedback relative mb-4 flex w-full items-center rounded py-2 pl-3"
+              :class="[
+                isR18g
+                  ? config.isDark
+                    ? ''
+                    : 'bg-(--van-gray-1)/70'
+                  : config.isDark
+                    ? 'bg-(--van-gray-8)'
+                    : 'bg-(--van-gray-2)'
+              ]"
+              v-if="eps && eps.length > 1"
+              @click="openEpSelectPopup"
+            >
               <span>选集</span>
               <span class="mx-0.5">·</span>
-              <span class="max-w-1/2 van-ellipsis">{{ nowEp?.name || `第${nowEpIndex + 1}话` }}</span>
-              <span class="absolute right-2 text-xs text-(--van-text-color-2) flex items-center">
+              <span class="van-ellipsis max-w-1/2">{{
+                nowEp?.name || `第${nowEpIndex + 1}话`
+              }}</span>
+              <span class="absolute right-2 flex items-center text-xs text-(--van-text-color-2)">
                 <span>{{ nowEpIndex + 1 }}/{{ eps.length }}</span>
                 <NIcon size="12px" class="ml-1">
                   <ArrowForwardIosOutlined />
                 </NIcon>
               </span>
             </div>
-            <Comp.Popup round position="bottom" class="h-[70vh] flex flex-col" v-model:show="isShowEpSelectPopup">
-              <div class="w-full h-10 pt-2 pl-8 flex items-center font-bold text-lg">选集</div>
-              <Comp.List class="w-full h-full" :source="{ data: Utils.data.PromiseContent.resolve(eps), isEnd: true }"
-                :itemHeight="40" v-slot="{ data: { item: ep, index }, height }" ref="epSelList">
-                <VanCell clickable @click="handleChick({ ...union.toJSON(), thisEp: ep.toJSON() })"
+            <Comp.Popup
+              round
+              position="bottom"
+              class="flex h-[70vh] flex-col"
+              v-model:show="isShowEpSelectPopup"
+            >
+              <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold">选集</div>
+              <Comp.List
+                class="h-full w-full"
+                :source="{ data: Utils.data.PromiseContent.resolve(eps), isEnd: true }"
+                :itemHeight="40"
+                v-slot="{ data: { item: ep, index }, height }"
+                ref="epSelList"
+              >
+                <VanCell
+                  clickable
+                  @click="handleChick({ ...union.toJSON(), thisEp: ep.toJSON() })"
                   :title="ep.name || `第${index + 1}话`"
                   :title-class="[nowEpId === ep.index && 'font-bold text-(--p-color)!']"
-                  class="w-full flex items-center " :style="{ height: `${height}px !important` }">
+                  class="flex w-full items-center"
+                  :style="{ height: `${height}px !important` }"
+                >
                 </VanCell>
               </Comp.List>
             </Comp.Popup>
           </div>
           <!-- recommend -->
-          <div class="van-hairline--top w-full *:bg-transparent" v-if="page.recommends.content.data.value">
-            <component :is="getItemCard(item.contentType)" :item v-for="item of page.recommends.content.data.value" />
+          <div
+            class="van-hairline--top w-full *:bg-transparent"
+            v-if="page.recommends.content.data.value"
+          >
+            <component
+              :is="getItemCard(item.contentType)"
+              :item
+              v-for="item of page.recommends.content.data.value"
+            />
           </div>
         </Comp.Content>
       </VanTab>
 
-      <VanTab class="h-full! van-hairline--top" title="评论" name="comment">
+      <VanTab class="van-hairline--top h-full!" title="评论" name="comment">
         <template #title>
           <span>评论</span>
-          <span class="text-xs! ml-0.5 font-light">{{ union?.commentNumber ?? '' }}</span>
+          <span class="ml-0.5 text-xs! font-light">{{ union?.commentNumber ?? '' }}</span>
         </template>
         <Comment :comments="page.comments" :item="union" class="h-[calc(70vh-38px)]" />
       </VanTab>
     </VanTabs>
   </NScrollbar>
 </template>
-<style scoped lang='css'>
+<style scoped lang="css">
 .scroll::-webkit-scrollbar {
   display: none;
 }
