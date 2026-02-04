@@ -46,7 +46,7 @@ export default defineConfig(({ command }) => ({
       },
       version: {
         plugin: _package.version,
-        supportCore: '^0.5'
+        supportCore: '^1.0'
       }
     }, command)
   ],
