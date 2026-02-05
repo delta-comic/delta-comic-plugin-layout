@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.3...0.1.4) (2026-02-05)
+
+
+### Bug Fixes
+
+* **pub:** share button ([1053f19](https://github.com/delta-comic/delta-comic-plugin-layout/commit/1053f193aa44109029954f62e66ff777fbb37f3a))
+
 ## [0.1.3](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.2...0.1.3) (2026-02-04)
 
 ### Bug Fixes
