@@ -12,13 +12,17 @@
     "type": "git",
     "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
   },
+  "files": [
+    "./public/*",
+    "./package.json"
+  ],
   "type": "module",
+  "types": "./public/import.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/import.d.ts"
+      "types": "./public/import.d.ts"
     }
   },
-  "types": "./dist/import.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r plugin.zip ./*",
