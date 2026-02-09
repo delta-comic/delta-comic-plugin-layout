@@ -1,3 +1,10 @@
+## [0.1.6](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.5...0.1.6) (2026-02-09)
+
+
+### Bug Fixes
+
+* [pub] ig useless file ([54da3b8](https://github.com/delta-comic/delta-comic-plugin-layout/commit/54da3b8e040e66c6a8c1082e2117e76b22c4e7e8))
+
 ## [0.1.5](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.4...0.1.5) (2026-02-09)
 
 
