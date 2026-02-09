@@ -1,3 +1,10 @@
+## [0.1.5](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.4...0.1.5) (2026-02-09)
+
+
+### Bug Fixes
+
+* [pub] pack type ([6472972](https://github.com/delta-comic/delta-comic-plugin-layout/commit/6472972a74e0f7bde42c074f933a716a8cec638c))
+
 ## [0.1.4](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.3...0.1.4) (2026-02-05)
 
 
