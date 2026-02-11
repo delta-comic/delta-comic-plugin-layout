@@ -18,7 +18,11 @@ export default defineConfig(
           template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }
         }),
         vidstack({ include: './src/view/*' }),
-        Components({ dts: true, resolvers: [NaiveUiResolver(), VantResolver()] }),
+        Components({
+          dts: true,
+          resolvers: [NaiveUiResolver(), VantResolver()],
+          exclude: ['./src/**/*']
+        }),
         tailwindcss(),
         deltaComicPlus(
           {
@@ -40,7 +44,7 @@ export default defineConfig(
           targets: browserslistToTargets(browserslist('> 1%, last 2 versions, not ie <= 8'))
         }
       },
-      server: { port: 6173, host: true },
+      server: { port: 6174, host: true },
       base: './'
     }) satisfies UserConfigExport
 )

@@ -78,14 +78,15 @@
     "tailwindcss": "4.1.18",
     "typescript": "^5.9.3",
     "unplugin-vue-components": "31.0.0",
-    "vite": "npm:rolldown-vite@7.3.1",
+    "vite": "^8.0.0-beta.13",
     "vite-plugin-external": "^6.2.2",
     "vite-plugin-monkey": "^7.1.9",
     "vue-component-type-helpers": "^3.2.4",
     "vue-tsc": "^3.2.4"
   },
   "overrides": {
-    "delta-comic-core": "latest"
+    "delta-comic-core": "latest",
+    "vite": "^8.0.0-beta.13"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -95,6 +96,7 @@
       "esbuild"
     ],
     "overrides": {
+      "vite": "^8.0.0-beta.13",
       "delta-comic-core": "latest"
     }
   }
