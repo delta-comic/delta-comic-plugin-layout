@@ -1,3 +1,13 @@
+## [0.1.7](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.6...0.1.7) (2026-02-11)
+
+
+### Bug Fixes
+
+* [pub] ci build ([87c80a6](https://github.com/delta-comic/delta-comic-plugin-layout/commit/87c80a6b1657b12ab4629b3d0b19e6938a556a5b))
+* **ci:** [pub] no debug ([0c96017](https://github.com/delta-comic/delta-comic-plugin-layout/commit/0c96017e8f811ada60a827aff7ecaec8ca28012a))
+* **ci:** no log [pub] ([f61b8be](https://github.com/delta-comic/delta-comic-plugin-layout/commit/f61b8bea464eb95c50b699da612b943a507b55c5))
+* fullscreen ([455662c](https://github.com/delta-comic/delta-comic-plugin-layout/commit/455662ca726818e36eaae8d791810005df68b510))
+
 ## [0.1.6](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.5...0.1.6) (2026-02-09)
 
 
