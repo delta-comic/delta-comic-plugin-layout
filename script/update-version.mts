@@ -1,16 +1,15 @@
+import fs from 'node:fs'
 import semantic from 'semantic-release'
-import { WritableStreamBuffer } from 'stream-buffers'
 
 import config from '../.releaserc.mjs'
 import pkg from '../package.json' with { type: 'json' }
 import { setVersion } from './set-version.mts'
-const stdoutBuffer = new WritableStreamBuffer()
-const stderrBuffer = new WritableStreamBuffer()
 
+const file = fs.createWriteStream('./log.log')
 const result = await semantic(config, {
   env: { ...process.env, IS_DUR_RUN: true },
-  stdout: stdoutBuffer as any,
-  stderr: stderrBuffer as any
+  stdout: file as any,
+  stderr: file as any
 })
 
 if (result) {
