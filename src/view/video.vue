@@ -7,13 +7,17 @@ import type { MediaOrientationLockRequestEvent } from 'vidstack'
 import 'vidstack/icons'
 import 'vidstack/bundle'
 import 'hls.js'
-// import "dashjs"
 import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
 import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
+import { getCurrentWindow } from '@tauri-apps/api/window'
+import { useFullscreen } from '@vueuse/core'
 
 const $props = defineProps<{ page: uni.content.ContentVideoPage }>()
-const isFullScreen = defineModel<boolean>('isFullScreen', { required: true })
+
+const { isFullscreen } = useFullscreen()
+const setFullscreen = async (isFull: boolean) => (await getCurrentWindow()).setFullscreen(isFull)
+
 const player = useTemplateRef<MediaPlayerElement>('player')
 const union = computed(() => $props.page.union.value)
 const videos = computed(() => $props.page.videos.content.data.value ?? [])
@@ -24,7 +28,7 @@ watch(
   (player, _, onCleanup) => {
     onCleanup(
       watch(
-        isFullScreen,
+        isFullscreen,
         isFullScreen => {
           if (player) {
             console.log('<Player> isFullScreen change', isFullScreen)
@@ -66,7 +70,7 @@ const unlockScreenOrientation = async () => {
 }
 window.$api.player = player
 onBeforeUnmount(() => {
-  isFullScreen.value = false
+  setFullscreen(false)
   player.value?.destroy()
   unlockScreenOrientation()
 })
@@ -108,7 +112,7 @@ const { comp: CoreComp } = requireDepend(coreModule)
       keep-alive
       autoPlay
       @media-orientation-lock-request="handleScreenScreenOrientationLock($event)"
-      @fullscreen-change="isFullScreen = $event.detail"
+      @fullscreen-change="setFullscreen($event.detail)"
     >
       <media-provider class="bg-black"></media-provider>
       <Comp.Await v-if="union" :promise="() => union!.$cover.getUrl()" v-slot="{ result }">
@@ -120,7 +124,7 @@ const { comp: CoreComp } = requireDepend(coreModule)
       </Comp.Await>
 
       <media-controls
-        v-if="isFullScreen"
+        v-if="isFullscreen"
         class="pointer-events-none absolute inset-0 z-10 flex h-full w-full flex-col bg-linear-to-t from-black/10 to-transparent text-white opacity-0 transition-opacity data-visible:opacity-100"
       >
         <media-controls-group

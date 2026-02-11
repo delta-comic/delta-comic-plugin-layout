@@ -1,8 +1,12 @@
 import pkg from './package.json' with { type: 'json' }
+
+const isDryRun = !!process.env.IS_DUR_RUN
+
+const shared = { branches: ['main'], repositoryUrl: pkg.repository.url, tagFormat: '${version}' }
+
 /** @type {import("semantic-release").GlobalConfig} */
-export default {
-  branches: ['main'],
-  repositoryUrl: pkg.repository.url,
+const production = {
+  ...shared,
   plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
@@ -15,6 +19,10 @@ export default {
         message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
       }
     ]
-  ],
-  tagFormat: '${version}'
+  ]
 }
+
+/** @type {import("semantic-release").GlobalConfig} */
+const dev = { ...shared, plugins: ['@semantic-release/commit-analyzer'], dryRun: true }
+
+export default isDryRun ? dev : production

@@ -10,7 +10,13 @@ import {
   PlusRound,
   ReportGmailerrorredRound
 } from '@vicons/material'
-import { computedAsync, createReusableTemplate, useCssVar, useFullscreen } from '@vueuse/core'
+import {
+  computedAsync,
+  createReusableTemplate,
+  toReactive,
+  useCssVar,
+  useFullscreen
+} from '@vueuse/core'
 import { uni, Comp, Utils, requireDepend, coreModule, Store } from 'delta-comic-core'
 import { AnimatePresence, motion } from 'motion-v'
 import { computed, shallowRef, useTemplateRef, nextTick, watch } from 'vue'
@@ -19,6 +25,7 @@ import { sortBy } from 'es-toolkit/compat'
 import { PopoverAction } from 'vant'
 import { isString } from 'es-toolkit'
 import DOMPurify from 'dompurify'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 const {
   comp: { FavouriteSelect, AuthorIcon, Comment, ItemCard }
 } = requireDepend(coreModule)
@@ -26,7 +33,10 @@ const {
 const $router = useRouter()
 const $route = useRoute()
 const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>()
-const { isFullscreen } = useFullscreen()
+
+const fullscreen = toReactive(useFullscreen())
+const setFullscreen = async (isFull: boolean) => (await getCurrentWindow()).setFullscreen(isFull)
+
 const union = computed(() => $props.page.union.value!)
 const showTitleFull = shallowRef(false)
 const [TitleDefine, Title] = createReusableTemplate()
@@ -50,7 +60,6 @@ const openEpSelectPopup = async () => {
     index: eps.value.findIndex(ep => ep.index === nowEpId)
   })
 }
-
 const safeHeightTopCss = useCssVar('--safe-area-inset-top')
 const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)?.[0]))
 
@@ -290,14 +299,14 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
           </div>
         </VanSticky>
       </div>
-      <Teleport to="#cover" :disabled="!isFullscreen">
+      <Teleport to="#cover" :disabled="!fullscreen.isFullscreen">
         <slot name="view" />
       </Teleport>
       <VanRow class="pointer-events-none absolute bottom-0 z-2 w-full">
         <VanCol span="1" offset="21">
           <NButton
             class="pointer-events-auto text-3xl!"
-            @click="isFullscreen = true"
+            @click="setFullscreen(true)"
             text
             color="#fff"
           >
