@@ -43,7 +43,6 @@ jobs:
         id: set-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEBUG: semantic-release:*
           IS_DUR_RUN: true
         run: |
           OLD_VERSION="$(node ./script/update-version.mts)"
