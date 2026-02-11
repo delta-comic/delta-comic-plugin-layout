@@ -2,6 +2,7 @@ import semantic from 'semantic-release'
 import { WritableStreamBuffer } from 'stream-buffers'
 
 import config from '../.releaserc.mjs'
+import pkg from '../package.json' with { type: 'json' }
 import { setVersion } from './set-version.mts'
 const stdoutBuffer = new WritableStreamBuffer()
 const stderrBuffer = new WritableStreamBuffer()
@@ -14,7 +15,7 @@ const result = await semantic(config, {
 
 if (result) {
   await setVersion(result.nextRelease.version)
-  console.log(result.lastRelease.version)
+  console.log(pkg.version)
   process.exit(0)
 }
 process.exit(0)
