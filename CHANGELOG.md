@@ -1,3 +1,11 @@
+## [0.1.8](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.7...0.1.8) (2026-02-12)
+
+
+### Bug Fixes
+
+* **build:** [pub] fix style not found ([2c1fc3d](https://github.com/delta-comic/delta-comic-plugin-layout/commit/2c1fc3d584a16c3a6d4d610186f861809bfc34c1))
+* release version not sync ([7502777](https://github.com/delta-comic/delta-comic-plugin-layout/commit/7502777533dc07392fc6fb950c02476927dfedcd))
+
 ## [0.1.7](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.6...0.1.7) (2026-02-11)
 
 
