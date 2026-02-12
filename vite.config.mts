@@ -18,11 +18,7 @@ export default defineConfig(
           template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }
         }),
         vidstack({ include: './src/view/*' }),
-        Components({
-          dts: true,
-          resolvers: [NaiveUiResolver(), VantResolver()],
-          exclude: ['./src/**/*']
-        }),
+        Components({ dts: true, resolvers: [NaiveUiResolver(), VantResolver()] }),
         tailwindcss(),
         deltaComicPlus(
           {

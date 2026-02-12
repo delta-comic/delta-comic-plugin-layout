@@ -324,7 +324,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
       :offset-top="56 + safeHeightTop"
       background="var(--nui-card-color)"
       @scroll="({ isFixed }) => (isScrolled = isFixed)"
-      class="tab min-h-[70vh]!"
+      class="not-full min-h-[70vh]!"
     >
       <VanTab
         class="van-hairline--top relative min-h-full bg-(--nui-body-color)"
