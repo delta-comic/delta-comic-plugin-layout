@@ -9,12 +9,15 @@ import { NaiveUiResolver, VantResolver } from 'unplugin-vue-components/resolvers
 import Components from 'unplugin-vue-components/vite'
 import { vite as vidstack } from 'vidstack/plugins'
 import { defineConfig, type UserConfigExport } from 'vite'
+import dts from 'vite-plugin-dts'
 
 import _package from './package.json'
+
 export default defineConfig(
   ({ command }) =>
     ({
       plugins: [
+        dts({ include: ['./src'], outDir: './type', tsconfigPath: './tsconfig.json' }),
         vue({
           template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }
         }),

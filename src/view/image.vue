@@ -14,12 +14,19 @@ import { AnimatePresence, motion } from 'motion-v'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { imageViewConfig } from '@/config'
-const $props = defineProps<{ page: uni.content.ContentImagePage }>()
+import { useConfig } from '@delta-comic/plugin'
+import type { uni } from '@delta-comic/model'
+import { SharedFunction } from '@delta-comic/core'
+import { SmartAbortController } from '@delta-comic/request'
+import { DcImage, DcList, DcToggleIcon, DcVar, DcPopup } from '@delta-comic/ui'
+import { useSwipeDbClick } from '@/utils/ui'
+import type { ContentImagePage } from '@/model'
+const $props = defineProps<{ page: ContentImagePage }>()
 const $emit = defineEmits<{ firstSlide: []; lastSlide: []; click: []; reloadPages: [] }>()
 
 const isFullScreen = defineModel<boolean>('isFullScreen', { required: true })
 
-const config = Store.useConfig().$load(imageViewConfig)
+const config = useConfig().$load(imageViewConfig)
 
 const swiper = shallowRef<SwiperClass>()
 
@@ -59,64 +66,10 @@ defineExpose({
 })
 const isShowMenu = shallowRef(true)
 
-const { handleTouchend, handleTouchmove, handleTouchstart, handleDbTap } = (() => {
-  let touchStartTime = 0
-  let touchStartX = 0
-  let touchStartY = 0
-  let isDragging = false
-  let tapEventTimerId = 0
-
-  const THRESHOLD = 200 // 单击的时间阈值（毫秒）
-  const MOVE_THRESHOLD = 30 // 拖动的滑动距离阈值
-  return {
-    handleTouchstart: (_swiper: SwiperClass, e: TouchEvent | PointerEvent | MouseEvent) => {
-      if (e instanceof TouchEvent) {
-        var pageX = e.touches[0].pageX
-        var pageY = e.touches[0].pageY
-      } else {
-        var pageX = e.pageX
-        var pageY = e.pageY
-      }
-      touchStartTime = Date.now() // 记录触摸开始的时间
-      touchStartX = pageX
-      touchStartY = pageY
-      isDragging = false
-    },
-    handleTouchmove: (_swiper: SwiperClass, e: TouchEvent | PointerEvent | MouseEvent) => {
-      if (e instanceof TouchEvent) {
-        var pageX = e.touches[0].pageX
-        var pageY = e.touches[0].pageY
-      } else {
-        var pageX = e.pageX
-        var pageY = e.pageY
-      }
-      const distanceX = Math.abs(pageX - touchStartX)
-      const distanceY = Math.abs(pageY - touchStartY)
-
-      // 如果滑动距离超过阈值，则认为是拖动
-      if (distanceX > MOVE_THRESHOLD || distanceY > MOVE_THRESHOLD) {
-        isDragging = true
-      }
-    },
-    handleTouchend: () => {
-      const touchEndTime = Date.now()
-      // 判断是否为单击
-      if (!isDragging && touchEndTime - touchStartTime < THRESHOLD && tapEventTimerId === 0) {
-        tapEventTimerId = <number>(<any>setTimeout(() => {
-          tapEventTimerId = 0
-          $emit('click')
-          isShowMenu.value = !isShowMenu.value
-          // console.log('单击', tapEventTimerId)
-        }, 300))
-      }
-    },
-    handleDbTap: () => {
-      clearTimeout(tapEventTimerId)
-      tapEventTimerId = 0
-      // console.log("双击", tapEventTimerId)
-    }
-  }
-})()
+const { handleTouchend, handleTouchmove, handleTouchstart, handleDbTap } = useSwipeDbClick(() => {
+  $emit('click')
+  isShowMenu.value = !isShowMenu.value
+})
 
 const nowEp = computed(() =>
   $props.page.eps.content.data.value?.find(v => v.index === $props.page.ep)
@@ -125,7 +78,7 @@ const isShowEpSelectPopup = shallowRef(false)
 const $route = useRoute()
 const nowEpId = $route.params.ep.toString()
 const handleEpSelect = (preload: uni.item.RawItem) =>
-  Utils.eventBus.SharedFunction.call(
+  SharedFunction.call(
     'routeToContent',
     preload.contentType,
     preload.id,
@@ -137,7 +90,7 @@ defineSlots<{ bottomBar(): any }>()
 const union = computed(() => $props.page.union.value!)
 
 const isLiked = shallowRef(union.value?.isLiked ?? false)
-const likeSignal = new Utils.request.SmartAbortController()
+const likeSignal = new SmartAbortController()
 const handleLike = async () => {
   likeSignal.abort()
   try {
@@ -178,7 +131,7 @@ const handleLike = async () => {
         :data-hash="index + 1"
         class="overflow-hidden"
       >
-        <Comp.Image fetchpriority="high" fit="contain" :src="image" class="swiper-zoom-container">
+        <DcImage fetchpriority="high" fit="contain" :src="image" class="swiper-zoom-container">
           <template #loading>
             <div class="size-screen flex items-center justify-center text-center">
               <span class="text-3xl text-white"> {{ index + 1 }} </span>
@@ -189,10 +142,10 @@ const handleLike = async () => {
               <span class="text-3xl text-white"> {{ index + 1 }} </span>
             </div>
           </template>
-        </Comp.Image>
+        </DcImage>
       </SwiperSlide>
     </Swiper>
-    <Comp.Image
+    <DcImage
       ref="imgIns"
       class="absolute top-0 size-full"
       fit="contain"
@@ -224,7 +177,7 @@ const handleLike = async () => {
           <span class="van-ellipsis ml-1 text-xs">{{ nowEp?.name }}</span>
         </div>
         <div class="flex h-full w-full items-center justify-around">
-          <Comp.ToggleIcon
+          <DcToggleIcon
             padding
             size="30px"
             v-model="isLiked"
@@ -242,7 +195,7 @@ const handleLike = async () => {
         :transition="{ ease: 'easeInOut', duration: 0.2 }"
         class="use-backdrop-blur-md absolute bottom-0 z-3 flex h-14 w-full items-center justify-center bg-black/50 text-white"
       >
-        <Comp.Var :value="{ showNum: false }" v-slot="{ value }">
+        <DcVar :value="{ showNum: false }" v-slot="{ value }">
           <VanSlider
             v-model="selectPage"
             @change="v => pageOnIndex === v || swiper?.slideTo(v, 0)"
@@ -269,7 +222,7 @@ const handleLike = async () => {
           <div class="absolute -top-3 left-2 -translate-y-full">
             {{ pageOnIndex + 1 }}&nbsp;/&nbsp;{{ images.length }}
           </div>
-        </Comp.Var>
+        </DcVar>
         <div class="flex w-full justify-end gap-4 pr-4 *:flex! *:items-center *:justify-center">
           <slot name="bottomBar" />
           <div v-if="(page.eps.content.data.value?.length ?? 1) > 1">
@@ -285,7 +238,7 @@ const handleLike = async () => {
         </div>
       </motion.div>
     </AnimatePresence>
-    <Comp.Popup
+    <DcPopup
       round
       position="bottom"
       class="flex h-[70vh] flex-col bg-black/50! backdrop-blur"
@@ -293,7 +246,7 @@ const handleLike = async () => {
       theme="dark"
     >
       <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold text-white">选集</div>
-      <Comp.List
+      <DcList
         class="h-full w-full"
         :source="{ data: page.eps.content, isEnd: true }"
         :itemHeight="40"
@@ -310,8 +263,8 @@ const handleLike = async () => {
           :style="{ height: `${height}px !important` }"
         >
         </VanCell>
-      </Comp.List>
-    </Comp.Popup>
+      </DcList>
+    </DcPopup>
     <AnimatePresence>
       <motion.div
         v-if="!isShowMenu || !isFullScreen"

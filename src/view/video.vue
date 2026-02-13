@@ -11,11 +11,15 @@ import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useFullscreen } from '@vueuse/core'
+import type { ContentVideoPage } from '@/model'
+import { SmartAbortController } from '@delta-comic/request'
+import type { uni } from '@delta-comic/model'
+import { DcAwait, DcToggleIcon } from '@delta-comic/ui'
 
-const $props = defineProps<{ page: uni.content.ContentVideoPage }>()
+const $props = defineProps<{ page: ContentVideoPage }>()
 
 const { isFullscreen } = useFullscreen()
-const setFullscreen = async (isFull: boolean) => (await getCurrentWindow()).setFullscreen(isFull)
+const setFullscreen = (isFull: boolean) => getCurrentWindow().setFullscreen(isFull)
 
 const player = useTemplateRef<MediaPlayerElement>('player')
 const union = computed(() => $props.page.union.value)
@@ -84,7 +88,7 @@ watch(
 )
 
 const isLiked = shallowRef(union.value?.isLiked ?? false)
-const likeSignal = new Utils.request.SmartAbortController()
+const likeSignal = new SmartAbortController()
 const handleLike = async () => {
   likeSignal.abort()
   try {
@@ -95,8 +99,6 @@ const handleLike = async () => {
 }
 
 defineSlots<{ menu(): any }>()
-
-const { comp: CoreComp } = requireDepend(coreModule)
 </script>
 
 <template>
@@ -114,13 +116,13 @@ const { comp: CoreComp } = requireDepend(coreModule)
       @fullscreen-change="setFullscreen($event.detail)"
     >
       <media-provider class="bg-black"></media-provider>
-      <Comp.Await v-if="union" :promise="() => union!.$cover.getUrl()" v-slot="{ result }">
+      <DcAwait v-if="union" :promise="() => union!.$cover.getUrl()" v-slot="{ result }">
         <media-poster
           class="absolute inset-0 block h-full w-full rounded-md bg-black opacity-0 transition-opacity data-visible:opacity-100 [&>img]:h-full [&>img]:w-full [&>img]:object-cover"
           :src="result"
           alt="封面"
         />
-      </Comp.Await>
+      </DcAwait>
 
       <media-controls
         v-if="isFullscreen"
@@ -136,14 +138,9 @@ const { comp: CoreComp } = requireDepend(coreModule)
           <div
             class="absolute right-0 flex h-full items-center justify-around gap-6 pr-3 *:p-0! **:text-white!"
           >
-            <Comp.ToggleIcon
-              size="23px"
-              v-model="isLiked"
-              @click="handleLike"
-              :icon="LikeOutlined"
-            />
+            <DcToggleIcon size="23px" v-model="isLiked" @click="handleLike" :icon="LikeOutlined" />
 
-            <CoreComp.FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
+            <CoreDcFavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
 
             <media-pip-button>
               <media-icon

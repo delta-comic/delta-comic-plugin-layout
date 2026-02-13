@@ -33,6 +33,7 @@ import { useConfig, Global } from '@delta-comic/plugin'
 import { db, SubscribeDB } from '@delta-comic/db'
 import { createDateString } from '@/utils/date'
 import ItemCard from '@/components/ItemCard.vue'
+import FavouriteSelect from '@/components/FavouriteSelect.vue'
 
 const $router = useRouter()
 const $route = useRoute()
