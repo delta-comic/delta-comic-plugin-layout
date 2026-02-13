@@ -1,6 +1,6 @@
 import '@/index.css'
 import { definePlugin, PluginExpose } from 'delta-comic-core'
-import 'delta-comic-core'
+
 import { imageViewConfig } from './config'
 import Default from './layout/default.vue'
 import { pluginName } from './symbol'

@@ -1,33 +1,26 @@
 <script setup lang="ts">
+import { uni } from '@delta-comic/model'
+import { Global, type Share } from '@delta-comic/plugin'
+import { DcPopup, DcToggleIcon } from '@delta-comic/ui'
 import { ShareSharp } from '@vicons/material'
-import {
-  Comp,
-  requireDepend,
-  coreModule,
-  uni,
-  type PluginShareInitiativeItem
-} from 'delta-comic-core'
 import { computed, shallowRef } from 'vue'
 
-const {
-  comp: { ImagedIcon }
-} = requireDepend(coreModule)
 const $props = defineProps<{ page: uni.content.ContentPage }>()
 const showShare = shallowRef(false)
 const methods = computed(() =>
-  Array.from(uni.content.ContentPage.share.entries()).filter(v => v[1].filter($props.page))
+  Array.from(Global.share.entries()).filter(v => v[1].filter($props.page))
 )
-const handleClick = (method: PluginShareInitiativeItem) => {
+const handleClick = (method: Share.InitiativeItem) => {
   showShare.value = false
   return method.call($props.page)
 }
 </script>
 
 <template>
-  <Comp.ToggleIcon padding size="27px" :icon="ShareSharp" dis-changed @click="showShare = true">
+  <DcToggleIcon padding size="27px" :icon="ShareSharp" dis-changed @click="showShare = true">
     分享
-  </Comp.ToggleIcon>
-  <Comp.Popup v-model:show="showShare" round position="bottom" class="h-fit bg-(--van-background)!">
+  </DcToggleIcon>
+  <DcPopup v-model:show="showShare" round position="bottom" class="h-fit bg-(--van-background)!">
     <div class="w-full bg-(--van-background-2) pt-4 pb-1 text-center text-base!">分享该内容</div>
     <div
       class="scrollbar mb-3 flex h-fit w-full gap-1 overflow-x-auto overflow-y-hidden bg-(--van-background-2) px-1 py-5"
@@ -52,5 +45,5 @@ const handleClick = (method: PluginShareInitiativeItem) => {
     <VanButton block size="large" class="w-full! border-none!" @click="showShare = false"
       >取消</VanButton
     >
-  </Comp.Popup>
+  </DcPopup>
 </template>

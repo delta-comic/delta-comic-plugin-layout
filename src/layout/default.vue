@@ -17,7 +17,6 @@ import {
   useCssVar,
   useFullscreen
 } from '@vueuse/core'
-import { uni, Comp, Utils, requireDepend, coreModule, Store } from 'delta-comic-core'
 import { AnimatePresence, motion } from 'motion-v'
 import { computed, shallowRef, useTemplateRef, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -26,9 +25,14 @@ import { PopoverAction } from 'vant'
 import { isString } from 'es-toolkit'
 import DOMPurify from 'dompurify'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-const {
-  comp: { FavouriteSelect, AuthorIcon, Comment, ItemCard }
-} = requireDepend(coreModule)
+import { SharedFunction } from '@delta-comic/core'
+import { PromiseContent, uni } from '@delta-comic/model'
+import { createLoadingMessage, DcContent, DcPopup, DcText, DcToggleIcon } from '@delta-comic/ui'
+import { SmartAbortController } from '@delta-comic/request'
+import { useConfig, Global } from '@delta-comic/plugin'
+import { db, SubscribeDB } from '@delta-comic/db'
+import { createDateString } from '@/utils/date'
+import ItemCard from '@/components/ItemCard.vue'
 
 const $router = useRouter()
 const $route = useRoute()
@@ -68,15 +72,15 @@ const getItemCard = (contentType: uni.content.ContentType_) =>
   uni.item.Item.itemCard.get(contentType) ?? ItemCard
 
 const handleChick = (preload: uni.item.RawItem) =>
-  Utils.eventBus.SharedFunction.call(
+  SharedFunction.call(
     'routeToContent',
     preload.contentType,
     preload.id,
     preload.thisEp.index,
-    <any>preload
+    uni.item.Item.create(preload)
   )
 const isLiked = shallowRef(union.value?.isLiked ?? false)
-const likeSignal = new Utils.request.SmartAbortController()
+const likeSignal = new SmartAbortController()
 const handleLike = async () => {
   likeSignal.abort()
   try {
@@ -86,7 +90,7 @@ const handleLike = async () => {
   }
 }
 
-const contentSource = Utils.data.PromiseContent.withResolvers<uni.item.Item>(true)
+const contentSource = PromiseContent.withResolvers<uni.item.Item>(true)
 watch(
   $props.page.union,
   union => {
@@ -108,13 +112,11 @@ $props.page.detail.content.onSuccess(data => {
   contentSource.resolve(data)
 })
 
-const config = Store.useConfig()
+const config = useConfig()
 
 const [DefineAvatar, Avatar] = createReusableTemplate<{ author: uni.item.Author }>()
 
-const getActionInfo = (key: string) => uni.user.User.authorActions.get([union.value.$$plugin, key])!
-
-const { db } = requireDepend(coreModule)
+const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plugin, key])!
 
 const getIsSubscribe = (author: uni.item.Author) =>
   db.value
@@ -127,13 +129,22 @@ const getIsSubscribe = (author: uni.item.Author) =>
 const showDetailUsers = shallowRef(false)
 
 const addSubscribe = (author: uni.item.Author) =>
-  Utils.message
-    .createLoadingMessage('关注中')
-    .bind(Utils.eventBus.SharedFunction.call('addAuthorSubscribe', author, author.$$plugin))
+  createLoadingMessage('关注中').bind(
+    SubscribeDB.upsert({
+      type: 'author',
+      author,
+      plugin: author.$$plugin,
+      key: SubscribeDB.key.toString([author.$$plugin, author.label]),
+      itemKey: null
+    })
+  )
 const removeSubscribe = (author: uni.item.Author) =>
-  Utils.message
-    .createLoadingMessage('取消中')
-    .bind(Utils.eventBus.SharedFunction.call('removeAuthorSubscribe', author, author.$$plugin))
+  createLoadingMessage('取消中').bind(
+    db.value
+      .deleteFrom('subscribe')
+      .where('key', '=', SubscribeDB.key.toString([author.$$plugin, author.label]))
+      .execute()
+  )
 
 const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
   author: uni.item.Author
@@ -186,7 +197,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
   <DefineSubscribeRow v-slot="{ author, class: className }">
     <div class="relative w-full" :class="className">
       <Avatar :author />
-      <Comp.Await :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+      <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
         <NButton
           round
           type="primary"
@@ -204,13 +215,13 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
             {{ isSubscribe ? '取关' : '关注' }}
           </template>
         </NButton>
-      </Comp.Await>
+      </DcAwait>
     </div>
   </DefineSubscribeRow>
   <DefineSubscribeSmallRow v-slot="{ author, class: className }">
     <div class="relative w-full" :class="className">
       <Avatar :author />
-      <Comp.Await :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+      <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
         <NButton
           round
           type="primary"
@@ -225,7 +236,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
             </NIcon>
           </template>
         </NButton>
-      </Comp.Await>
+      </DcAwait>
     </div>
   </DefineSubscribeSmallRow>
 
@@ -239,7 +250,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
           <span>{{ union?.viewNumber }}</span>
         </span>
         <span>
-          <span>{{ Utils.translate.createDateString(union?.$updateTime) }}</span>
+          <span>{{ createDateString(union?.$updateTime) }}</span>
         </span>
       </div>
     </div>
@@ -331,7 +342,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
         title="简介"
         name="info"
       >
-        <Comp.Content
+        <DcContent
           :source="contentSource.content"
           retriable
           @reset-retry="$props.page.reloadAll"
@@ -346,13 +357,13 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
             <span class="absolute right-3 text-(--van-text-color-2)"
               >共{{ union?.author.length }}位</span
             >
-            <Comp.Popup v-model:show="showDetailUsers" position="bottom" round class="h-[50vh]">
+            <DcPopup v-model:show="showDetailUsers" position="bottom" round class="h-[50vh]">
               <SubscribeRow
                 :author
                 v-for="author of union.author"
                 class="van-hairline--bottom py-2"
               />
-            </Comp.Popup>
+            </DcPopup>
           </div>
           <div
             class="flex items-center overflow-x-auto text-nowrap"
@@ -403,18 +414,18 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                       {{ page.pid.content.data.value }}
                     </div>
                   </div>
-                  <Comp.Text
+                  <DcText
                     :text="union.description"
                     v-if="isString(union?.description)"
                     class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
                   >
-                  </Comp.Text>
-                  <Comp.Text
+                  </DcText>
+                  <DcText
                     :text="union.description.content"
                     v-else-if="union?.description?.type == 'text'"
                     class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
                   >
-                  </Comp.Text>
+                  </DcText>
                   <div
                     v-html="DOMPurify.sanitize(union?.description?.content ?? '')"
                     v-else
@@ -442,7 +453,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                           ?.toSorted((a, b) => b.name.length - a.name.length)
                           .filter(Boolean)"
                         @click="
-                          Utils.eventBus.SharedFunction.call(
+                          SharedFunction.call(
                             'routeToSearch',
                             category.search.keyword,
                             [page.plugin, category.search.source],
@@ -468,7 +479,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
             </div>
             <!-- action bar -->
             <div class="mt-8 mb-4 flex justify-around" v-if="union">
-              <Comp.ToggleIcon
+              <DcToggleIcon
                 padding
                 size="27px"
                 v-model="isLiked"
@@ -476,13 +487,13 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                 :icon="LikeFilled"
               >
                 {{ (union.likeNumber ?? 0) + (isLiked ? 1 : 0) || '喜欢' }}
-              </Comp.ToggleIcon>
-              <Comp.ToggleIcon padding size="27px" :icon="FolderOutlined" dis-changed>
+              </DcToggleIcon>
+              <DcToggleIcon padding size="27px" :icon="FolderOutlined" dis-changed>
                 缓存
-              </Comp.ToggleIcon>
-              <Comp.ToggleIcon padding size="27px" dis-changed :icon="ReportGmailerrorredRound">
+              </DcToggleIcon>
+              <DcToggleIcon padding size="27px" dis-changed :icon="ReportGmailerrorredRound">
                 举报
-              </Comp.ToggleIcon>
+              </DcToggleIcon>
               <FavouriteSelect :item="union" />
               <ShareButton :page />
             </div>
@@ -513,16 +524,16 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                 </NIcon>
               </span>
             </div>
-            <Comp.Popup
+            <DcPopup
               round
               position="bottom"
               class="flex h-[70vh] flex-col"
               v-model:show="isShowEpSelectPopup"
             >
               <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold">选集</div>
-              <Comp.List
+              <DcList
                 class="h-full w-full"
-                :source="{ data: Utils.data.PromiseContent.resolve(eps), isEnd: true }"
+                :source="{ data: PromiseContent.resolve(eps), isEnd: true }"
                 :itemHeight="40"
                 v-slot="{ data: { item: ep, index }, height }"
                 ref="epSelList"
@@ -536,8 +547,8 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                   :style="{ height: `${height}px !important` }"
                 >
                 </VanCell>
-              </Comp.List>
-            </Comp.Popup>
+              </DcList>
+            </DcPopup>
           </div>
           <!-- recommend -->
           <div
@@ -550,7 +561,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
               v-for="item of page.recommends.content.data.value"
             />
           </div>
-        </Comp.Content>
+        </DcContent>
       </VanTab>
 
       <VanTab class="van-hairline--top h-full!" title="评论" name="comment">

@@ -1,7 +1,8 @@
+import { DeltaComicUiResolver } from '@delta-comic/ui/vite'
+import { deltaComicPlus } from '@delta-comic/vite'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import browserslist from 'browserslist'
-import { deltaComicPlus } from 'delta-comic-core/vite'
 import { browserslistToTargets } from 'lightningcss'
 import { fileURLToPath, URL } from 'node:url'
 import { NaiveUiResolver, VantResolver } from 'unplugin-vue-components/resolvers'
@@ -18,7 +19,10 @@ export default defineConfig(
           template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }
         }),
         vidstack({ include: './src/view/*' }),
-        Components({ dts: true, resolvers: [NaiveUiResolver(), VantResolver()] }),
+        Components({
+          dts: true,
+          resolvers: [NaiveUiResolver(), VantResolver(), DeltaComicUiResolver()]
+        }),
         tailwindcss(),
         deltaComicPlus(
           {

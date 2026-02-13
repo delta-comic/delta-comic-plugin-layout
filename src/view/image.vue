@@ -13,7 +13,6 @@ import { LikeOutlined } from '@vicons/antd'
 import { AnimatePresence, motion } from 'motion-v'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { Comp, Store, uni, Utils } from 'delta-comic-core'
 import { imageViewConfig } from '@/config'
 const $props = defineProps<{ page: uni.content.ContentImagePage }>()
 const $emit = defineEmits<{ firstSlide: []; lastSlide: []; click: []; reloadPages: [] }>()
