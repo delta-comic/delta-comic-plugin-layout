@@ -12,15 +12,13 @@ import { pluginName } from './symbol'
 import Image from './view/Image.vue'
 import Video from './view/Video.vue'
 
-const plugin = definePlugin({
-  name: pluginName,
-  onBooted: () => ({
-    view: { Image, Video },
-    layout: { Default },
-    model,
-    component: { ItemCard, ShareButton, FavouriteSelect, CreateFavouriteCard }
-  }),
-  config: [imageViewConfig]
-})
+const plugin = {
+  view: { Image, Video },
+  layout: { Default },
+  model,
+  component: { ItemCard, ShareButton, FavouriteSelect, CreateFavouriteCard }
+}
 
-export type LayoutLib = PluginExpose<() => typeof plugin>
+definePlugin({ name: pluginName, onBooted: () => plugin, config: [imageViewConfig] })
+
+export type LayoutLib = typeof plugin

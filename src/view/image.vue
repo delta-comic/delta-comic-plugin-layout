@@ -16,19 +16,18 @@ import { useRoute } from 'vue-router'
 import { imageViewConfig } from '@/config'
 import { useConfig } from '@delta-comic/plugin'
 import type { uni } from '@delta-comic/model'
-import { SharedFunction } from '@delta-comic/core'
+import { SharedFunction,useFullscreen, } from '@delta-comic/core'
 import { SmartAbortController } from '@delta-comic/request'
 import { DcImage, DcList, DcToggleIcon, DcVar, DcPopup } from '@delta-comic/ui'
 import { useSwipeDbClick } from '@/utils/ui'
 import type { ContentImagePage } from '@/model'
 const $props = defineProps<{ page: ContentImagePage }>()
-const $emit = defineEmits<{ firstSlide: []; lastSlide: []; click: []; reloadPages: [] }>()
-
-const isFullScreen = defineModel<boolean>('isFullScreen', { required: true })
 
 const config = useConfig().$load(imageViewConfig)
 
 const swiper = shallowRef<SwiperClass>()
+
+const {}=useFullscreen()
 
 const images = computed(() => $props.page.images.content.data.value ?? [])
 const comic = computed(() => $props.page.union.value!)
@@ -47,27 +46,18 @@ const onInit = async () => {
   }, 1)
 }
 
-const goToSlide = (offset: 1 | -1, emitEvent: () => void) => {
+const goToSlide = (offset: 1 | -1) => {
   const targetIndex = pageOnIndex.value + offset
   if (inRange(targetIndex, 0, images.value.length)) {
     offset < 0 ? swiper.value?.slidePrev() : swiper.value?.slideNext()
-  } else {
-    emitEvent()
   }
 }
-const goPrev = () => goToSlide(-1, () => $emit('firstSlide'))
-const goNext = () => goToSlide(1, () => $emit('lastSlide'))
+const goPrev = () => goToSlide(-1)
+const goNext = () => goToSlide(1)
 
-defineExpose({
-  index: pageOnIndex,
-  toIndex(index: number) {
-    swiper.value?.slideTo(index)
-  }
-})
 const isShowMenu = shallowRef(true)
 
 const { handleTouchend, handleTouchmove, handleTouchstart, handleDbTap } = useSwipeDbClick(() => {
-  $emit('click')
   isShowMenu.value = !isShowMenu.value
 })
 

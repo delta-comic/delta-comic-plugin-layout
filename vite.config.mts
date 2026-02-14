@@ -17,7 +17,12 @@ export default defineConfig(
   ({ command }) =>
     ({
       plugins: [
-        dts({ include: ['./src'], outDir: './type', tsconfigPath: './tsconfig.json' }),
+        dts({
+          include: ['./src'],
+          outDir: './type',
+          rollupTypes: true,
+          tsconfigPath: './tsconfig.json'
+        }),
         vue({
           template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }
         }),

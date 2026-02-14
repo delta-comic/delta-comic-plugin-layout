@@ -11,9 +11,8 @@ import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useFullscreen } from '@vueuse/core'
-import type { ContentVideoPage } from '@/model'
+import type { ContentVideoPage, VideoConfig } from '@/model'
 import { SmartAbortController } from '@delta-comic/request'
-import type { uni } from '@delta-comic/model'
 import { DcAwait, DcToggleIcon } from '@delta-comic/ui'
 
 const $props = defineProps<{ page: ContentVideoPage }>()
@@ -78,7 +77,7 @@ onBeforeUnmount(() => {
   unlockScreenOrientation()
 })
 
-const src = shallowRef<uni.content.VideoConfig[number]>()
+const src = shallowRef<VideoConfig[number]>()
 watch(
   videos,
   videos => {
