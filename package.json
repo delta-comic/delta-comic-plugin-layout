@@ -17,12 +17,6 @@
     "./package.json"
   ],
   "type": "module",
-  "types": "./public/import.d.ts",
-  "exports": {
-    ".": {
-      "types": "./public/import.d.ts"
-    }
-  },
   "scripts": {
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r plugin.zip ./*",
@@ -34,7 +28,7 @@
     "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
   },
   "dependencies": {
-    "@delta-comic/core": "^0.0.2",
+    "@delta-comic/core": "^0.2.0",
     "@delta-comic/db": "^0.0.2",
     "@delta-comic/model": "^0.0.2",
     "@delta-comic/plugin": "^0.0.3",
@@ -74,7 +68,7 @@
     "@vitejs/plugin-vue": "^6.0.4",
     "@vue/tsconfig": "^0.8.1",
     "browserslist": "^4.28.1",
-    "commitlint-plugin-cspell": "^0.4.0",
+    "commitlint-plugin-cspell": "^0.5.0",
     "cspell": "^9.6.4",
     "husky": "^9.1.7",
     "lightningcss": "^1.31.1",
@@ -93,20 +87,12 @@
     "vue-component-type-helpers": "^3.2.4",
     "vue-tsc": "^3.2.4"
   },
-  "overrides": {
-    "delta-comic-core": "latest",
-    "vite": "^8.0.0-beta.13"
-  },
   "pnpm": {
     "onlyBuiltDependencies": [
       "@parcel/watcher",
       "@tailwindcss/oxide",
       "core-js",
       "esbuild"
-    ],
-    "overrides": {
-      "vite": "^8.0.0-beta.13",
-      "delta-comic-core": "latest"
-    }
+    ]
   }
 }

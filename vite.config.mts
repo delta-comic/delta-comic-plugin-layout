@@ -21,7 +21,8 @@ export default defineConfig(
           include: ['./src'],
           outDir: './type',
           rollupTypes: true,
-          tsconfigPath: './tsconfig.json'
+          tsconfigPath: './tsconfig.json',
+          
         }),
         vue({
           template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }

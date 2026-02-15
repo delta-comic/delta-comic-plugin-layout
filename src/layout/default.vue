@@ -13,9 +13,7 @@ import {
 import {
   computedAsync,
   createReusableTemplate,
-  toReactive,
-  useCssVar,
-  useFullscreen
+  useCssVar
 } from '@vueuse/core'
 import { AnimatePresence, motion } from 'motion-v'
 import { computed, shallowRef, useTemplateRef, nextTick, watch } from 'vue'
@@ -25,7 +23,7 @@ import { PopoverAction } from 'vant'
 import { isString } from 'es-toolkit'
 import DOMPurify from 'dompurify'
 import { getCurrentWindow } from '@tauri-apps/api/window'
-import { SharedFunction } from '@delta-comic/core'
+import { SharedFunction, useFullscreen } from '@delta-comic/core'
 import { PromiseContent, uni } from '@delta-comic/model'
 import { createLoadingMessage, DcContent, DcPopup, DcText, DcToggleIcon } from '@delta-comic/ui'
 import { SmartAbortController } from '@delta-comic/request'
@@ -39,7 +37,7 @@ const $router = useRouter()
 const $route = useRoute()
 const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>()
 
-const fullscreen = toReactive(useFullscreen())
+const fullscreen = useFullscreen()
 const setFullscreen = async (isFull: boolean) => (await getCurrentWindow()).setFullscreen(isFull)
 
 const union = computed(() => $props.page.union.value!)
