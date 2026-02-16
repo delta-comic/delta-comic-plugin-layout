@@ -32,6 +32,7 @@ import { db, SubscribeDB } from '@delta-comic/db'
 import { createDateString } from '@/utils/date'
 import ItemCard from '@/components/ItemCard.vue'
 import FavouriteSelect from '@/components/FavouriteSelect.vue'
+import Comment from '@/components/comment/Comment.vue'
 
 const $router = useRouter()
 const $route = useRoute()

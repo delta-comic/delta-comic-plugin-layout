@@ -11,6 +11,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Children: typeof import('./src/components/comment/Children.vue')['default']
+    Comment: typeof import('./src/components/comment/Comment.vue')['default']
+    CommentRow: typeof import('./src/components/comment/CommentRow.vue')['default']
     CreateFavouriteCard: typeof import('./src/components/CreateFavouriteCard.vue')['default']
     DcAwait: typeof import('@delta-comic/ui')['DcAwait']
     DcList: typeof import('@delta-comic/ui')['DcList']
@@ -25,6 +28,7 @@ declare module 'vue' {
     NSpin: typeof import('naive-ui')['NSpin']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Sender: typeof import('./src/components/comment/sender.vue')['default']
     ShareButton: typeof import('./src/components/ShareButton.vue')['default']
     VanButton: typeof import('vant/es')['Button']
     VanCell: typeof import('vant/es')['Cell']
@@ -40,5 +44,7 @@ declare module 'vue' {
     VanSwitch: typeof import('vant/es')['Switch']
     VanTab: typeof import('vant/es')['Tab']
     VanTabs: typeof import('vant/es')['Tabs']
+    VanTag: typeof import('vant/es')['Tag']
+    VanTextEllipsis: typeof import('vant/es')['TextEllipsis']
   }
 }

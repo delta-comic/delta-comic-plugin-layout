@@ -1,6 +1,10 @@
 import '@/index.css'
 import { definePlugin, type PluginExpose } from '@delta-comic/plugin'
 
+import Children from './components/comment/children.vue'
+import Comment from './components/comment/Comment.vue'
+import CommentRow from './components/comment/commentRow.vue'
+import Sender from './components/comment/sender.vue'
 import CreateFavouriteCard from './components/CreateFavouriteCard.vue'
 import FavouriteSelect from './components/FavouriteSelect.vue'
 import ItemCard from './components/ItemCard.vue'
@@ -20,7 +24,13 @@ const plugin = definePlugin({
       view: { Image, Video },
       layout: { Default },
       model,
-      component: { ItemCard, ShareButton, FavouriteSelect, CreateFavouriteCard },
+      component: {
+        ItemCard,
+        ShareButton,
+        FavouriteSelect,
+        CreateFavouriteCard,
+        comment: { Comment, Children, Sender, CommentRow }
+      },
       helper: { createDateString }
     }) as {
       view: { Image: typeof Image; Video: typeof Video }
@@ -31,6 +41,12 @@ const plugin = definePlugin({
         ItemCard: typeof ItemCard
         FavouriteSelect: typeof FavouriteSelect
         CreateFavouriteCard: typeof CreateFavouriteCard
+        comment: {
+          Comment: typeof Comment
+          Children: typeof Children
+          Sender: typeof Sender
+          CommentRow: typeof CommentRow
+        }
       }
       helper: { createDateString: typeof createDateString }
     },

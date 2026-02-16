@@ -1,4 +1,8 @@
 import { PluginExpose } from '@delta-comic/plugin';
+import { default as Children } from './components/comment/children.vue';
+import { default as Comment } from './components/comment/Comment.vue';
+import { default as CommentRow } from './components/comment/commentRow.vue';
+import { default as Sender } from './components/comment/sender.vue';
 import { default as CreateFavouriteCard } from './components/CreateFavouriteCard.vue';
 import { default as FavouriteSelect } from './components/FavouriteSelect.vue';
 import { default as ItemCard } from './components/ItemCard.vue';
@@ -24,6 +28,12 @@ declare const plugin: Promise<{
             ItemCard: typeof ItemCard;
             FavouriteSelect: typeof FavouriteSelect;
             CreateFavouriteCard: typeof CreateFavouriteCard;
+            comment: {
+                Comment: typeof Comment;
+                Children: typeof Children;
+                Sender: typeof Sender;
+                CommentRow: typeof CommentRow;
+            };
         };
         helper: {
             createDateString: typeof createDateString;
