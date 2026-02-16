@@ -193,6 +193,17 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
     }>, {
         loadChild(parent: uni.comment.Comment): void;
     }, {}, {}, {}, {}> | null;
-    previewUser: unknown;
+    previewUser: import('vue').CreateComponentPublicInstanceWithMixins<Readonly<{}> & Readonly<{}>, {
+        show(u: uni.user.User): void;
+    }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, import('vue').PublicProps, {}, true, {}, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, {}, any, import('vue').ComponentProvideOptions, {
+        P: {};
+        B: {};
+        D: {};
+        C: {};
+        M: {};
+        Defaults: {};
+    }, Readonly<{}> & Readonly<{}>, {
+        show(u: uni.user.User): void;
+    }, {}, {}, {}, {}> | null;
 }, any>;
 export default _default;

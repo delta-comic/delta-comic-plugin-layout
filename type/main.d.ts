@@ -1,12 +1,13 @@
 import { PluginExpose } from '@delta-comic/plugin';
-import { default as Children } from './components/comment/children.vue';
+import { default as Children } from './components/comment/Children.vue';
 import { default as Comment } from './components/comment/Comment.vue';
-import { default as CommentRow } from './components/comment/commentRow.vue';
+import { default as CommentRow } from './components/comment/CommentRow.vue';
 import { default as Sender } from './components/comment/sender.vue';
 import { default as CreateFavouriteCard } from './components/CreateFavouriteCard.vue';
 import { default as FavouriteSelect } from './components/FavouriteSelect.vue';
 import { default as ItemCard } from './components/ItemCard.vue';
 import { default as ShareButton } from './components/ShareButton.vue';
+import { default as PreviewUser } from './components/user/previewUser.vue';
 import { default as Default } from './layout/default.vue';
 import { createDateString } from './utils/date';
 import { default as Image } from './view/image.vue';
@@ -34,6 +35,7 @@ declare const plugin: Promise<{
                 Sender: typeof Sender;
                 CommentRow: typeof CommentRow;
             };
+            previewUser: typeof PreviewUser;
         };
         helper: {
             createDateString: typeof createDateString;

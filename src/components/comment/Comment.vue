@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from 'vue'
-import _CommentRow from './commentRow.vue'
+import _CommentRow from './CommentRow.vue'
 import { uni, type RStream } from '@delta-comic/model'
 import { DcWaterfall } from '@delta-comic/ui'
-import Children from './children.vue'
+import Children from './Children.vue'
+import PreviewUser from '../user/previewUser.vue'
 
 const $props = defineProps<{
   item: uni.item.Item

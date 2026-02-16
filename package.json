@@ -17,13 +17,13 @@
     "./package.json"
   ],
   "types": "./type/main.d.ts",
-  "exports":{
-    "types":"./type/main.d.ts",
-    "default":"./type/main.d.ts",
-    "import":"./type/main.d.ts",
-    "node":"./type/main.d.ts",
-    "require":"./type/main.d.ts",
-    "module-sync":"./type/main.d.ts"
+  "exports": {
+    "types": "./type/main.d.ts",
+    "default": "./type/main.d.ts",
+    "import": "./type/main.d.ts",
+    "node": "./type/main.d.ts",
+    "require": "./type/main.d.ts",
+    "module-sync": "./type/main.d.ts"
   },
   "type": "module",
   "scripts": {
@@ -40,7 +40,7 @@
     "@delta-comic/core": "^0.2.0",
     "@delta-comic/db": "^0.0.2",
     "@delta-comic/model": "^0.0.2",
-    "@delta-comic/plugin": "^0.0.3",
+    "@delta-comic/plugin": "^0.0.4",
     "@delta-comic/request": "^0.0.2",
     "@delta-comic/ui": "^0.0.2",
     "@delta-comic/utils": "^0.0.3",
@@ -82,8 +82,8 @@
     "husky": "^9.1.7",
     "lightningcss": "^1.31.1",
     "lint-staged": "^16.2.7",
-    "oxfmt": "^0.32.0",
-    "oxlint": "^1.47.0",
+    "oxfmt": "^0.33.0",
+    "oxlint": "^1.48.0",
     "oxlint-tsgolint": "^0.13.0",
     "semantic-release": "^25.0.3",
     "tailwindcss": "4.1.18",

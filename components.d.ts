@@ -26,6 +26,7 @@ declare module 'vue' {
     NIcon: typeof import('naive-ui')['NIcon']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
     NSpin: typeof import('naive-ui')['NSpin']
+    PreviewUser: typeof import('./src/components/user/previewUser.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sender: typeof import('./src/components/comment/sender.vue')['default']

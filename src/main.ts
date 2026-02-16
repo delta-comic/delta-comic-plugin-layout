@@ -1,14 +1,15 @@
 import '@/index.css'
 import { definePlugin, type PluginExpose } from '@delta-comic/plugin'
 
-import Children from './components/comment/children.vue'
+import Children from './components/comment/Children.vue'
 import Comment from './components/comment/Comment.vue'
-import CommentRow from './components/comment/commentRow.vue'
+import CommentRow from './components/comment/CommentRow.vue'
 import Sender from './components/comment/sender.vue'
 import CreateFavouriteCard from './components/CreateFavouriteCard.vue'
 import FavouriteSelect from './components/FavouriteSelect.vue'
 import ItemCard from './components/ItemCard.vue'
 import ShareButton from './components/ShareButton.vue'
+import PreviewUser from './components/user/previewUser.vue'
 import { imageViewConfig } from './config'
 import Default from './layout/default.vue'
 import * as model from './model'
@@ -29,7 +30,8 @@ const plugin = definePlugin({
         ShareButton,
         FavouriteSelect,
         CreateFavouriteCard,
-        comment: { Comment, Children, Sender, CommentRow }
+        comment: { Comment, Children, Sender, CommentRow },
+        previewUser: PreviewUser
       },
       helper: { createDateString }
     }) as {
@@ -47,6 +49,7 @@ const plugin = definePlugin({
           Sender: typeof Sender
           CommentRow: typeof CommentRow
         }
+        previewUser: typeof PreviewUser
       }
       helper: { createDateString: typeof createDateString }
     },
