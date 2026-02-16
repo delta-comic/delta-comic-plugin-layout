@@ -20,7 +20,6 @@ export default defineConfig(
         dts({
           include: ['./src'],
           outDir: './type',
-          rollupTypes: true,
           tsconfigPath: './tsconfig.json',
           
         }),

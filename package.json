@@ -13,9 +13,18 @@
     "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
   },
   "files": [
-    "./public/*",
+    "./type/**/*",
     "./package.json"
   ],
+  "types": "./type/main.d.ts",
+  "exports":{
+    "types":"./type/main.d.ts",
+    "default":"./type/main.d.ts",
+    "import":"./type/main.d.ts",
+    "node":"./type/main.d.ts",
+    "require":"./type/main.d.ts",
+    "module-sync":"./type/main.d.ts"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -44,7 +53,7 @@
     "es-toolkit": "^1.44.0",
     "hls.js": "^1.6.15",
     "media-icons": "^1.1.5",
-    "motion-v": "2.0.0-beta.2",
+    "motion-v": "2.0.0-beta.3",
     "naive-ui": "^2.43.2",
     "swiper": "^12.1.1",
     "vant": "^4.9.22",
@@ -75,7 +84,7 @@
     "lint-staged": "^16.2.7",
     "oxfmt": "^0.32.0",
     "oxlint": "^1.47.0",
-    "oxlint-tsgolint": "^0.12.2",
+    "oxlint-tsgolint": "^0.13.0",
     "semantic-release": "^25.0.3",
     "tailwindcss": "4.1.18",
     "typescript": "^5.9.3",

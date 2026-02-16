@@ -6,20 +6,31 @@ import FavouriteSelect from './components/FavouriteSelect.vue'
 import ItemCard from './components/ItemCard.vue'
 import ShareButton from './components/ShareButton.vue'
 import { imageViewConfig } from './config'
-import Default from './layout/Default.vue'
+import Default from './layout/default.vue'
 import * as model from './model'
 import { pluginName } from './symbol'
-import Image from './view/Image.vue'
-import Video from './view/Video.vue'
+import Image from './view/image.vue'
+import Video from './view/video.vue'
 
 const plugin = definePlugin({
   name: pluginName,
-  onBooted: () => ({
-    view: { Image, Video },
-    layout: { Default },
-    model,
-    component: { ItemCard, ShareButton, FavouriteSelect, CreateFavouriteCard }
-  }),
+  onBooted: () =>
+    ({
+      view: { Image, Video },
+      layout: { Default },
+      model,
+      component: { ItemCard, ShareButton, FavouriteSelect, CreateFavouriteCard }
+    }) as {
+      view: { Image: typeof Image; Video: typeof Video }
+      layout: { Default: typeof Default }
+      model: typeof model
+      component: {
+        ShareButton: typeof ShareButton
+        ItemCard: typeof ItemCard
+        FavouriteSelect: typeof FavouriteSelect
+        CreateFavouriteCard: typeof CreateFavouriteCard
+      }
+    },
   config: [imageViewConfig]
 })
 

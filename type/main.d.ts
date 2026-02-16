@@ -1,0 +1,49 @@
+import { PluginExpose } from '@delta-comic/plugin';
+import { default as CreateFavouriteCard } from './components/CreateFavouriteCard.vue';
+import { default as FavouriteSelect } from './components/FavouriteSelect.vue';
+import { default as ItemCard } from './components/ItemCard.vue';
+import { default as ShareButton } from './components/ShareButton.vue';
+import { default as Default } from './layout/default.vue';
+import { default as Image } from './view/image.vue';
+import { default as Video } from './view/video.vue';
+import * as model from './model';
+declare const plugin: Promise<{
+    name: string;
+    onBooted: () => {
+        view: {
+            Image: typeof Image;
+            Video: typeof Video;
+        };
+        layout: {
+            Default: typeof Default;
+        };
+        model: typeof model;
+        component: {
+            ShareButton: typeof ShareButton;
+            ItemCard: typeof ItemCard;
+            FavouriteSelect: typeof FavouriteSelect;
+            CreateFavouriteCard: typeof CreateFavouriteCard;
+        };
+    };
+    config: import('@delta-comic/plugin').ConfigPointer<{
+        doubleImage: {
+            type: "switch";
+            defaultValue: false;
+            info: string;
+        };
+        preloadImages: {
+            type: "number";
+            defaultValue: number;
+            info: string;
+            range: [number, number];
+            float: false;
+        };
+        isFollowView: {
+            type: "switch";
+            defaultValue: false;
+            info: string;
+        };
+    }>[];
+}>;
+export type LayoutLib = PluginExpose<() => typeof plugin>;
+export {};
