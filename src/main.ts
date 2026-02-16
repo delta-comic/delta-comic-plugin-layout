@@ -9,6 +9,7 @@ import { imageViewConfig } from './config'
 import Default from './layout/default.vue'
 import * as model from './model'
 import { pluginName } from './symbol'
+import { createDateString } from './utils/date'
 import Image from './view/image.vue'
 import Video from './view/video.vue'
 
@@ -19,7 +20,8 @@ const plugin = definePlugin({
       view: { Image, Video },
       layout: { Default },
       model,
-      component: { ItemCard, ShareButton, FavouriteSelect, CreateFavouriteCard }
+      component: { ItemCard, ShareButton, FavouriteSelect, CreateFavouriteCard },
+      helper: { createDateString }
     }) as {
       view: { Image: typeof Image; Video: typeof Video }
       layout: { Default: typeof Default }
@@ -30,6 +32,7 @@ const plugin = definePlugin({
         FavouriteSelect: typeof FavouriteSelect
         CreateFavouriteCard: typeof CreateFavouriteCard
       }
+      helper: { createDateString: typeof createDateString }
     },
   config: [imageViewConfig]
 })

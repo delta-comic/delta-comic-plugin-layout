@@ -4,6 +4,7 @@ import { default as FavouriteSelect } from './components/FavouriteSelect.vue';
 import { default as ItemCard } from './components/ItemCard.vue';
 import { default as ShareButton } from './components/ShareButton.vue';
 import { default as Default } from './layout/default.vue';
+import { createDateString } from './utils/date';
 import { default as Image } from './view/image.vue';
 import { default as Video } from './view/video.vue';
 import * as model from './model';
@@ -23,6 +24,9 @@ declare const plugin: Promise<{
             ItemCard: typeof ItemCard;
             FavouriteSelect: typeof FavouriteSelect;
             CreateFavouriteCard: typeof CreateFavouriteCard;
+        };
+        helper: {
+            createDateString: typeof createDateString;
         };
     };
     config: import('@delta-comic/plugin').ConfigPointer<{
