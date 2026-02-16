@@ -1,3 +1,17 @@
+# [0.2.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.8...0.2.0) (2026-02-16)
+
+
+### Bug Fixes
+
+* [pub] user preview ([855b808](https://github.com/delta-comic/delta-comic-plugin-layout/commit/855b80894e2391208598132392105b903e121ebc))
+
+
+### Features
+
+* all of new ([52176ce](https://github.com/delta-comic/delta-comic-plugin-layout/commit/52176ce168b75d07af2fc55804a33786b1020628))
+* comment ([6656a19](https://github.com/delta-comic/delta-comic-plugin-layout/commit/6656a19b7e4c01b5e912b7c09a5d050a211f603d))
+* layout to new ([05daf04](https://github.com/delta-comic/delta-comic-plugin-layout/commit/05daf04edfd7b822e640cb5990b9735e539886e5))
+
 ## [0.1.8](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.7...0.1.8) (2026-02-12)
 
 
