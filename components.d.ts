@@ -15,6 +15,7 @@ declare module 'vue' {
     Comment: typeof import('./src/components/comment/Comment.vue')['default']
     CommentRow: typeof import('./src/components/comment/CommentRow.vue')['default']
     CreateFavouriteCard: typeof import('./src/components/CreateFavouriteCard.vue')['default']
+    DcAuthorIcon: typeof import('@delta-comic/ui')['DcAuthorIcon']
     DcAwait: typeof import('@delta-comic/ui')['DcAwait']
     DcList: typeof import('@delta-comic/ui')['DcList']
     FavouriteSelect: typeof import('./src/components/FavouriteSelect.vue')['default']

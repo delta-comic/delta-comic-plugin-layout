@@ -10,11 +10,7 @@ import {
   PlusRound,
   ReportGmailerrorredRound
 } from '@vicons/material'
-import {
-  computedAsync,
-  createReusableTemplate,
-  useCssVar
-} from '@vueuse/core'
+import { computedAsync, createReusableTemplate, useCssVar } from '@vueuse/core'
 import { AnimatePresence, motion } from 'motion-v'
 import { computed, shallowRef, useTemplateRef, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -22,7 +18,6 @@ import { sortBy } from 'es-toolkit/compat'
 import { PopoverAction } from 'vant'
 import { isString } from 'es-toolkit'
 import DOMPurify from 'dompurify'
-import { getCurrentWindow } from '@tauri-apps/api/window'
 import { SharedFunction, useFullscreen } from '@delta-comic/core'
 import { PromiseContent, uni } from '@delta-comic/model'
 import { createLoadingMessage, DcContent, DcPopup, DcText, DcToggleIcon } from '@delta-comic/ui'
@@ -39,7 +34,7 @@ const $route = useRoute()
 const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>()
 
 const fullscreen = useFullscreen()
-const setFullscreen = async (isFull: boolean) => (await getCurrentWindow()).setFullscreen(isFull)
+const setFullscreen = async (isFull: boolean) => (isFull ? fullscreen.entry() : fullscreen.exit())
 
 const union = computed(() => $props.page.union.value!)
 const showTitleFull = shallowRef(false)
@@ -172,7 +167,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
     >
       <template #reference>
         <div class="van-ellipsis flex w-fit items-center pl-2 text-[16px] text-(--p-color)">
-          <AuthorIcon :size-spacing="8.5" :author class="mx-2" />
+          <DcAuthorIcon :size-spacing="8.5" :author class="mx-2" />
           <div class="flex w-full flex-col text-nowrap">
             <div class="flex items-center text-(--nui-primary-color)">
               {{ author.label }}
@@ -310,7 +305,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
           </div>
         </VanSticky>
       </div>
-      <Teleport to="#cover" :disabled="!fullscreen.isFullscreen">
+      <Teleport to="#cover" :disabled="!fullscreen.isFullscreen.value">
         <slot name="view" />
       </Teleport>
       <VanRow class="pointer-events-none absolute bottom-0 z-2 w-full">

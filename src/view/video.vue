@@ -9,7 +9,6 @@ import 'hls.js'
 import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
 import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
-import { getCurrentWindow } from '@tauri-apps/api/window'
 import { useFullscreen } from '@delta-comic/core'
 import type { ContentVideoPage, VideoConfig } from '@/model'
 import { SmartAbortController } from '@delta-comic/request'
@@ -17,8 +16,8 @@ import { DcAwait, DcToggleIcon } from '@delta-comic/ui'
 
 const $props = defineProps<{ page: ContentVideoPage }>()
 
-const { isFullscreen } = useFullscreen()
-const setFullscreen = (isFull: boolean) => getCurrentWindow().setFullscreen(isFull)
+const { isFullscreen, ...fc } = useFullscreen()
+const setFullscreen = async (isFull: boolean) => (isFull ? fc.entry() : fc.exit())
 
 const player = useTemplateRef<MediaPlayerElement>('player')
 const union = computed(() => $props.page.union.value)
@@ -139,7 +138,7 @@ defineSlots<{ menu(): any }>()
           >
             <DcToggleIcon size="23px" v-model="isLiked" @click="handleLike" :icon="LikeOutlined" />
 
-            <CoreDcFavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
+            <FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
 
             <media-pip-button>
               <media-icon
@@ -203,7 +202,7 @@ defineSlots<{ menu(): any }>()
               show
               theme="dark"
               :actions="videos.map((v, index) => ({ text: `线路: ${index + 1}`, label: v }))"
-              teleport="#popups"
+              teleport="body"
             >
               <template #reference>
                 <NButton color="#fff" strong size="large" text

@@ -53,6 +53,7 @@ const submit = () => {
   promise.resolve([...selectList])
   selectList.clear()
   isShow.value = false
+  return favouriteThis(Array.from(selectList.values()))
 }
 
 const favouriteThis = (inCard: FavouriteDB.Card['createAt'][]) =>
