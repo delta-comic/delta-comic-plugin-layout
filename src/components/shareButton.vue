@@ -30,7 +30,7 @@ const handleClick = (method: Share.InitiativeItem) => {
         class="flex h-full w-fit flex-col items-center justify-around"
         @click="handleClick(method[1])"
       >
-        <ImagedIcon
+        <DcImagedIcon
           :size-spacing="12"
           :icon="method[1].icon"
           :bgColor="method[1].bgColor ?? 'var(--color-gray-200)'"
