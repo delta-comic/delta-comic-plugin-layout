@@ -1,3 +1,11 @@
+## [0.2.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.2.0...0.2.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* [pub] fullscreen ([a9d5335](https://github.com/delta-comic/delta-comic-plugin-layout/commit/a9d5335412cea7361abbb1166000ad5cda8ea6ee))
+* video view fullscreen api change ([a9c2bde](https://github.com/delta-comic/delta-comic-plugin-layout/commit/a9c2bde2f60b6f5b1c10a362d30893fffbadcd38))
+
 # [0.2.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.1.8...0.2.0) (2026-02-16)
 
 
