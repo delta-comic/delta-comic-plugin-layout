@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.2.1...0.2.2) (2026-02-18)
+
+
+### Bug Fixes
+
+* [pub] shb icon ([6d10428](https://github.com/delta-comic/delta-comic-plugin-layout/commit/6d104282abf9279261ee25ec36f2a04096d999e8))
+
 ## [0.2.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.2.0...0.2.1) (2026-02-18)
 
 
