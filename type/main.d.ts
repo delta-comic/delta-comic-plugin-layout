@@ -10,14 +10,28 @@ import { default as FavouriteSelect } from './components/FavouriteSelect.vue'
 import { default as ItemCard } from './components/ItemCard.vue'
 import { default as ShareButton } from './components/ShareButton.vue'
 import { default as PreviewUser } from './components/user/PreviewUser.vue'
+import type * as DefaultLayoutInject from './layout/default'
 import { default as Default } from './layout/Default.vue'
 import * as model from './model'
 import { createDateString } from './utils/date'
+import type * as ImageViewInject from './view/image'
 import { default as Image } from './view/Image.vue'
+import type * as VideoViewInject from './view/video'
 import { default as Video } from './view/Video.vue'
 declare module '@delta-comic/plugin' {
   interface GlobalInjections {
-    'layout::view::image::bottom-bar': Component
+    'layout::view::image.top-bar': Component<ImageViewInject.BarProps>
+    'layout::view::image.content': Component<ImageViewInject.ContentProps>
+    'layout::view::image.bottom-bar': Component<ImageViewInject.BarProps>
+    'layout::view::video.top-bar': Component<VideoViewInject.BarProps>
+    'layout::view::video.center-bar': Component<VideoViewInject.BarProps>
+    'layout::view::video.bottom-bar': Component<VideoViewInject.BarProps>
+    'layout::view::video.content': Component<VideoViewInject.BarProps>
+    'layout::layout::default.subscribe-row': Component<DefaultLayoutInject.SubscribeRowProps>
+    'layout::layout::default.action': Component<DefaultLayoutInject.ContentProps>
+    'layout::layout::default.description': Component<DefaultLayoutInject.ContentProps>
+    'layout::layout::default.recommend': Component<DefaultLayoutInject.ContentProps>
+    'layout::layout::default.tab': Component<DefaultLayoutInject.TabProps>
   }
 }
 declare const plugin: Promise<{

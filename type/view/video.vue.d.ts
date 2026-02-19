@@ -1,30 +1,48 @@
-import { MediaPlayerElement } from 'vidstack/elements';
-import { ContentVideoPage } from '../model';
-type __VLS_Props = {
-    page: ContentVideoPage;
-};
+import { ContentVideoPage } from '../model'
+import type * as VideoViewInject from './video'
+type __VLS_Props = { page: ContentVideoPage }
 declare function __VLS_template(): {
-    attrs: Partial<{}>;
-    slots: Readonly<{
-        menu(): any;
-    }> & {
-        menu(): any;
-    };
-    refs: {
-        player: any;
-    };
-    rootEl: any;
-};
-type __VLS_TemplateResult = ReturnType<typeof __VLS_template>;
-declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {
-    player: Readonly<import('vue').ShallowRef<MediaPlayerElement | null>>;
-}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, string, import('vue').PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {
-    player: any;
-}, any>;
-declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
-export default _default;
-type __VLS_WithTemplateSlots<T, S> = T & {
-    new (): {
-        $slots: S;
-    };
-};
+  attrs: Partial<{}>
+  slots: Readonly<{
+    topBar(args: VideoViewInject.BarProps): any
+    centerBar(args: VideoViewInject.BarProps): any
+    bottomBar(args: VideoViewInject.BarProps): any
+    content(args: VideoViewInject.BarProps): any
+  }> & {
+    topBar(args: VideoViewInject.BarProps): any
+    centerBar(args: VideoViewInject.BarProps): any
+    bottomBar(args: VideoViewInject.BarProps): any
+    content(args: VideoViewInject.BarProps): any
+  }
+  refs: { player: any }
+  rootEl: any
+}
+type __VLS_TemplateResult = ReturnType<typeof __VLS_template>
+declare const __VLS_component: import('vue').DefineComponent<
+  __VLS_Props,
+  {},
+  {},
+  {},
+  {},
+  import('vue').ComponentOptionsMixin,
+  import('vue').ComponentOptionsMixin,
+  {},
+  string,
+  import('vue').PublicProps,
+  Readonly<__VLS_Props> & Readonly<{}>,
+  {},
+  {},
+  {},
+  {},
+  string,
+  import('vue').ComponentProvideOptions,
+  false,
+  { player: any },
+  any
+>
+declare const _default: __VLS_WithTemplateSlots<
+  typeof __VLS_component,
+  __VLS_TemplateResult['slots']
+>
+export default _default
+type __VLS_WithTemplateSlots<T, S> = T & { new (): { $slots: S } }

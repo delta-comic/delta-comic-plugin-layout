@@ -12,6 +12,8 @@ import { useRouter } from 'vue-router'
 import { useFullscreen } from '@delta-comic/core'
 import type { ContentVideoPage, VideoConfig } from '@/model'
 import { SmartAbortController } from '@delta-comic/request'
+import type * as VideoViewInject from './video'
+import { Inject } from '@delta-comic/plugin'
 
 const $props = defineProps<{ page: ContentVideoPage }>()
 
@@ -21,7 +23,6 @@ const setFullscreen = async (isFull: boolean) => (isFull ? fc.entry() : fc.exit(
 const player = useTemplateRef<MediaPlayerElement>('player')
 const union = computed(() => $props.page.union.value)
 const videos = computed(() => $props.page.videos.content.data.value ?? [])
-defineExpose({ player })
 
 watch(
   player,
@@ -95,7 +96,12 @@ const handleLike = async () => {
   }
 }
 
-defineSlots<{ menu(): any }>()
+defineSlots<{
+  topBar(args: VideoViewInject.BarProps): any
+  centerBar(args: VideoViewInject.BarProps): any
+  bottomBar(args: VideoViewInject.BarProps): any
+  content(args: VideoViewInject.BarProps): any
+}>()
 </script>
 
 <template>
@@ -135,6 +141,9 @@ defineSlots<{ menu(): any }>()
           <div
             class="absolute right-0 flex h-full items-center justify-around gap-6 pr-3 *:p-0! **:text-white!"
           >
+            <slot name="topBar" :="{ player, page, isFullscreen }"></slot>
+            <Inject key="layout::view::video.top-bar" :args="{ player, page, isFullscreen }" />
+
             <DcToggleIcon size="23px" v-model="isLiked" @click="handleLike" :icon="LikeOutlined" />
 
             <FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
@@ -156,6 +165,8 @@ defineSlots<{ menu(): any }>()
         <media-controls-group
           class="pointer-events-none! relative flex w-full flex-1 items-center px-2"
         >
+          <slot name="centerBar" :="{ player, page, isFullscreen }"></slot>
+          <Inject key="layout::view::video.center-bar" :args="{ player, page, isFullscreen }" />
           <div class="absolute bottom-3 left-6 flex items-center text-sm font-medium text-white/80">
             <media-time class="time" type="current"></media-time>
             <div class="mx-1">/</div>
@@ -194,7 +205,8 @@ defineSlots<{ menu(): any }>()
           </div>
 
           <div class="absolute right-6 flex h-7.5 items-end gap-4">
-            <slot name="menu"></slot>
+            <slot name="bottomBar" :="{ player, page, isFullscreen }"></slot>
+            <Inject key="layout::view::video.bottom-bar" :args="{ player, page, isFullscreen }" />
             <VanPopover
               @select="q => (src = q.label)"
               placement="top-end"
@@ -221,6 +233,9 @@ defineSlots<{ menu(): any }>()
         <media-controls-group
           class="pt-safe pointer-events-auto flex h-[calc(56px+var(--safe-area-inset-top))] w-full items-center justify-end gap-3 bg-linear-to-b from-black to-transparent px-2"
         >
+          <slot name="topBar" :="{ player, page, isFullscreen }"></slot>
+          <Inject key="layout::view::video.top-bar" :args="{ player, page, isFullscreen }" />
+
           <media-pip-button>
             <media-icon
               type="picture-in-picture"
@@ -236,6 +251,8 @@ defineSlots<{ menu(): any }>()
         </media-controls-group>
         <div class="flex-1"></div>
         <media-controls-group class="pointer-events-auto flex w-full items-center px-2">
+          <slot name="centerBar" :="{ player, page, isFullscreen }"></slot>
+          <Inject key="layout::view::video.center-bar" :args="{ player, page, isFullscreen }" />
         </media-controls-group>
         <div class="flex-1"></div>
         <media-controls-group class="pointer-events-auto flex w-full items-center justify-around">
@@ -245,6 +262,9 @@ defineSlots<{ menu(): any }>()
             <PauseRound class="size-10 group-data-paused:hidden" type="play" />
             <PlayArrowRound class="hidden size-10 group-data-paused:block" type="play" />
           </media-play-button>
+
+          <slot name="bottomBar" :="{ player, page, isFullscreen }"></slot>
+          <Inject key="layout::view::video.bottom-bar" :args="{ player, page, isFullscreen }" />
 
           <media-time-slider
             class="group relative mx-[7.5px] inline-flex h-10 w-full cursor-pointer touch-none items-center outline-none select-none aria-hidden:hidden"
@@ -287,6 +307,9 @@ defineSlots<{ menu(): any }>()
           track-width="8"
         ></media-spinner>
       </div>
+
+      <slot name="content" :="{ player, page, isFullscreen }"></slot>
+      <Inject key="layout::view::video.content" :args="{ player, page, isFullscreen }" />
     </media-player>
   </NSpin>
 </template>

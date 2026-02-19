@@ -15,11 +15,12 @@ import { watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { imageViewConfig } from '@/config'
 import { Inject, useConfig } from '@delta-comic/plugin'
-import type { uni } from '@delta-comic/model'
+import { uni } from '@delta-comic/model'
 import { SharedFunction, useFullscreen } from '@delta-comic/core'
 import { SmartAbortController } from '@delta-comic/request'
 import { useSwipeDbClick } from '@/utils/ui'
 import type { ContentImagePage } from '@/model'
+import type * as ImageViewInject from './image'
 const $props = defineProps<{ page: ContentImagePage }>()
 
 const config = useConfig().$load(imageViewConfig)
@@ -72,10 +73,14 @@ const handleEpSelect = (preload: uni.item.RawItem) =>
     preload.contentType,
     preload.id,
     preload.thisEp.index,
-    <any>preload
+    uni.item.Item.create(preload)
   )
 
-defineSlots<{ bottomBar(): any }>()
+defineSlots<{
+  topBar(args: ImageViewInject.BarProps): any
+  content(args: ImageViewInject.ContentProps): any
+  bottomBar(args: ImageViewInject.BarProps): any
+}>()
 const union = computed(() => $props.page.union.value!)
 
 const isLiked = shallowRef(union.value?.isLiked ?? false)
@@ -132,6 +137,8 @@ const handleLike = async () => {
             </div>
           </template>
         </DcImage>
+        <slot name="content" :="{ page, images, swiper: swiper!, index, image }" />
+        <Inject key="layout::view::image.content" :args="{ page, images, swiper, index, image }" />
       </SwiperSlide>
     </Swiper>
     <DcImage
@@ -166,6 +173,11 @@ const handleLike = async () => {
           <span class="van-ellipsis ml-1 text-xs">{{ nowEp?.name }}</span>
         </div>
         <div class="flex h-full w-full items-center justify-around">
+          <slot name="topBar" :="{ page, images, swiper, index: pageOnIndex }" />
+          <Inject
+            key="layout::view::image.top-bar"
+            :args="{ page, images, swiper, index: pageOnIndex }"
+          />
           <DcToggleIcon
             padding
             size="30px"
@@ -215,8 +227,11 @@ const handleLike = async () => {
         <div
           class="flex w-full justify-end gap-4 overflow-x-auto overflow-y-hidden pr-4 *:flex! *:items-center *:justify-center"
         >
-          <slot name="bottomBar" />
-          <Inject key="layout::view::image::bottom-bar" :args="{}" />
+          <slot name="bottomBar" :="{ page, images, swiper, index: pageOnIndex }" />
+          <Inject
+            key="layout::view::image.bottom-bar"
+            :args="{ page, images, swiper, index: pageOnIndex }"
+          />
           <div v-if="(page.eps.content.data.value?.length ?? 1) > 1">
             <NButton text color="#fff" @click="isShowEpSelectPopup = true"> 选集 </NButton>
           </div>

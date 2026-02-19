@@ -22,12 +22,22 @@ import { SharedFunction, useFullscreen } from '@delta-comic/core'
 import { PromiseContent, uni } from '@delta-comic/model'
 import { createLoadingMessage } from '@delta-comic/ui'
 import { SmartAbortController } from '@delta-comic/request'
-import { useConfig, Global } from '@delta-comic/plugin'
+import { useConfig, Global, Inject } from '@delta-comic/plugin'
 import { db, SubscribeDB } from '@delta-comic/db'
 import { createDateString } from '@/utils/date'
 import ItemCard from '@/components/ItemCard.vue'
 import FavouriteSelect from '@/components/FavouriteSelect.vue'
 import Comment from '@/components/comment/Comment.vue'
+import type * as LayoutInject from './default'
+
+defineSlots<{
+  subscribeRow(args: LayoutInject.SubscribeRowProps): any
+  action(args: LayoutInject.ContentProps): any
+  description(args: LayoutInject.ContentProps): any
+  recommend(args: LayoutInject.ContentProps): any
+  tab(args: LayoutInject.TabProps): any
+  view(): any
+}>()
 
 const $router = useRouter()
 const $route = useRoute()
@@ -61,8 +71,6 @@ const openEpSelectPopup = async () => {
 }
 const safeHeightTopCss = useCssVar('--safe-area-inset-top')
 const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)?.[0]))
-
-const slots = defineSlots<{ view(): void }>()
 const getItemCard = (contentType: uni.content.ContentType_) =>
   uni.item.Item.itemCard.get(contentType) ?? ItemCard
 
@@ -193,6 +201,12 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
     <div class="relative w-full" :class="className">
       <Avatar :author />
       <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+        <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'common' }" />
+        <Inject
+          key="layout::layout::default.subscribe-row"
+          :args="{ page, author, isSubscribe, type: 'common' }"
+        />
+
         <NButton
           round
           type="primary"
@@ -213,10 +227,17 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
       </DcAwait>
     </div>
   </DefineSubscribeRow>
+
   <DefineSubscribeSmallRow v-slot="{ author, class: className }">
     <div class="relative w-full" :class="className">
       <Avatar :author />
       <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+        <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'small' }" />
+        <Inject
+          key="layout::layout::default.subscribe-row"
+          :args="{ page, author, isSubscribe, type: 'small' }"
+        />
+
         <NButton
           round
           type="primary"
@@ -426,6 +447,10 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                     v-else
                     class="mt-1 max-w-full justify-start text-xs font-normal text-(--van-text-color-2)"
                   ></div>
+
+                  <slot name="description" :="{ page, item: union }" />
+                  <Inject key="layout::layout::default.description" :args="{ page, item: union }" />
+
                   <div
                     class="flex w-full flex-col"
                     v-for="[name, categories] of Object.entries(
@@ -491,6 +516,9 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
               </DcToggleIcon>
               <FavouriteSelect :item="union" />
               <ShareButton :page />
+
+              <slot name="action" :="{ page, item: union }" />
+              <Inject key="layout::layout::default.action" :args="{ page, item: union }" />
             </div>
             <!-- ep select -->
             <div
@@ -546,10 +574,9 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
             </DcPopup>
           </div>
           <!-- recommend -->
-          <div
-            class="van-hairline--top w-full *:bg-transparent"
-            v-if="page.recommends.content.data.value"
-          >
+          <div class="van-hairline--top w-full *:bg-transparent">
+            <slot name="recommend" :="{ page, item: union }" />
+            <Inject key="layout::layout::default.recommend" :args="{ page, item: union }" />
             <component
               :is="getItemCard(item.contentType)"
               :item
@@ -566,6 +593,9 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
         </template>
         <Comment :comments="page.comments" :item="union" class="h-[calc(70vh-38px)]" />
       </VanTab>
+
+      <slot name="tab" :="{ page }" />
+      <Inject key="layout::layout::default.tab" :args="{ page }" />
     </VanTabs>
   </NScrollbar>
 </template>

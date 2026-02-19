@@ -12,16 +12,32 @@ import ItemCard from './components/ItemCard.vue'
 import ShareButton from './components/ShareButton.vue'
 import PreviewUser from './components/user/PreviewUser.vue'
 import { imageViewConfig } from './config'
+import type * as DefaultLayoutInject from './layout/default'
 import Default from './layout/Default.vue'
 import * as model from './model'
 import { pluginName } from './symbol'
 import { createDateString } from './utils/date'
+import type * as ImageViewInject from './view/image'
 import Image from './view/Image.vue'
+import type * as VideoViewInject from './view/video'
 import Video from './view/Video.vue'
 
 declare module '@delta-comic/plugin' {
   interface GlobalInjections {
-    'layout::view::image::bottom-bar': Component
+    'layout::view::image.top-bar': Component<ImageViewInject.BarProps>
+    'layout::view::image.content': Component<ImageViewInject.ContentProps>
+    'layout::view::image.bottom-bar': Component<ImageViewInject.BarProps>
+
+    'layout::view::video.top-bar': Component<VideoViewInject.BarProps>
+    'layout::view::video.center-bar': Component<VideoViewInject.BarProps>
+    'layout::view::video.bottom-bar': Component<VideoViewInject.BarProps>
+    'layout::view::video.content': Component<VideoViewInject.BarProps>
+
+    'layout::layout::default.subscribe-row': Component<DefaultLayoutInject.SubscribeRowProps>
+    'layout::layout::default.action': Component<DefaultLayoutInject.ContentProps>
+    'layout::layout::default.description': Component<DefaultLayoutInject.ContentProps>
+    'layout::layout::default.recommend': Component<DefaultLayoutInject.ContentProps>
+    'layout::layout::default.tab': Component<DefaultLayoutInject.TabProps>
   }
 }
 

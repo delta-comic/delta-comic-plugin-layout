@@ -1,10 +1,11 @@
+import { fileURLToPath, URL } from 'node:url'
+
 import { DeltaComicUiResolver } from '@delta-comic/ui/vite'
 import { deltaComicPlus } from '@delta-comic/vite'
 import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import browserslist from 'browserslist'
 import { browserslistToTargets } from 'lightningcss'
-import { fileURLToPath, URL } from 'node:url'
 import { NaiveUiResolver, VantResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { vite as vidstack } from 'vidstack/plugins'
@@ -17,12 +18,7 @@ export default defineConfig(
   ({ command }) =>
     ({
       plugins: [
-        dts({
-          include: ['./src'],
-          outDir: './type',
-          tsconfigPath: './tsconfig.json',
-          
-        }),
+        dts({ include: ['./src'], outDir: './type', tsconfigPath: './tsconfig.json' }),
         vue({
           template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }
         }),
@@ -40,7 +36,7 @@ export default defineConfig(
             description: _package.description,
             entry: { jsPath: './index.js', cssPath: 'auto' },
             name: { display: '基础布局组件', id: 'layout' },
-            version: { plugin: _package.version, supportCore: '^1.0' }
+            version: { plugin: _package.version, supportCore: '^2' }
           },
           command
         )
