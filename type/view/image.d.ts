@@ -1,17 +1,16 @@
-import { uni } from '@delta-comic/model'
-import { Swiper as SwiperClass } from 'swiper'
-
-import * as model from '../model'
+import { uni } from '@delta-comic/model';
+import { Swiper as SwiperClass } from 'swiper';
+import * as model from '../model';
 export interface BarProps {
-  page: model.ContentImagePage
-  images: uni.image.Image[]
-  swiper?: SwiperClass
-  index: number
+    page: model.ContentImagePage;
+    images: uni.image.Image[];
+    swiper?: SwiperClass;
+    index: number;
 }
 export interface ContentProps {
-  page: model.ContentImagePage
-  images: uni.image.Image[]
-  image: uni.image.Image
-  swiper: SwiperClass
-  index: number
+    page: model.ContentImagePage;
+    images: uni.image.Image[];
+    image: uni.image.Image;
+    swiper: SwiperClass;
+    index: number;
 }
