@@ -4,7 +4,7 @@ import _CommentRow from './CommentRow.vue'
 import { uni, type RStream } from '@delta-comic/model'
 import { DcWaterfall } from '@delta-comic/ui'
 import Children from './Children.vue'
-import PreviewUser from '../user/previewUser.vue'
+import PreviewUser from '../user/PreviewUser.vue'
 
 const $props = defineProps<{
   item: uni.item.Item

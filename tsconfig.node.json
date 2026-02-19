@@ -21,8 +21,7 @@
     "noImplicitReturns": false,
     "noImplicitAny": true,
     "noImplicitOverride": true,
-    "noImplicitThis": true,
-    "types": ["@types/node"]
+    "noImplicitThis": true
   },
   "include": ["vite.config.mts", "./script/**/*", "./*.ts"]
 }

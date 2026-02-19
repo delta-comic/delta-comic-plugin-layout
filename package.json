@@ -16,16 +16,16 @@
     "./type/**/*",
     "./package.json"
   ],
+  "type": "module",
   "types": "./type/main.d.ts",
   "exports": {
     "types": "./type/main.d.ts",
-    "default": "./type/main.d.ts",
     "import": "./type/main.d.ts",
     "node": "./type/main.d.ts",
     "require": "./type/main.d.ts",
-    "module-sync": "./type/main.d.ts"
+    "module-sync": "./type/main.d.ts",
+    "default": "./type/main.d.ts"
   },
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r plugin.zip ./*",
@@ -37,12 +37,12 @@
     "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
   },
   "dependencies": {
-    "@delta-comic/core": "^0.2.0",
+    "@delta-comic/core": "^0.3.0",
     "@delta-comic/db": "^0.0.2",
     "@delta-comic/model": "^0.0.2",
-    "@delta-comic/plugin": "^0.0.4",
+    "@delta-comic/plugin": "^0.1.0",
     "@delta-comic/request": "^0.0.2",
-    "@delta-comic/ui": "^0.0.2",
+    "@delta-comic/ui": "^0.0.3",
     "@delta-comic/utils": "^0.0.3",
     "@tauri-apps/api": "^2.10.1",
     "@vicons/antd": "^0.13.0",
@@ -53,9 +53,9 @@
     "es-toolkit": "^1.44.0",
     "hls.js": "^1.6.15",
     "media-icons": "^1.1.5",
-    "motion-v": "2.0.0-beta.3",
+    "motion-v": "2.0.0-beta.4",
     "naive-ui": "^2.43.2",
-    "swiper": "^12.1.1",
+    "swiper": "^12.1.2",
     "vant": "^4.9.22",
     "vidstack": "^1.12.13",
     "vue": "^3.5.28",
@@ -72,8 +72,7 @@
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.6",
     "@semantic-release/release-notes-generator": "^14.1.0",
-    "@tailwindcss/vite": "^4.1.18",
-    "@types/node": "^25.2.3",
+    "@tailwindcss/vite": "^4.2.0",
     "@vitejs/plugin-vue": "^6.0.4",
     "@vue/tsconfig": "^0.8.1",
     "browserslist": "^4.28.1",
@@ -84,9 +83,9 @@
     "lint-staged": "^16.2.7",
     "oxfmt": "^0.33.0",
     "oxlint": "^1.48.0",
-    "oxlint-tsgolint": "^0.13.0",
+    "oxlint-tsgolint": "^0.14.0",
     "semantic-release": "^25.0.3",
-    "tailwindcss": "4.1.18",
+    "tailwindcss": "4.2.0",
     "typescript": "^5.9.3",
     "unplugin-vue-components": "31.0.0",
     "vite": "8.0.0-beta.14",
@@ -97,6 +96,9 @@
     "vue-tsc": "^3.2.4"
   },
   "pnpm": {
+    "overrides": {
+      "@microsoft/api-extractor": "7.48.1"
+    },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
       "@tailwindcss/oxide",

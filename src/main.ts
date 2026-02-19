@@ -1,5 +1,6 @@
 import '@/index.css'
 import { definePlugin, type PluginExpose } from '@delta-comic/plugin'
+import type { Component } from 'vue'
 
 import Children from './components/comment/Children.vue'
 import Comment from './components/comment/Comment.vue'
@@ -9,14 +10,20 @@ import CreateFavouriteCard from './components/CreateFavouriteCard.vue'
 import FavouriteSelect from './components/FavouriteSelect.vue'
 import ItemCard from './components/ItemCard.vue'
 import ShareButton from './components/ShareButton.vue'
-import PreviewUser from './components/user/previewUser.vue'
+import PreviewUser from './components/user/PreviewUser.vue'
 import { imageViewConfig } from './config'
-import Default from './layout/default.vue'
+import Default from './layout/Default.vue'
 import * as model from './model'
 import { pluginName } from './symbol'
 import { createDateString } from './utils/date'
-import Image from './view/image.vue'
-import Video from './view/video.vue'
+import Image from './view/Image.vue'
+import Video from './view/Video.vue'
+
+declare module '@delta-comic/plugin' {
+  interface GlobalInjections {
+    'layout::view::image::bottom-bar': Component
+  }
+}
 
 const plugin = definePlugin({
   name: pluginName,
