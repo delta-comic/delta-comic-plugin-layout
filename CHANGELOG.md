@@ -1,3 +1,15 @@
+# [0.3.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.2.2...0.3.0) (2026-02-19)
+
+
+### Features
+
+* inject interface ([c3baa93](https://github.com/delta-comic/delta-comic-plugin-layout/commit/c3baa930fd9bc0c594751e36196b1ca0306ce0ee))
+
+
+### Performance Improvements
+
+* [pub] inject api in all ([82b8403](https://github.com/delta-comic/delta-comic-plugin-layout/commit/82b8403541a710faebde56f3387d7bc8df2b20a1))
+
 ## [0.2.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.2.1...0.2.2) (2026-02-18)
 
 
