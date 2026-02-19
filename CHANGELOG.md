@@ -1,3 +1,15 @@
+# [0.4.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.3.1...0.4.0) (2026-02-19)
+
+
+### Bug Fixes
+
+* [pub] import sender name ([d596cfd](https://github.com/delta-comic/delta-comic-plugin-layout/commit/d596cfdf070719d6adcdca1a94d422871028e915))
+
+
+### Features
+
+* [pub] trigger build ([b788ecf](https://github.com/delta-comic/delta-comic-plugin-layout/commit/b788ecf8cef230cf422f8b1e3880db7a09b5c637))
+
 ## [0.3.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.3.1...0.3.2) (2026-02-19)
 
 
