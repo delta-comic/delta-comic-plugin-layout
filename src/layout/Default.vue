@@ -354,7 +354,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
       class="not-full min-h-[70vh]!"
     >
       <VanTab
-        class="van-hairline--top relative min-h-full bg-(--nui-body-color)"
+        class="van-hairline--top relative min-h-full bg-(--nui-card-color)"
         title="简介"
         name="info"
       >

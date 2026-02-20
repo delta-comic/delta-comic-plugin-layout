@@ -68,7 +68,7 @@ const config = useConfig()
           >
             {{ comment.sender.name ?? '' }}
             <span
-              class="-translate-y-0.5 rounded bg-(--nui-primary-color) px-0.5 py-0.5 text-[9px] text-white"
+              class="mr-1 -translate-y-0.5 rounded bg-(--nui-primary-color) px-0.5 py-0.5 text-[9px] text-white"
               v-if="isParentSender"
               >LZ</span
             >
