@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.4.0...0.5.0) (2026-02-20)
+
+
+### Features
+
+* [pub] comment inject ([0c0bc23](https://github.com/delta-comic/delta-comic-plugin-layout/commit/0c0bc235d53e39bdc77dfbce59f6a7dc0f7d7d6b))
+
 # [0.4.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.3.1...0.4.0) (2026-02-19)
 
 

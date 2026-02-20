@@ -1,4 +1,5 @@
 import { uni } from '@delta-comic/model';
+import type * as CommentInject from '.';
 type __VLS_Props = {
     comment: uni.comment.Comment;
     parentComment?: uni.comment.Comment;
@@ -7,11 +8,17 @@ type __VLS_Props = {
 declare function __VLS_template(): {
     attrs: Partial<{}>;
     slots: Readonly<{
-        default(): void;
-        userExtra(): void;
+        avatar(args: CommentInject.CommentProps): any;
+        action(args: CommentInject.CommentProps): any;
+        userExtra(args: CommentInject.CommentProps): any;
+        description(args: CommentInject.CommentProps): any;
+        reply(args: CommentInject.CommentProps): any;
     }> & {
-        default(): void;
-        userExtra(): void;
+        avatar(args: CommentInject.CommentProps): any;
+        action(args: CommentInject.CommentProps): any;
+        userExtra(args: CommentInject.CommentProps): any;
+        description(args: CommentInject.CommentProps): any;
+        reply(args: CommentInject.CommentProps): any;
     };
     refs: {};
     rootEl: any;
