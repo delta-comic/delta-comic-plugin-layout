@@ -5,17 +5,25 @@ import { computed } from 'vue'
 import userIcon from '@/assets/images/userIcon.webp?url'
 import DOMPurify from 'dompurify'
 import type { uni } from '@delta-comic/model'
-import { useConfig } from '@delta-comic/plugin'
+import { Inject, useConfig } from '@delta-comic/plugin'
 import { createDateString } from '@/utils/date'
 import { createLoadingMessage, DcImage, DcToggleIcon } from '@delta-comic/ui'
 import { NPopconfirm } from 'naive-ui'
+import type * as CommentInject from '.'
 const $props = defineProps<{
   comment: uni.comment.Comment
   parentComment?: uni.comment.Comment
   usernameHighlight?: boolean
 }>()
 const $emit = defineEmits<{ click: [c: uni.comment.Comment]; clickUser: [u: uni.user.User] }>()
-defineSlots<{ default(): void; userExtra(): void }>()
+
+defineSlots<{
+  avatar(args: CommentInject.CommentProps): any
+  action(args: CommentInject.CommentProps): any
+  userExtra(args: CommentInject.CommentProps): any
+  description(args: CommentInject.CommentProps): any
+  reply(args: CommentInject.CommentProps): any
+}>()
 
 const isParentSender = computed(
   () => $props.comment.sender.name == $props.parentComment?.sender.name
@@ -40,6 +48,11 @@ const config = useConfig()
           fit="cover"
           @click="$emit('clickUser', comment.sender)"
         />
+        <slot name="avatar" :="{ comment, parentComment, usernameHighlight }" />
+        <Inject
+          key="layout::components::comment::comment-row.avatar"
+          :args="{ comment, parentComment, usernameHighlight }"
+        />
       </div>
     </VanCol>
     <VanCol class="relative ml-1 flex! flex-col" span="19">
@@ -59,7 +72,12 @@ const config = useConfig()
               v-if="isParentSender"
               >LZ</span
             >
-            <slot name="userExtra"></slot>
+
+            <slot name="userExtra" :="{ comment, parentComment, usernameHighlight }" />
+            <Inject
+              key="layout::components::comment::comment-row.userExtra"
+              :args="{ comment, parentComment, usernameHighlight }"
+            />
           </div>
         </div>
         <span class="text-[11px] text-(--van-text-color-2)">
@@ -83,6 +101,12 @@ const config = useConfig()
           >
         </VanTextEllipsis>
         <div v-else v-html="DOMPurify.sanitize(comment.content.text)"></div>
+
+        <slot name="description" :="{ comment, parentComment, usernameHighlight }" />
+        <Inject
+          key="layout::components::comment::comment-row.description"
+          :args="{ comment, parentComment, usernameHighlight }"
+        />
       </div>
 
       <div class="mt-2 mb-1 -ml-0.5 flex gap-3">
@@ -122,7 +146,12 @@ const config = useConfig()
           </template>
           确定举报?
         </NPopconfirm>
-        <slot />
+
+        <slot name="action" :="{ comment, parentComment, usernameHighlight }" />
+        <Inject
+          key="layout::components::comment::comment-row.action"
+          :args="{ comment, parentComment, usernameHighlight }"
+        />
       </div>
 
       <div
@@ -134,6 +163,12 @@ const config = useConfig()
         <NIcon size="11px" class="ml-1">
           <ArrowForwardIosRound />
         </NIcon>
+
+        <slot name="reply" :="{ comment, parentComment, usernameHighlight }" />
+        <Inject
+          key="layout::components::comment::comment-row.reply"
+          :args="{ comment, parentComment, usernameHighlight }"
+        />
       </div>
     </VanCol>
   </VanRow>

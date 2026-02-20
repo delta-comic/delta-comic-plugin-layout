@@ -2,6 +2,7 @@ import '@/index.css'
 import { definePlugin, type PluginExpose } from '@delta-comic/plugin'
 import type { Component } from 'vue'
 
+import type * as CommentInject from './components/comment'
 import Children from './components/comment/Children.vue'
 import Comment from './components/comment/Comment.vue'
 import CommentRow from './components/comment/CommentRow.vue'
@@ -38,6 +39,12 @@ declare module '@delta-comic/plugin' {
     'layout::layout::default.description': Component<DefaultLayoutInject.ContentProps>
     'layout::layout::default.recommend': Component<DefaultLayoutInject.ContentProps>
     'layout::layout::default.tab': Component<DefaultLayoutInject.TabProps>
+
+    'layout::components::comment::comment-row.userExtra': Component<CommentInject.CommentProps>
+    'layout::components::comment::comment-row.action': Component<CommentInject.CommentProps>
+    'layout::components::comment::comment-row.description': Component<CommentInject.CommentProps>
+    'layout::components::comment::comment-row.reply': Component<CommentInject.CommentProps>
+    'layout::components::comment::comment-row.avatar': Component<CommentInject.CommentProps>
   }
 }
 
