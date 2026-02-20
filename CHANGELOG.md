@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.5.0...0.5.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* [pub] layout bg color ([66e663e](https://github.com/delta-comic/delta-comic-plugin-layout/commit/66e663e77d27e2b4910a17638fa59838940efdcf))
+
 # [0.5.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.4.0...0.5.0) (2026-02-20)
 
 
