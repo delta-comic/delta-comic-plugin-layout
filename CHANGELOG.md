@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.5.1...0.6.0) (2026-02-22)
+
+
+### Features
+
+* [pub] version better ([a2b1a9a](https://github.com/delta-comic/delta-comic-plugin-layout/commit/a2b1a9a7902c2cb500e7d1ad7414e41025194bd4))
+
 ## [0.5.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.5.0...0.5.1) (2026-02-20)
 
 
