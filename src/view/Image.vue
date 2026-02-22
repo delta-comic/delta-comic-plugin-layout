@@ -21,6 +21,8 @@ import { SmartAbortController } from '@delta-comic/request'
 import { useSwipeDbClick } from '@/utils/ui'
 import type { ContentImagePage } from '@/model'
 import type * as ImageViewInject from './image'
+import ButtonPopup from '@/components/ButtonPopup.vue'
+import Settings from '@/components/Settings.vue'
 const $props = defineProps<{ page: ContentImagePage }>()
 
 const config = useConfig().$load(imageViewConfig)
@@ -64,7 +66,6 @@ const { handleTouchend, handleTouchmove, handleTouchstart, handleDbTap } = useSw
 const nowEp = computed(() =>
   $props.page.eps.content.data.value?.find(v => v.index === $props.page.ep)
 )
-const isShowEpSelectPopup = shallowRef(false)
 const $route = useRoute()
 const nowEpId = $route.params.ep.toString()
 const handleEpSelect = (preload: uni.item.RawItem) =>
@@ -232,9 +233,42 @@ const handleLike = async () => {
             key="layout::view::image.bottom-bar"
             :args="{ page, images, swiper, index: pageOnIndex }"
           />
-          <div v-if="(page.eps.content.data.value?.length ?? 1) > 1">
-            <NButton text color="#fff" @click="isShowEpSelectPopup = true"> 选集 </NButton>
-          </div>
+          <ButtonPopup class="flex h-[70vh] flex-col bg-black/50! backdrop-blur" theme="dark">
+            <template #button>
+              <NButton text color="#fff">设置</NButton>
+            </template>
+            <Settings />
+          </ButtonPopup>
+          <ButtonPopup
+            v-if="(page.eps.content.data.value?.length ?? 1) > 1"
+            class="flex h-[70vh] flex-col bg-black/50! backdrop-blur"
+            theme="dark"
+          >
+            <template #button>
+              <NButton text color="#fff">选集</NButton>
+            </template>
+            <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold text-white">
+              选集
+            </div>
+            <DcList
+              class="h-full w-full"
+              :source="{ data: page.eps.content, isEnd: true }"
+              :itemHeight="40"
+              v-slot="{ data: { item: ep, index }, height }"
+              :data-processor="v => v.toReversed()"
+              ref="epSelList"
+            >
+              <VanCell
+                clickable
+                @click="handleEpSelect({ ...page.union.value!.toJSON(), thisEp: ep.toJSON() })"
+                :title="ep.name || `第${page.eps.content.data.value!.length - index}话`"
+                :title-class="['text-white', nowEpId === ep.index && 'font-bold !text-(--p-color)']"
+                class="flex w-full items-center bg-transparent!"
+                :style="{ height: `${height}px !important` }"
+              >
+              </VanCell>
+            </DcList>
+          </ButtonPopup>
           <div>
             <NButton class="text-3xl!" text color="#fff" @click="$router.back()">
               <NIcon>
@@ -245,33 +279,6 @@ const handleLike = async () => {
         </div>
       </motion.div>
     </AnimatePresence>
-    <DcPopup
-      round
-      position="bottom"
-      class="flex h-[70vh] flex-col bg-black/50! backdrop-blur"
-      v-model:show="isShowEpSelectPopup"
-      theme="dark"
-    >
-      <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold text-white">选集</div>
-      <DcList
-        class="h-full w-full"
-        :source="{ data: page.eps.content, isEnd: true }"
-        :itemHeight="40"
-        v-slot="{ data: { item: ep, index }, height }"
-        :data-processor="v => v.toReversed()"
-        ref="epSelList"
-      >
-        <VanCell
-          clickable
-          @click="handleEpSelect({ ...page.union.value!.toJSON(), thisEp: ep.toJSON() })"
-          :title="ep.name || `第${page.eps.content.data.value!.length - index}话`"
-          :title-class="['text-white', nowEpId === ep.index && 'font-bold !text-(--p-color)']"
-          class="flex w-full items-center bg-transparent!"
-          :style="{ height: `${height}px !important` }"
-        >
-        </VanCell>
-      </DcList>
-    </DcPopup>
     <AnimatePresence>
       <motion.div
         v-if="!isShowMenu || !isFullscreen"

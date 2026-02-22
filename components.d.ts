@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ButtonPopup: typeof import('./src/components/ButtonPopup.vue')['default']
     Children: typeof import('./src/components/comment/Children.vue')['default']
     Comment: typeof import('./src/components/comment/Comment.vue')['default']
     CommentRow: typeof import('./src/components/comment/CommentRow.vue')['default']
@@ -38,6 +39,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sender: typeof import('./src/components/comment/Sender.vue')['default']
+    Settings: typeof import('./src/components/Settings.vue')['default']
     ShareButton: typeof import('./src/components/ShareButton.vue')['default']
     VanButton: typeof import('vant/es')['Button']
     VanCell: typeof import('vant/es')['Cell']

@@ -53,6 +53,7 @@
     "es-toolkit": "^1.44.0",
     "hls.js": "^1.6.15",
     "media-icons": "^1.1.5",
+    "mitt": "^3.0.1",
     "motion-v": "2.0.0-beta.4",
     "naive-ui": "^2.43.2",
     "swiper": "^12.1.2",

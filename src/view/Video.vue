@@ -14,6 +14,8 @@ import type { ContentVideoPage, VideoConfig } from '@/model'
 import { SmartAbortController } from '@delta-comic/request'
 import type * as VideoViewInject from './video'
 import { Inject } from '@delta-comic/plugin'
+import ButtonPopup from '@/components/ButtonPopup.vue'
+import Settings from '@/components/Settings.vue'
 
 const $props = defineProps<{ page: ContentVideoPage }>()
 
@@ -61,13 +63,11 @@ const $router = useRouter()
 $router.beforeEach(() => {
   unlockScreenOrientation()
 })
-const handleScreenScreenOrientationLock = async (config: MediaOrientationLockRequestEvent) => {
-  config.stopImmediatePropagation()
 
-  screen.orientation.unlock()
-}
 const unlockScreenOrientation = async () => {
-  screen.orientation.unlock()
+  try {
+    screen.orientation.unlock()
+  } catch {}
 }
 window.$api.player = player
 onBeforeUnmount(() => {
@@ -115,7 +115,6 @@ defineSlots<{
       @media-orientation-unlock-request="unlockScreenOrientation()"
       keep-alive
       autoPlay
-      @media-orientation-lock-request="handleScreenScreenOrientationLock($event)"
       @fullscreen-change="setFullscreen($event.detail)"
     >
       <media-provider class="bg-black"></media-provider>
@@ -207,21 +206,40 @@ defineSlots<{
           <div class="absolute right-6 flex h-7.5 items-end gap-4">
             <slot name="bottomBar" :="{ player, page, isFullscreen }"></slot>
             <Inject key="layout::view::video.bottom-bar" :args="{ player, page, isFullscreen }" />
-            <VanPopover
-              @select="q => (src = q.label)"
-              placement="top-end"
-              show
+
+            <ButtonPopup
+              class="flex h-screen w-[30vmax] flex-col bg-black/50! backdrop-blur"
+              position="right"
+              :round="false"
               theme="dark"
-              :actions="videos.map((v, index) => ({ text: `线路: ${index + 1}`, label: v }))"
-              teleport="body"
             >
-              <template #reference>
-                <NButton color="#fff" strong size="large" text
+              <template #button>
+                <NButton text color="#fff">设置</NButton>
+              </template>
+              <Settings />
+            </ButtonPopup>
+            <ButtonPopup
+              class="flex h-screen w-[30vmax] flex-col bg-black/50! backdrop-blur"
+              position="right"
+              :round="false"
+              theme="dark"
+            >
+              <template #button>
+                <NButton color="#fff" size="large" text
                   >线路:
                   {{ videos.findIndex(v => v == src) + 1 }}
                 </NButton>
               </template>
-            </VanPopover>
+              <NButton
+                v-for="(line, index) of videos"
+                :color="src == line ? 'var(--p-color)' : '#fff'"
+                @click="() => (src = line)"
+                size="large"
+                text
+                >线路:
+                {{ index + 1 }}
+              </NButton>
+            </ButtonPopup>
           </div>
         </media-controls-group>
       </media-controls>
