@@ -36,7 +36,7 @@ export default defineConfig(
             description: _package.description,
             entry: { jsPath: './index.js', cssPath: 'auto' },
             name: { display: '基础布局组件', id: 'layout' },
-            version: { plugin: _package.version, supportCore: '^2' }
+            version: { plugin: _package.version, supportCore: '^1.2' }
           },
           command
         )
