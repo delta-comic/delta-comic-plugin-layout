@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+
 import semantic from 'semantic-release'
 
 import config from '../.releaserc.mjs'

@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["components.d.ts"],
+  "ignorePatterns": ["components.d.ts", "type/**/*", "*.md"],
   "endOfLine": "lf",
   "semi": false,
   "useTabs": false,

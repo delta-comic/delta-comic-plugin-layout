@@ -1,6 +1,5 @@
-import type { AudioSrc, MediaSrc, TextTrackInit } from 'vidstack'
-
 import { PromiseContent, uni } from '@delta-comic/model'
+import type { AudioSrc, MediaSrc, TextTrackInit } from 'vidstack'
 
 export abstract class ContentImagePage extends uni.content.ContentPage {
   public images = PromiseContent.withResolvers<uni.image.Image[]>()

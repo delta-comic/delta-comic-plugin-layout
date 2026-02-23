@@ -1,6 +1,5 @@
-import type { Swiper as SwiperClass } from 'swiper'
-
 import { noop } from 'es-toolkit'
+import type { Swiper as SwiperClass } from 'swiper'
 
 export const useSwipeDbClick = (onClick = noop, onDbClick = noop) => {
   let touchStartTime = 0
