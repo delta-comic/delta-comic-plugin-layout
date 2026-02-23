@@ -6,8 +6,8 @@ import 'swiper/css/zoom'
 import 'swiper/css/free-mode'
 import { Swiper as SwiperClass } from 'swiper'
 import { Virtual, Zoom, HashNavigation, Keyboard, FreeMode } from 'swiper/modules'
-import { computed, shallowRef } from 'vue'
-import { inRange } from 'es-toolkit'
+import { computed, shallowReactive, shallowRef, watchEffect } from 'vue'
+import { inRange, sum } from 'es-toolkit'
 import { isEmpty } from 'es-toolkit/compat'
 import { ArrowBackIosNewRound, FullscreenExitRound } from '@vicons/material'
 import { LikeOutlined } from '@vicons/antd'
@@ -24,6 +24,7 @@ import type { ContentImagePage } from '@/model'
 import type * as ImageViewInject from './image'
 import ButtonPopup from '@/components/ButtonPopup.vue'
 import Settings from '@/components/Settings.vue'
+import { computedWithControl, useResizeObserver } from '@vueuse/core'
 const $props = defineProps<{ page: ContentImagePage }>()
 
 const config = useConfig().$load(imageViewConfig)
@@ -95,6 +96,41 @@ const handleLike = async () => {
     console.error('liked fail')
   }
 }
+
+const slides = shallowReactive<InstanceType<typeof SwiperSlide>[]>([])
+const freeModeHeightCache = shallowReactive(new Array<number>())
+const virtualShowIndex = computedWithControl<number[]>([swiper], () =>
+  Array.from(swiper.value?.wrapperEl.children ?? []).map(el =>
+    Number((el as HTMLDivElement).dataset.swiperSlideIndex)
+  )
+)
+watchEffect(onCleanup => {
+  const mut = new MutationObserver(() => virtualShowIndex.trigger())
+  if (swiper.value?.wrapperEl)
+    mut.observe(swiper.value.wrapperEl, {
+      childList: true,
+      attributes: false,
+      characterData: false
+    })
+  onCleanup(() => mut.disconnect())
+})
+
+const isLastPreloadItem = (index: number) =>
+  index == pageOnIndex.value ? false : index == virtualShowIndex.value[0]
+watchEffect(onCleanup => {
+  const { stop } = useResizeObserver(
+    slides.filter(Boolean).map(slide => slide.$el),
+    sizes => {
+      sizes.forEach((size, index) => {
+        freeModeHeightCache[index] = Math.max(
+          freeModeHeightCache[index] ?? 0,
+          size.contentRect.height
+        )
+      })
+    }
+  )
+  onCleanup(() => stop())
+})
 </script>
 
 <template>
@@ -106,7 +142,7 @@ const handleLike = async () => {
       :slidesPerView="config.doubleImage ? 2 : 1"
       @slideChange="sw => (pageOnIndex = sw.activeIndex)"
       class="size-full"
-      :freeMode="config.isFollowView"
+      :freeMode="{ enabled: config.isFollowView, sticky: false, momentum: true }"
       @double-tap="handleDbTap"
       @touch-move="handleTouchmove"
       @touch-end="handleTouchend"
@@ -125,10 +161,21 @@ const handleLike = async () => {
         v-for="(image, index) of images"
         :key="index"
         :virtualIndex="index"
-        :data-hash="index + 1"
-        class="overflow-hidden"
+        :data-is-last="isLastPreloadItem(index)"
+        class="mt-[attr(data-mt_px,0px)]! overflow-hidden"
+        :class="[config.isFollowView && 'h-auto!']"
+        :ref="ins => (slides[index] = ins as any)"
+        :data-mt="
+          isLastPreloadItem(index) ? sum(freeModeHeightCache.filter((_, i) => i < index - 1)) : 0
+        "
       >
-        <DcImage fetchpriority="high" fit="contain" :src="image" class="swiper-zoom-container">
+        <DcImage
+          fetchpriority="high"
+          fit="contain"
+          :src="image"
+          class="swiper-zoom-container"
+          :class="[config.isFollowView && 'h-auto!']"
+        >
           <template #loading>
             <div class="size-screen flex items-center justify-center text-center">
               <span class="text-3xl text-white"> {{ index + 1 }} </span>
@@ -235,7 +282,7 @@ const handleLike = async () => {
             key="layout::view::image.bottom-bar"
             :args="{ page, images, swiper, index: pageOnIndex }"
           />
-          <ButtonPopup class="flex h-[70vh] flex-col bg-black/50! backdrop-blur" theme="dark">
+          <ButtonPopup class="flex h-[70vh] flex-col bg-black/50! backdrop-blur">
             <template #button>
               <NButton text color="#fff">设置</NButton>
             </template>
@@ -244,7 +291,6 @@ const handleLike = async () => {
           <ButtonPopup
             v-if="(page.eps.content.data.value?.length ?? 1) > 1"
             class="flex h-[70vh] flex-col bg-black/50! backdrop-blur"
-            theme="dark"
           >
             <template #button>
               <NButton text color="#fff">选集</NButton>
