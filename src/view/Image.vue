@@ -3,8 +3,9 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import 'swiper/css/virtual'
 import 'swiper/css/zoom'
+import 'swiper/css/free-mode'
 import { Swiper as SwiperClass } from 'swiper'
-import { Virtual, Zoom, HashNavigation, Keyboard } from 'swiper/modules'
+import { Virtual, Zoom, HashNavigation, Keyboard, FreeMode } from 'swiper/modules'
 import { computed, shallowRef } from 'vue'
 import { inRange } from 'es-toolkit'
 import { isEmpty } from 'es-toolkit/compat'
@@ -99,12 +100,13 @@ const handleLike = async () => {
 <template>
   <NSpin :show="isEmpty(images)" class="pt-safe relative size-full bg-black *:first:size-full">
     <Swiper
-      :modules="[Virtual, Zoom, HashNavigation, Keyboard]"
+      :modules="[Virtual, Zoom, HashNavigation, Keyboard, FreeMode]"
       @swiper="sw => (swiper = sw)"
       :initialSlide="pageOnIndex"
       :slidesPerView="config.doubleImage ? 2 : 1"
       @slideChange="sw => (pageOnIndex = sw.activeIndex)"
       class="size-full"
+      :freeMode="config.isFollowView"
       @double-tap="handleDbTap"
       @touch-move="handleTouchmove"
       @touch-end="handleTouchend"
@@ -116,7 +118,7 @@ const handleLike = async () => {
       @init="onInit"
       zoom
       keyboard
-      direction="horizontal"
+      :direction="config.vertical ? 'vertical' : 'horizontal'"
       @touch-start="handleTouchstart"
     >
       <SwiperSlide

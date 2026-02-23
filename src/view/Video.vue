@@ -2,7 +2,6 @@
 import { computed, onBeforeUnmount, shallowRef, useTemplateRef } from 'vue'
 import { watch } from 'vue'
 import type { MediaPlayerElement } from 'vidstack/elements'
-import type { MediaOrientationLockRequestEvent } from 'vidstack'
 import 'vidstack/icons'
 import 'vidstack/bundle'
 import 'hls.js'
