@@ -5,7 +5,7 @@ import 'swiper/css/virtual'
 import 'swiper/css/zoom'
 import 'swiper/css/free-mode'
 import { Swiper as SwiperClass } from 'swiper'
-import { Virtual, Zoom, HashNavigation, Keyboard, FreeMode } from 'swiper/modules'
+import { Virtual, Zoom, HashNavigation, Keyboard, Mousewheel, FreeMode } from 'swiper/modules'
 import { computed, shallowReactive, shallowRef, watchEffect } from 'vue'
 import { inRange, sum } from 'es-toolkit'
 import { isEmpty } from 'es-toolkit/compat'
@@ -136,7 +136,8 @@ watchEffect(onCleanup => {
 <template>
   <NSpin :show="isEmpty(images)" class="pt-safe relative size-full bg-black *:first:size-full">
     <Swiper
-      :modules="[Virtual, Zoom, HashNavigation, Keyboard, FreeMode]"
+      mousewheel
+      :modules="[Virtual, Zoom, HashNavigation, Keyboard, Mousewheel, FreeMode]"
       @swiper="sw => (swiper = sw)"
       :initialSlide="pageOnIndex"
       :slidesPerView="config.doubleImage ? 2 : 1"
