@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.7.0...0.7.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* deps type not right [pub] ([7f09eb9](https://github.com/delta-comic/delta-comic-plugin-layout/commit/7f09eb9930785b43f4bfb25b9874d51f7c543422))
+
 # [0.7.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.6.0...0.7.0) (2026-02-24)
 
 
