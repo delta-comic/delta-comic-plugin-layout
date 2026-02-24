@@ -85,6 +85,11 @@ declare const plugin: Promise<{
             defaultValue: false;
             info: string;
         };
+        vertical: {
+            type: "switch";
+            defaultValue: false;
+            info: string;
+        };
     }>[];
 }>;
 export type LayoutLib = PluginExpose<() => typeof plugin>;

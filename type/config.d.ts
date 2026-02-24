@@ -17,4 +17,9 @@ export declare const imageViewConfig: ConfigPointer<{
         defaultValue: false;
         info: string;
     };
+    vertical: {
+        type: "switch";
+        defaultValue: false;
+        info: string;
+    };
 }>;

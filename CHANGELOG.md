@@ -1,3 +1,12 @@
+# [0.7.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.6.0...0.7.0) (2026-02-24)
+
+
+### Features
+
+* [pub] mouse wheel control ([efe5c96](https://github.com/delta-comic/delta-comic-plugin-layout/commit/efe5c96fd4ab173b9a5a4f79fae82706fdbf3ab6))
+* button popup ([0b2b96a](https://github.com/delta-comic/delta-comic-plugin-layout/commit/0b2b96a8d5aaa5323b6bb37ab88433d807fc1a4a))
+* wip web,too,n read smoothly ([759c51d](https://github.com/delta-comic/delta-comic-plugin-layout/commit/759c51d1fb557db50d70f5a50592c9a87cd232b3))
+
 # [0.6.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.5.1...0.6.0) (2026-02-22)
 
 
