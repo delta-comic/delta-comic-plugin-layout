@@ -1,3 +1,10 @@
+## [0.7.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.7.1...0.7.2) (2026-03-03)
+
+
+### Bug Fixes
+
+* [pub] comment popup ([dfcdb83](https://github.com/delta-comic/delta-comic-plugin-layout/commit/dfcdb834d133f3e5b0d20085e4e46d205070822e))
+
 ## [0.7.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.7.0...0.7.1) (2026-02-24)
 
 
