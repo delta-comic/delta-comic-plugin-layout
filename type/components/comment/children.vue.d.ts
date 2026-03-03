@@ -99,6 +99,8 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {
             closed: () => any;
             "update:show": (value: boolean) => any;
         }, string, {
+            closeOnClickOverlay: boolean;
+            overlay: boolean;
             position: import('vant').PopupPosition;
             noBorder: boolean;
         }, {}, string, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, import('vue').ComponentProvideOptions> & {
@@ -122,6 +124,8 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {
         $nextTick: typeof import('vue').nextTick;
         $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (...args: [R, R, import('@vue/reactivity').OnCleanup]) => any : (...args: [any, any, import('@vue/reactivity').OnCleanup]) => any, options?: import('vue').WatchOptions): import('vue').WatchStopHandle;
     } & Readonly<{
+        closeOnClickOverlay: boolean;
+        overlay: boolean;
         position: import('vant').PopupPosition;
         noBorder: boolean;
     }> & Omit<Readonly<{
@@ -159,7 +163,7 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {
     }>> & Readonly<{
         onClosed?: (() => any) | undefined;
         "onUpdate:show"?: ((value: boolean) => any) | undefined;
-    }>, "zIndex" | "position" | "noBorder" | "trulyShow"> & import('vue').ShallowUnwrapRef<{
+    }>, "zIndex" | "overlay" | "closeOnClickOverlay" | "position" | "noBorder" | "trulyShow"> & import('vue').ShallowUnwrapRef<{
         zIndex: import('vue').ComputedRef<number>;
         trulyShow: import('vue').ShallowRef<boolean, boolean>;
     }> & {} & import('vue').ComponentCustomProperties & {} & {

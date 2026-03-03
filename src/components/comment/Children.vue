@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { uni } from '@delta-comic/model'
+import { uni, Stream } from '@delta-comic/model'
 import { DcPopup, DcWaterfall } from '@delta-comic/ui'
-import { computed, shallowRef } from 'vue'
+import { computed, shallowRef, watch } from 'vue'
 import Sender from './Sender.vue'
 import { CloseRound } from '@vicons/material'
 const $props = defineProps<{ item: uni.item.Item }>()
@@ -16,6 +16,8 @@ defineExpose({
 })
 defineEmits<{ user: [u: uni.user.User] }>()
 const CommentRow = computed(() => uni.comment.Comment.commentRow.get($props.item.contentType))
+
+watch(parentComment, s => s?.children.next(), { immediate: true })
 </script>
 
 <template>
@@ -39,14 +41,13 @@ const CommentRow = computed(() => uni.comment.Comment.commentRow.get($props.item
       </NIcon>
     </div>
     <DcWaterfall
-      :source="parentComment.children"
+      :source="parentComment.children.setupData([parentComment])"
       :padding="0"
       :col="1"
       :gap="0"
       v-if="parentComment"
       v-slot="{ item: comment }"
-      class="h-[calc(100%-40px-36px)]! bg-(--van-background)"
-      :data-processor="v => (parentComment ? [parentComment, ...v] : v)"
+      class="h-[calc(70vh-40px-36px)]! bg-(--van-background)"
     >
       <component
         :is="CommentRow"
