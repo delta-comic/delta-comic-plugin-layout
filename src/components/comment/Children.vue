@@ -27,7 +27,7 @@ watch(parentComment, s => s?.children.next(), { immediate: true })
     lock-scroll
     ref="floatPopup"
     :overlay="false"
-    class="h-[70vh] **:overflow-x-hidden"
+    class="h-[70vh] overflow-hidden"
   >
     <div class="van-hairline--bottom relative flex h-9 w-full items-center pl-3 text-base">
       评论详情
