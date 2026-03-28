@@ -128,8 +128,6 @@ $props.page.detail.content.onSuccess(data => {
 
 const config = useConfig()
 
-const [DefineAvatar, Avatar] = createReusableTemplate<{ author: uni.item.Author }>()
-
 const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plugin, key])!
 
 const getIsSubscribe = (author: uni.item.Author) =>
@@ -159,114 +157,9 @@ const removeSubscribe = (author: uni.item.Author) =>
       .where('key', '=', SubscribeDB.key.toString([author.$$plugin, author.label]))
       .execute()
   )
-
-const [DefineSubscribeRow, SubscribeRow] = createReusableTemplate<{
-  author: uni.item.Author
-  class?: any
-}>()
-
-const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
-  author: uni.item.Author
-  class?: any
-}>()
 </script>
 
 <template>
-  <DefineAvatar v-slot="{ author }">
-    <VanPopover
-      :actions="
-        (author.actions ?? []).map(k => ({
-          text: getActionInfo(k).name,
-          icons: getActionInfo(k).icon,
-          key: k
-        }))
-      "
-      @select="q => getActionInfo(q.key).call(author)"
-      placement="bottom-start"
-    >
-      <template #reference>
-        <div class="van-ellipsis flex w-fit items-center pl-2 text-[16px] text-(--p-color)">
-          <DcAuthorIcon :size-spacing="8.5" :author class="mx-2" />
-          <div class="flex w-full flex-col text-nowrap">
-            <div class="flex items-center text-(--nui-primary-color)">
-              {{ author.label }}
-            </div>
-            <div class="-mt-0.5 flex max-w-2/3 items-center text-[11px] text-(--van-text-color-2)">
-              {{ author.description }}
-            </div>
-          </div>
-        </div>
-      </template>
-      <template #action="{ action: { text, icons } }: { action: PopoverAction; index: number }">
-        <div class="relative flex w-full items-center justify-center gap-1 text-nowrap">
-          <NIcon color="var(--van-text-color)" class="flex! items-center!" size="18px">
-            <component :is="icons" />
-          </NIcon>
-          <div>{{ text }}</div>
-        </div>
-      </template>
-    </VanPopover>
-  </DefineAvatar>
-
-  <DefineSubscribeRow v-slot="{ author, class: className }">
-    <div class="relative w-full" :class="className">
-      <Avatar :author />
-      <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
-        <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'common' }" />
-        <Inject
-          key="layout::layout::default.subscribe-row"
-          :args="{ page, author, isSubscribe, type: 'common' }"
-        />
-
-        <NButton
-          round
-          type="primary"
-          :color="isSubscribe ? '#6a7282' : undefined"
-          class="absolute! top-1/2 right-3 -translate-y-1/2"
-          size="small"
-          @click.stop="isSubscribe ? removeSubscribe(author) : addSubscribe(author)"
-        >
-          <template #icon>
-            <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
-              <PlusRound />
-            </NIcon>
-          </template>
-          <template #default>
-            {{ isSubscribe ? '取关' : '关注' }}
-          </template>
-        </NButton>
-      </DcAwait>
-    </div>
-  </DefineSubscribeRow>
-
-  <DefineSubscribeSmallRow v-slot="{ author, class: className }">
-    <div class="relative w-full" :class="className">
-      <Avatar :author />
-      <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
-        <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'small' }" />
-        <Inject
-          key="layout::layout::default.subscribe-row"
-          :args="{ page, author, isSubscribe, type: 'small' }"
-        />
-
-        <NButton
-          round
-          type="primary"
-          :color="isSubscribe ? '#6a7282' : undefined"
-          class="aspect-square px-0!"
-          size="small"
-          @click.stop="isSubscribe ? removeSubscribe(author) : addSubscribe(author)"
-        >
-          <template #icon>
-            <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
-              <PlusRound />
-            </NIcon>
-          </template>
-        </NButton>
-      </DcAwait>
-    </div>
-  </DefineSubscribeSmallRow>
-
   <TitleDefine>
     <div
       class="mt-1 flex gap-1 text-xs font-normal text-(--van-text-color-2) *:flex *:items-center"
@@ -292,69 +185,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
         : 'var(--nui-body-color)'
     }"
   >
-    <div class="relative flex h-[30vh] justify-center bg-black text-white">
-      <div
-        class="pt-safe pointer-events-none absolute top-0 z-3 flex h-14 w-full items-center *:pointer-events-auto"
-      >
-        <VanSticky>
-          <div
-            class="pt-safe flex h-[calc(56px+var(--safe-area-inset-top))] w-screen items-center transition-colors"
-            :class="[isScrolled ? 'bg-(--p-color)' : 'bg-transparent']"
-          >
-            <NIcon color="white" size="1.5rem" class="ml-5" @click="$router.back()">
-              <ArrowBackRound />
-            </NIcon>
-            <NIcon color="white" size="1.5rem" class="ml-5" @click="$router.force.push('/')">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                viewBox="0 0 24 24"
-              >
-                <g
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M19 8.71l-5.333-4.148a2.666 2.666 0 0 0-3.274 0L5.059 8.71a2.665 2.665 0 0 0-1.029 2.105v7.2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.2c0-.823-.38-1.6-1.03-2.105"
-                  ></path>
-                  <path d="M16 15c-2.21 1.333-5.792 1.333-8 0"></path>
-                </g>
-              </svg>
-            </NIcon>
-            <div
-              @click="scrollbar?.scrollTo({ behavior: 'smooth', top: 0, left: 0 })"
-              class="flex size-full items-center justify-center text-[16px] transition-opacity"
-              :class="[isScrolled || 'opacity-0']"
-            >
-              <NIcon size="2.5rem">
-                <PlayArrowRound />
-              </NIcon>
-              返回顶部
-            </div>
-          </div>
-        </VanSticky>
-      </div>
-      <Teleport to="#cover" :disabled="!fullscreen.isFullscreen.value">
-        <slot name="view" />
-      </Teleport>
-      <VanRow class="pointer-events-none absolute bottom-0 z-2 w-full">
-        <VanCol span="1" offset="21">
-          <NButton
-            class="pointer-events-auto text-3xl!"
-            @click="setFullscreen(true)"
-            text
-            color="#fff"
-          >
-            <NIcon>
-              <FullscreenRound />
-            </NIcon>
-          </NButton>
-        </VanCol>
-      </VanRow>
-    </div>
+    <ViewBox />
     <VanTabs
       shrink
       swipeable
@@ -375,42 +206,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
           @reset-retry="$props.page.reloadAll"
           class="min-h-[60vh]"
         >
-          <div
-            class="relative mt-3 flex items-center pb-2 text-nowrap"
-            v-if="(union?.author.length ?? 0) > 1"
-            @click="showDetailUsers = true"
-          >
-            <span class="ml-3 font-bold">创作团队</span>
-            <span class="absolute right-3 text-(--van-text-color-2)"
-              >共{{ union?.author.length }}位</span
-            >
-            <DcPopup v-model:show="showDetailUsers" position="bottom" round class="h-[50vh]">
-              <SubscribeRow
-                :author
-                v-for="author of union.author"
-                class="van-hairline--bottom py-2"
-              />
-            </DcPopup>
-          </div>
-          <div
-            class="flex items-center overflow-x-auto text-nowrap"
-            @pointerdown.stop
-            @click.stop
-            @pointermove.stop
-          >
-            <SubscribeRow
-              :author="union.author[0]"
-              v-if="union?.author.length === 1"
-              class="mt-3"
-            />
-            <div v-else class="scroll flex overflow-x-scroll overflow-y-hidden" @click.stop>
-              <SubscribeSmallRow
-                class="flex items-center gap-3 text-nowrap"
-                :author
-                v-for="author of union?.author"
-              />
-            </div>
-          </div>
+          <SubscribeList />
           <div class="mx-auto mt-2 w-[95%]">
             <div class="relative flex h-fit">
               <div class="relative w-[89%] text-[17px] font-medium">
@@ -441,61 +237,10 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                       {{ page.pid.content.data.value }}
                     </div>
                   </div>
-                  <DcText
-                    :text="union.description"
-                    v-if="isString(union?.description)"
-                    class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
-                  >
-                  </DcText>
-                  <DcText
-                    :text="union.description.content"
-                    v-else-if="union?.description?.type == 'text'"
-                    class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
-                  >
-                  </DcText>
-                  <div
-                    v-html="DOMPurify.sanitize(union?.description?.content ?? '')"
-                    v-else
-                    class="mt-1 max-w-full justify-start text-xs font-normal text-(--van-text-color-2)"
-                  ></div>
 
-                  <slot name="description" :="{ page, item: union }" />
-                  <Inject key="layout::layout::default.description" :args="{ page, item: union }" />
+                  <Description />
 
-                  <div
-                    class="flex w-full flex-col"
-                    v-for="[name, categories] of Object.entries(
-                      Object.groupBy(union?.categories ?? [], v => v.group)
-                    )"
-                  >
-                    <NDivider
-                      class="my-1! text-xs! text-(--van-gray-7)! **:font-light!"
-                      title-placement="left"
-                    >
-                      {{ name }}
-                    </NDivider>
-                    <div class="flex flex-wrap gap-2.5 *:px-3! **:text-xs!">
-                      <NButton
-                        tertiary
-                        round
-                        type="tertiary"
-                        size="small"
-                        v-for="category of categories
-                          ?.toSorted((a, b) => b.name.length - a.name.length)
-                          .filter(Boolean)"
-                        @click="
-                          SharedFunction.call(
-                            'routeToSearch',
-                            category.search.keyword,
-                            [page.plugin, category.search.source],
-                            category.search.sort
-                          )
-                        "
-                      >
-                        {{ category.name }}
-                      </NButton>
-                    </div>
-                  </div>
+                  <Tags />
                 </NCollapseTransition>
               </div>
               <NIcon
@@ -508,92 +253,10 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
                 <KeyboardArrowDownRound />
               </NIcon>
             </div>
-            <!-- action bar -->
-            <div class="mt-8 mb-4 flex justify-around" v-if="union">
-              <DcToggleIcon
-                padding
-                size="27px"
-                v-model="isLiked"
-                @click="handleLike"
-                :icon="LikeFilled"
-              >
-                {{ (union.likeNumber ?? 0) + (isLiked ? 1 : 0) || '喜欢' }}
-              </DcToggleIcon>
-              <DcToggleIcon padding size="27px" :icon="FolderOutlined" dis-changed>
-                缓存
-              </DcToggleIcon>
-              <DcToggleIcon padding size="27px" dis-changed :icon="ReportGmailerrorredRound">
-                举报
-              </DcToggleIcon>
-              <FavouriteSelect :item="union" />
-              <ShareButton :page />
-
-              <slot name="action" :="{ page, item: union }" />
-              <Inject key="layout::layout::default.action" :args="{ page, item: union }" />
-            </div>
-            <!-- ep select -->
-            <div
-              class="van-haptics-feedback relative mb-4 flex w-full items-center rounded py-2 pl-3"
-              :class="[
-                isR18g
-                  ? config.isDark
-                    ? ''
-                    : 'bg-(--van-gray-1)/70'
-                  : config.isDark
-                    ? 'bg-(--van-gray-8)'
-                    : 'bg-(--van-gray-2)'
-              ]"
-              v-if="eps && eps.length > 1"
-              @click="openEpSelectPopup"
-            >
-              <span>选集</span>
-              <span class="mx-0.5">·</span>
-              <span class="van-ellipsis max-w-1/2">{{
-                nowEp?.name || `第${nowEpIndex + 1}话`
-              }}</span>
-              <span class="absolute right-2 flex items-center text-xs text-(--van-text-color-2)">
-                <span>{{ nowEpIndex + 1 }}/{{ eps.length }}</span>
-                <NIcon size="12px" class="ml-1">
-                  <ArrowForwardIosOutlined />
-                </NIcon>
-              </span>
-            </div>
-            <DcPopup
-              round
-              position="bottom"
-              class="flex h-[70vh] flex-col"
-              v-model:show="isShowEpSelectPopup"
-            >
-              <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold">选集</div>
-              <DcList
-                class="h-full w-full"
-                :source="{ data: PromiseContent.resolve(eps), isEnd: true }"
-                :itemHeight="40"
-                v-slot="{ data: { item: ep, index }, height }"
-                ref="epSelList"
-              >
-                <VanCell
-                  clickable
-                  @click="routeToContent({ ...union.toJSON(), thisEp: ep.toJSON() })"
-                  :title="ep.name || `第${index + 1}话`"
-                  :title-class="[nowEpId === ep.index && 'font-bold text-(--p-color)!']"
-                  class="flex w-full items-center"
-                  :style="{ height: `${height}px !important` }"
-                >
-                </VanCell>
-              </DcList>
-            </DcPopup>
+            <Actions />
+            <EpController />
           </div>
-          <!-- recommend -->
-          <div class="van-hairline--top w-full *:bg-transparent">
-            <slot name="recommend" :="{ page, item: union }" />
-            <Inject key="layout::layout::default.recommend" :args="{ page, item: union }" />
-            <component
-              :is="getItemCard(item.contentType)"
-              :item
-              v-for="item of page.recommends.content.data.value"
-            />
-          </div>
+          <Recommends />
         </DcContent>
       </VanTab>
 
