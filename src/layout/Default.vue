@@ -1,33 +1,5 @@
 <script setup lang="ts">
-import { SharedFunction, useFullscreen } from '@delta-comic/core'
-import { db, SubscribeDB } from '@delta-comic/db'
-import { uni } from '@delta-comic/model'
-import { useConfig, Global, Inject } from '@delta-comic/plugin'
-import { SmartAbortController } from '@delta-comic/request'
-import { createLoadingMessage } from '@delta-comic/ui'
-import { useQuery } from '@pinia/colada'
-import { LikeFilled } from '@vicons/antd'
-import {
-  ArrowBackRound,
-  ArrowForwardIosOutlined,
-  FolderOutlined,
-  FullscreenRound,
-  KeyboardArrowDownRound,
-  PlayArrowRound,
-  PlusRound,
-  ReportGmailerrorredRound
-} from '@vicons/material'
-import { computedAsync, createReusableTemplate, useCssVar } from '@vueuse/core'
-import DOMPurify from 'dompurify'
-import { isString } from 'es-toolkit'
-import { sortBy } from 'es-toolkit/compat'
-import { AnimatePresence, motion } from 'motion-v'
-import { PopoverAction } from 'vant'
-import { computed, shallowRef, useTemplateRef, nextTick, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
 import Comment from '@/components/comment/Comment.vue'
-import FavouriteSelect from '@/components/FavouriteSelect.vue'
 import ItemCard from '@/components/ItemCard.vue'
 import { createDateString } from '@/utils/date'
 
@@ -63,35 +35,8 @@ const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)
 const isScrolled = shallowRef(false)
 const scrollbar = useTemplateRef('scrollbar')
 
-const epSelList = useTemplateRef('epSelList')
-const isShowEpSelectPopup = shallowRef(false)
-const eps = computedAsync(
-  async () => sortBy(await $props.page.eps.content, v => Number(v.index)),
-  []
-)
-const nowEpId = $route.params.ep.toString()
-const nowEp = computed(() => eps.value.find(ep => ep.index === nowEpId))
-const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.index === nowEpId))
-const openEpSelectPopup = async () => {
-  scrollbar.value?.scrollTo(0, 0)
-  isShowEpSelectPopup.value = true
-  await nextTick()
-  epSelList.value?.listInstance?.scrollTo({
-    index: eps.value.findIndex(ep => ep.index === nowEpId)
-  })
-}
-
 const getItemCard = (contentType: uni.content.ContentType_) =>
   uni.item.Item.itemCard.get(contentType) ?? ItemCard
-
-const routeToContent = (preload: uni.item.RawItem) =>
-  SharedFunction.call(
-    'routeToContent',
-    preload.contentType,
-    preload.id,
-    preload.thisEp.id,
-    uni.item.Item.create(preload)
-  )
 
 const isLiked = shallowRef(union.value?.isLiked ?? false)
 const likeSignal = new SmartAbortController()

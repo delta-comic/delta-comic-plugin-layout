@@ -1,4 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { uni } from '@delta-comic/model'
+import { Inject } from '@delta-comic/plugin'
+import DOMPurify from 'dompurify'
+import { isString } from 'es-toolkit'
+
+const $props = defineProps<{
+  union?: uni.item.Item
+  page: uni.content.ContentPage
+}>()
+</script>
 
 <template>
   <DcText

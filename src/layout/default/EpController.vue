@@ -1,4 +1,54 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { SharedFunction } from '@delta-comic/core'
+import { uni } from '@delta-comic/model'
+import { useConfig } from '@delta-comic/plugin'
+import { shallowRef, useTemplateRef } from 'vue'
+import { useRoute } from 'vue-router'
+
+import * as LayoutInject from '../default'
+
+const $props = defineProps<{
+  union?: uni.item.Item
+  page: uni.content.ContentPage
+  isR18g?: boolean
+}>()
+
+const $route = useRoute()
+const routeToContent = (preload: uni.item.RawItem) =>
+  SharedFunction.call(
+    'routeToContent',
+    preload.contentType,
+    preload.id,
+    preload.thisEp.id,
+    uni.item.Item.create(preload)
+  )
+
+const config = useConfig()
+
+const queryEps = useInfQuery({
+  key: () => [LayoutInject.QueryKey.Ep, LayoutInject.createPageQueryKey($props.page)],
+  query: () => $props.page
+})
+
+const epSelList = useTemplateRef('epSelList')
+const isShowEpSelectPopup = shallowRef(false)
+const eps = computedAsync(
+  async () => sortBy(await $props.page.eps.content, v => Number(v.index)),
+  []
+)
+
+const nowEpId = $route.params.ep.toString()
+const nowEp = computed(() => eps.value.find(ep => ep.index === nowEpId))
+const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.index === nowEpId))
+const openEpSelectPopup = async () => {
+  scrollbar.value?.scrollTo(0, 0)
+  isShowEpSelectPopup.value = true
+  await nextTick()
+  epSelList.value?.listInstance?.scrollTo({
+    index: eps.value.findIndex(ep => ep.index === nowEpId)
+  })
+}
+</script>
 
 <template>
   <div
