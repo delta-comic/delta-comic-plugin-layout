@@ -1,4 +1,4 @@
-import type { uni } from '@delta-comic/model'
+import { uni } from '@delta-comic/model'
 
 export interface SubscribeRowProps {
   page: uni.content.ContentPage
@@ -15,3 +15,11 @@ export interface ContentProps {
   page: uni.content.ContentPage
   item?: uni.item.Item
 }
+
+export enum QueryKey {
+  Detail = 'layout::default::detail'
+}
+export const createPageQueryKey = (page: uni.content.ContentPage) => ({
+  id: page.id,
+  ct: uni.content.ContentPage.contentPages.key.toString(page.contentType)
+})

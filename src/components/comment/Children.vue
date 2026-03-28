@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { uni, Stream } from '@delta-comic/model'
+import { uni } from '@delta-comic/model'
 import { DcPopup, DcWaterfall } from '@delta-comic/ui'
-import { computed, shallowRef, watch } from 'vue'
-import Sender from './Sender.vue'
+import { useInfiniteQuery } from '@pinia/colada'
 import { CloseRound } from '@vicons/material'
+import { computed, shallowRef } from 'vue'
+
+import { createChildrenCommentQueryKey, QueryKey } from '.'
+import Sender from './Sender.vue'
 const $props = defineProps<{ item: uni.item.Item }>()
 const parentComment = shallowRef<uni.comment.Comment>()
 
@@ -12,12 +15,27 @@ defineExpose({
   loadChild(parent: uni.comment.Comment) {
     parentComment.value = parent
     isShowPopup.value = true
+    query.refresh()
   }
 })
 defineEmits<{ user: [u: uni.user.User] }>()
 const CommentRow = computed(() => uni.comment.Comment.commentRow.get($props.item.contentType))
 
-watch(parentComment, s => s?.children.next(), { immediate: true })
+const query = useInfiniteQuery({
+  enabled: () => !!parentComment.value,
+  key: () => [
+    QueryKey.ChildrenComment,
+    createChildrenCommentQueryKey(
+      $props.item.id,
+      parentComment.value?.id ?? 'unknown',
+      uni.content.ContentPage.contentPages.key.toString($props.item.contentType)
+    )
+  ],
+  query: async ({ signal, pageParam }) =>
+    await parentComment.value!.fetchChildren(pageParam, signal),
+  initialPageParam: parentComment.value!.fetchChildren.initialPageParam,
+  getNextPageParam: lastPage => lastPage.nextPage
+})
 </script>
 
 <template>
@@ -41,7 +59,7 @@ watch(parentComment, s => s?.children.next(), { immediate: true })
       </NIcon>
     </div>
     <DcWaterfall
-      :source="parentComment.children.setupData([parentComment])"
+      :source="{ type: 'infinite', value: query }"
       :padding="0"
       :col="1"
       :gap="0"

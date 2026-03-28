@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { computed, type StyleValue, useTemplateRef } from 'vue'
+import { SharedFunction } from '@delta-comic/core'
+import { RecentDB } from '@delta-comic/db'
+import { uni } from '@delta-comic/model'
+import { appConfig, useConfig } from '@delta-comic/plugin'
+import { DcImage } from '@delta-comic/ui'
+import {} from '@delta-comic/utils'
+import { EyeInvisibleOutlined } from '@vicons/antd'
 import { MoreVertRound } from '@vicons/material'
 import { createReusableTemplate } from '@vueuse/core'
-import { EyeInvisibleOutlined } from '@vicons/antd'
-import { uni } from '@delta-comic/model'
-import { DcImage } from '@delta-comic/ui'
-import { appConfig, useConfig } from '@delta-comic/plugin'
-import { SharedFunction } from '@delta-comic/core'
-import {} from '@delta-comic/utils'
 import { NPopconfirm } from 'naive-ui'
+import { computed, type StyleValue, useTemplateRef } from 'vue'
 
 const $props = withDefaults(
   defineProps<{
@@ -34,9 +35,12 @@ const imageRatio = computed(() =>
 
 defineSlots<{ default(): void; smallTopInfo(): void; cover(): void }>()
 const [TemplateIns, ComponentIns] = createReusableTemplate()
+const { upsert } = RecentDB.useUpsert()
 const handlePositiveClick = () => {
-  // add recent
-  if (uni.item.Item.is($props.item)) SharedFunction.call('addRecent', $props.item)
+  if (uni.item.Item.is($props.item))
+    return upsert({
+      item: $props.item
+    })
 }
 const config = useConfig().$load(appConfig)
 const processedTitle = computed(() =>
@@ -52,7 +56,7 @@ const handleClick = () => {
     'routeToContent',
     $props.item.contentType,
     $props.item.id,
-    $props.item.thisEp.index,
+    $props.item.thisEp.id,
     uni.item.Item.is($props.item) ? $props.item : undefined
   )
   $emit('click')

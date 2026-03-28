@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import type { uni } from '@delta-comic/model'
+import { uni } from '@delta-comic/model'
 import { useConfig } from '@delta-comic/plugin'
 import { createLoadingMessage, DcPopup } from '@delta-comic/ui'
+import { useMutation } from '@pinia/colada'
+import { isEmpty } from 'es-toolkit/compat'
 import type { FieldInstance } from 'vant'
 import { shallowRef } from 'vue'
+
+import { createChildrenCommentQueryKey, createMainCommentQueryKey } from '.'
 
 const config = useConfig()
 
@@ -18,21 +22,32 @@ const input = shallowRef('')
 const inputEl = shallowRef<FieldInstance>()
 const isSubmitting = shallowRef(false)
 
-const submit = async () => {
-  if (input.value == '') return window.$message.info('评论内容不能为空')
-  isSubmitting.value = true
-  const loading = createLoadingMessage('发送中')
-  try {
-    await $props.aim.sendComment(input.value)
-    loading.success()
-  } catch (err) {
-    console.error(err)
-    loading.fail()
+const { mutateAsync: submit } = useMutation({
+  key: () => [
+    uni.item.Item.is($props.aim)
+      ? createMainCommentQueryKey(
+          $props.aim.id,
+          uni.content.ContentPage.contentPages.key.toString($props.aim.contentType)
+        )
+      : createChildrenCommentQueryKey(
+          $props.item.id,
+          $props.aim.id,
+          uni.content.ContentPage.contentPages.key.toString($props.item.contentType)
+        )
+  ],
+  async mutation({ content }: { content: string }) {
+    if (isEmpty(content)) return window.$message.info('评论内容不能为空')
+    isSubmitting.value = true
+    const loading = createLoadingMessage('发送中')
+    try {
+      await loading.bind($props.aim.sendComment(input.value))
+    } finally {
+      show.value = false
+      input.value = ''
+      isSubmitting.value = false
+    }
   }
-  show.value = false
-  input.value = ''
-  isSubmitting.value = false
-}
+})
 </script>
 
 <template>
@@ -48,7 +63,9 @@ const submit = async () => {
       :disabled="isSubmitting"
     />
     <div class="mt-1 flex h-8 w-full items-center justify-end pr-1">
-      <NButton round type="primary" :loading="isSubmitting" @click="submit()"> 提交 </NButton>
+      <NButton round type="primary" :loading="isSubmitting" @click="submit({ content: input })">
+        提交
+      </NButton>
     </div>
   </DcPopup>
 

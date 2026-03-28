@@ -8,6 +8,7 @@ Booter
 booters
 cdylib
 codegen
+colada
 disretry
 Favourite
 favselect

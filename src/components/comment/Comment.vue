@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue'
-import _CommentRow from './CommentRow.vue'
-import { uni, type RStream } from '@delta-comic/model'
+import { uni, type StreamQuery } from '@delta-comic/model'
 import { DcWaterfall } from '@delta-comic/ui'
-import Children from './Children.vue'
+import { useInfiniteQuery } from '@pinia/colada'
+import { computed, useTemplateRef } from 'vue'
+
+import { createMainCommentQueryKey, QueryKey } from '.'
 import PreviewUser from '../user/PreviewUser.vue'
+import Children from './Children.vue'
+import _CommentRow from './CommentRow.vue'
 
 const $props = defineProps<{
   item: uni.item.Item
-  comments: RStream<uni.comment.Comment>
+  fetchComments: StreamQuery<[], uni.comment.Comment>
   class?: any
 }>()
 const CommentRow = computed(
@@ -18,13 +21,26 @@ const CommentRow = computed(
 const children = useTemplateRef('children')
 
 const previewUser = useTemplateRef('previewUser')
+
+const query = useInfiniteQuery({
+  key: () => [
+    QueryKey.MainComment,
+    createMainCommentQueryKey(
+      $props.item.id,
+      uni.content.ContentPage.contentPages.key.toString($props.item.contentType)
+    )
+  ],
+  query: async ({ signal, pageParam }) => await $props.fetchComments(pageParam, signal),
+  initialPageParam: $props.fetchComments.initialPageParam,
+  getNextPageParam: lastPage => lastPage.nextPage
+})
 </script>
 
 <template>
   <template v-if="item.commentSendable">
     <div class="w-full overflow-hidden bg-(--van-background)" :class="$props.class ?? 'non-height'">
       <DcWaterfall
-        :source="comments"
+        :source="{ type: 'infinite', value: query }"
         ref="waterfall"
         class="h-[calc(100%-40px)]!"
         v-slot="{ item: comment }"

@@ -1,6 +1,10 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["components.d.ts", "type/**/*", "*.md"],
+  "ignorePatterns": [
+    "components.d.ts",
+    "type/**/*",
+    "*.md"
+  ],
   "endOfLine": "lf",
   "semi": false,
   "useTabs": false,
@@ -13,11 +17,6 @@
   "jsxSingleQuote": true,
   "singleAttributePerLine": false,
   "vueIndentScriptAndStyle": false,
-  "experimentalTailwindcss": {
-    "preserveDuplicates": false,
-    "preserveWhitespace": false,
-    "stylesheet": "./src/index.css"
-  },
   "experimentalSortImports": {},
   "bracketSameLine": false,
   "bracketSpacing": true,

@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import { SharedFunction, useFullscreen } from '@delta-comic/core'
+import { db, SubscribeDB } from '@delta-comic/db'
+import { uni } from '@delta-comic/model'
+import { useConfig, Global, Inject } from '@delta-comic/plugin'
+import { SmartAbortController } from '@delta-comic/request'
+import { createLoadingMessage } from '@delta-comic/ui'
+import { useQuery } from '@pinia/colada'
 import { LikeFilled } from '@vicons/antd'
 import {
   ArrowBackRound,
@@ -11,24 +18,20 @@ import {
   ReportGmailerrorredRound
 } from '@vicons/material'
 import { computedAsync, createReusableTemplate, useCssVar } from '@vueuse/core'
+import DOMPurify from 'dompurify'
+import { isString } from 'es-toolkit'
+import { sortBy } from 'es-toolkit/compat'
 import { AnimatePresence, motion } from 'motion-v'
+import { PopoverAction } from 'vant'
 import { computed, shallowRef, useTemplateRef, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { sortBy } from 'es-toolkit/compat'
-import { PopoverAction } from 'vant'
-import { isString } from 'es-toolkit'
-import DOMPurify from 'dompurify'
-import { SharedFunction, useFullscreen } from '@delta-comic/core'
-import { PromiseContent, uni } from '@delta-comic/model'
-import { createLoadingMessage } from '@delta-comic/ui'
-import { SmartAbortController } from '@delta-comic/request'
-import { useConfig, Global, Inject } from '@delta-comic/plugin'
-import { db, SubscribeDB } from '@delta-comic/db'
-import { createDateString } from '@/utils/date'
-import ItemCard from '@/components/ItemCard.vue'
-import FavouriteSelect from '@/components/FavouriteSelect.vue'
+
 import Comment from '@/components/comment/Comment.vue'
-import type * as LayoutInject from './default'
+import FavouriteSelect from '@/components/FavouriteSelect.vue'
+import ItemCard from '@/components/ItemCard.vue'
+import { createDateString } from '@/utils/date'
+
+import * as LayoutInject from './default'
 
 defineSlots<{
   subscribeRow(args: LayoutInject.SubscribeRowProps): any
@@ -46,12 +49,20 @@ const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>(
 const fullscreen = useFullscreen()
 const setFullscreen = async (isFull: boolean) => (isFull ? fullscreen.entry() : fullscreen.exit())
 
-const union = computed(() => $props.page.union.value!)
+const { data: detail } = useQuery({
+  query: ({ signal }) => $props.page.fetchDetail(signal),
+  key: () => [LayoutInject.QueryKey.Detail, LayoutInject.createPageQueryKey($props.page)]
+})
+const union = computed(() => detail.value ?? $props.page.preload)
+
 const showTitleFull = shallowRef(false)
 const [TitleDefine, Title] = createReusableTemplate()
-const isScrolled = shallowRef(false)
 
+const safeHeightTopCss = useCssVar('--safe-area-inset-top')
+const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)?.[0]))
+const isScrolled = shallowRef(false)
 const scrollbar = useTemplateRef('scrollbar')
+
 const epSelList = useTemplateRef('epSelList')
 const isShowEpSelectPopup = shallowRef(false)
 const eps = computedAsync(
@@ -69,25 +80,25 @@ const openEpSelectPopup = async () => {
     index: eps.value.findIndex(ep => ep.index === nowEpId)
   })
 }
-const safeHeightTopCss = useCssVar('--safe-area-inset-top')
-const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)?.[0]))
+
 const getItemCard = (contentType: uni.content.ContentType_) =>
   uni.item.Item.itemCard.get(contentType) ?? ItemCard
 
-const handleChick = (preload: uni.item.RawItem) =>
+const routeToContent = (preload: uni.item.RawItem) =>
   SharedFunction.call(
     'routeToContent',
     preload.contentType,
     preload.id,
-    preload.thisEp.index,
+    preload.thisEp.id,
     uni.item.Item.create(preload)
   )
+
 const isLiked = shallowRef(union.value?.isLiked ?? false)
 const likeSignal = new SmartAbortController()
 const handleLike = async () => {
   likeSignal.abort()
   try {
-    union.value.like(likeSignal.signal).then(v => (isLiked.value = v))
+    union.value?.like(likeSignal.signal).then(v => (isLiked.value = v))
   } catch (error) {
     console.error('liked fail')
   }
@@ -563,7 +574,7 @@ const [DefineSubscribeSmallRow, SubscribeSmallRow] = createReusableTemplate<{
               >
                 <VanCell
                   clickable
-                  @click="handleChick({ ...union.toJSON(), thisEp: ep.toJSON() })"
+                  @click="routeToContent({ ...union.toJSON(), thisEp: ep.toJSON() })"
                   :title="ep.name || `第${index + 1}话`"
                   :title-class="[nowEpId === ep.index && 'font-bold text-(--p-color)!']"
                   class="flex w-full items-center"
