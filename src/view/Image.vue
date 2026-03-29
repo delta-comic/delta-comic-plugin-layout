@@ -1,30 +1,33 @@
 <script setup lang="ts">
-import { Swiper, SwiperSlide } from 'swiper/vue'
+import { SharedFunction, useFullscreen } from '@delta-comic/core'
 import 'swiper/css'
 import 'swiper/css/virtual'
 import 'swiper/css/zoom'
 import 'swiper/css/free-mode'
-import { Swiper as SwiperClass } from 'swiper'
-import { Virtual, Zoom, HashNavigation, Keyboard, Mousewheel, FreeMode } from 'swiper/modules'
-import { computed, shallowReactive, shallowRef, watchEffect } from 'vue'
+import { uni } from '@delta-comic/model'
+import { Inject, useConfig } from '@delta-comic/plugin'
+import { SmartAbortController } from '@delta-comic/request'
+import { useQuery } from '@pinia/colada'
+import { LikeOutlined } from '@vicons/antd'
+import { ArrowBackIosNewRound, FullscreenExitRound } from '@vicons/material'
+import { computedWithControl, useResizeObserver } from '@vueuse/core'
 import { inRange, sum } from 'es-toolkit'
 import { isEmpty } from 'es-toolkit/compat'
-import { ArrowBackIosNewRound, FullscreenExitRound } from '@vicons/material'
-import { LikeOutlined } from '@vicons/antd'
 import { AnimatePresence, motion } from 'motion-v'
+import { Swiper as SwiperClass } from 'swiper'
+import { Virtual, Zoom, HashNavigation, Keyboard, Mousewheel, FreeMode } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { computed, shallowReactive, shallowRef, watchEffect } from 'vue'
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { imageViewConfig } from '@/config'
-import { Inject, useConfig } from '@delta-comic/plugin'
-import { uni } from '@delta-comic/model'
-import { SharedFunction, useFullscreen } from '@delta-comic/core'
-import { SmartAbortController } from '@delta-comic/request'
-import { useSwipeDbClick } from '@/utils/ui'
-import type { ContentImagePage } from '@/model'
-import type * as ImageViewInject from './image'
+
 import ButtonPopup from '@/components/ButtonPopup.vue'
 import Settings from '@/components/Settings.vue'
-import { computedWithControl, useResizeObserver } from '@vueuse/core'
+import { imageViewConfig } from '@/config'
+import type { ContentImagePage } from '@/model'
+import { useSwipeDbClick } from '@/utils/ui'
+
+import type * as ImageViewInject from './image'
 const $props = defineProps<{ page: ContentImagePage }>()
 
 const config = useConfig().$load(imageViewConfig)
@@ -33,8 +36,8 @@ const swiper = shallowRef<SwiperClass>()
 
 const { isFullscreen } = useFullscreen()
 
-const images = computed(() => $props.page.images.content.data.value ?? [])
-const comic = computed(() => $props.page.union.value!)
+const images = useQuery({})
+// const images = computed(() => $props.page.images.content.data.value ?? [])
 
 const pageOnIndex = shallowRef(0)
 const selectPage = shallowRef(pageOnIndex.value)
@@ -68,6 +71,7 @@ const { handleTouchend, handleTouchmove, handleTouchstart, handleDbTap } = useSw
 const nowEp = computed(() =>
   $props.page.eps.content.data.value?.find(v => v.index === $props.page.ep)
 )
+
 const $route = useRoute()
 const nowEpId = $route.params.ep.toString()
 const handleEpSelect = (preload: uni.item.RawItem) =>
@@ -75,16 +79,15 @@ const handleEpSelect = (preload: uni.item.RawItem) =>
     'routeToContent',
     preload.contentType,
     preload.id,
-    preload.thisEp.index,
+    preload.thisEp.id,
     uni.item.Item.create(preload)
   )
 
-defineSlots<{
-  topBar(args: ImageViewInject.BarProps): any
-  content(args: ImageViewInject.ContentProps): any
-  bottomBar(args: ImageViewInject.BarProps): any
-}>()
-const union = computed(() => $props.page.union.value!)
+const { data: detail } = useQuery({
+  query: ({ signal }) => $props.page.fetchDetail(signal),
+  key: () => [LayoutInject.QueryKey.Detail, LayoutInject.createPageQueryKey($props.page)]
+})
+const union = computed(() => detail.value ?? $props.page.preload)
 
 const isLiked = shallowRef(union.value?.isLiked ?? false)
 const likeSignal = new SmartAbortController()
@@ -131,6 +134,12 @@ watchEffect(onCleanup => {
   )
   onCleanup(() => stop())
 })
+
+defineSlots<{
+  topBar(args: ImageViewInject.BarProps): any
+  content(args: ImageViewInject.ContentProps): any
+  bottomBar(args: ImageViewInject.BarProps): any
+}>()
 </script>
 
 <template>

@@ -1,11 +1,12 @@
-import { PromiseContent, uni } from '@delta-comic/model'
+import { uni } from '@delta-comic/model'
+import type { UseQueryReturn } from '@pinia/colada'
 import type { AudioSrc, MediaSrc, TextTrackInit } from 'vidstack'
 
 export abstract class ContentImagePage extends uni.content.ContentPage {
-  public images = PromiseContent.withResolvers<uni.image.Image[]>()
+  public abstract fetchImages: () => UseQueryReturn<uni.image.Image[]>
 }
 
 export type VideoConfig = { textTrack?: TextTrackInit[] } & Exclude<MediaSrc, string | AudioSrc>[]
 export abstract class ContentVideoPage extends uni.content.ContentPage {
-  public videos = PromiseContent.withResolvers<VideoConfig>()
+  public abstract fetchVideo: () => UseQueryReturn<VideoConfig>
 }
