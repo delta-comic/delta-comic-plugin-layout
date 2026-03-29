@@ -4,6 +4,7 @@ import type { uni } from '@delta-comic/model'
 import { Global } from '@delta-comic/plugin'
 import { createLoadingMessage } from '@delta-comic/ui'
 import { createReusableTemplate } from '@vueuse/core'
+import type { PopoverAction } from 'vant'
 
 const $props = defineProps<{
   page: uni.content.ContentPage
@@ -22,22 +23,28 @@ const getIsSubscribe = (author: uni.item.Author) =>
       .then(v => v.length != 0)
   )
 
+const { upsert } = SubscribeDB.useUpsert()
 const addSubscribe = (author: uni.item.Author) =>
   createLoadingMessage('关注中').bind(
-    SubscribeDB.upsert({
-      type: 'author',
-      author,
-      plugin: author.$$plugin,
-      key: SubscribeDB.key.toString([author.$$plugin, author.label]),
-      itemKey: null
+    upsert({
+      items: [
+        {
+          type: 'author',
+          author,
+          plugin: author.$$plugin,
+          key: SubscribeDB.key.toString([author.$$plugin, author.label]),
+          itemKey: null
+        }
+      ]
     })
   )
+
+const { remove } = SubscribeDB.useRemove()
 const removeSubscribe = (author: uni.item.Author) =>
   createLoadingMessage('取消中').bind(
-    db.value
-      .deleteFrom('subscribe')
-      .where('key', '=', SubscribeDB.key.toString([author.$$plugin, author.label]))
-      .execute()
+    remove({
+      keys: [SubscribeDB.key.toString([author.$$plugin, author.label])]
+    })
   )
 
 const getActionInfo = (key: string) => Global.userActions.get([$props.page.plugin, key])!
