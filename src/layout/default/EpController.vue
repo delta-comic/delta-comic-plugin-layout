@@ -2,7 +2,8 @@
 import { SharedFunction } from '@delta-comic/core'
 import { uni } from '@delta-comic/model'
 import { useConfig } from '@delta-comic/plugin'
-import { shallowRef, useTemplateRef } from 'vue'
+import { useInfiniteQuery } from '@pinia/colada'
+import { computed, nextTick, shallowRef, useTemplateRef } from 'vue'
 import { useRoute } from 'vue-router'
 
 import * as LayoutInject from '../default'
@@ -25,27 +26,25 @@ const routeToContent = (preload: uni.item.RawItem) =>
 
 const config = useConfig()
 
-const queryEps = useInfQuery({
+const queryEps = useInfiniteQuery({
   key: () => [LayoutInject.QueryKey.Ep, LayoutInject.createPageQueryKey($props.page)],
-  query: () => $props.page
+  query: async ({ signal, pageParam }) => await $props.page.fetchEps(pageParam, signal),
+  initialPageParam: $props.page.fetchEps.initialPageParam,
+  getNextPageParam: lp => lp.nextPage
 })
+const eps = computed(() => queryEps.data.value?.pages.flat() ?? [])
 
 const epSelList = useTemplateRef('epSelList')
 const isShowEpSelectPopup = shallowRef(false)
-const eps = computedAsync(
-  async () => sortBy(await $props.page.eps.content, v => Number(v.index)),
-  []
-)
 
 const nowEpId = $route.params.ep.toString()
-const nowEp = computed(() => eps.value.find(ep => ep.index === nowEpId))
-const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.index === nowEpId))
+const nowEp = computed(() => eps.value.find(ep => ep.id === nowEpId))
+const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.id === nowEpId))
 const openEpSelectPopup = async () => {
-  scrollbar.value?.scrollTo(0, 0)
   isShowEpSelectPopup.value = true
   await nextTick()
   epSelList.value?.listInstance?.scrollTo({
-    index: eps.value.findIndex(ep => ep.index === nowEpId)
+    index: eps.value.findIndex(ep => ep.id === nowEpId)
   })
 }
 </script>
@@ -84,16 +83,17 @@ const openEpSelectPopup = async () => {
     <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold">选集</div>
     <DcList
       class="h-full w-full"
-      :source="{ data: PromiseContent.resolve(eps), isEnd: true }"
+      :source="{ type: 'infinite', value: queryEps }"
       :itemHeight="40"
       v-slot="{ data: { item: ep, index }, height }"
       ref="epSelList"
     >
       <VanCell
+        v-if="union"
         clickable
         @click="routeToContent({ ...union.toJSON(), thisEp: ep.toJSON() })"
         :title="ep.name || `第${index + 1}话`"
-        :title-class="[nowEpId === ep.index && 'font-bold text-(--p-color)!']"
+        :title-class="[nowEpId === ep.id && 'font-bold text-(--p-color)!']"
         class="flex w-full items-center"
         :style="{ height: `${height}px !important` }"
       >

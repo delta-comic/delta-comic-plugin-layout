@@ -18,7 +18,8 @@ export interface ContentProps {
 
 export enum QueryKey {
   Detail = 'layout::default::detail',
-  Ep = 'layout::default::ep'
+  Ep = 'layout::default::ep',
+  Recommends = 'layout::default::recommends'
 }
 export const createPageQueryKey = (page: uni.content.ContentPage) => ({
   id: page.id,
