@@ -6,7 +6,7 @@ import type { NScrollbar } from 'naive-ui'
 import { computed, ref } from 'vue'
 defineProps<{
   isScrolled: boolean
-  scrollbar: InstanceType<typeof NScrollbar>
+  scrollbar: InstanceType<typeof NScrollbar> | null
 }>()
 
 const fullscreen = useFullscreen()

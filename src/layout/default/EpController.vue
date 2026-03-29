@@ -13,7 +13,7 @@ const $props = defineProps<{
   union?: uni.item.Item
   page: uni.content.ContentPage
   isR18g?: boolean
-  scrollbar: InstanceType<typeof NScrollbar>
+  scrollbar: InstanceType<typeof NScrollbar> | null
 }>()
 
 const $route = useRoute()
@@ -43,7 +43,7 @@ const nowEpId = $route.params.ep.toString()
 const nowEp = computed(() => eps.value.find(ep => ep.id === nowEpId))
 const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.id === nowEpId))
 const openEpSelectPopup = async () => {
-  $props.scrollbar.scrollTo(0, 0)
+  $props.scrollbar?.scrollTo(0, 0)
   isShowEpSelectPopup.value = true
   await nextTick()
   epSelList.value?.listInstance?.scrollTo({

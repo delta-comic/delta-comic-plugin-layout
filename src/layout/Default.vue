@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import type { uni } from '@delta-comic/model'
 import { useQuery } from '@pinia/colada'
+import { KeyboardArrowDownRound } from '@vicons/material'
 import { createReusableTemplate, useCssVar } from '@vueuse/core'
+import { motion } from 'motion-v'
 import { computed, shallowRef, useTemplateRef } from 'vue'
 
 import Comment from '@/components/comment/Comment.vue'
-import ItemCard from '@/components/ItemCard.vue'
 import { createDateString } from '@/utils/date'
 
 import * as LayoutInject from './default'
+import Actions from './default/Actions.vue'
+import Description from './default/Description.vue'
+import EpController from './default/EpController.vue'
+import SubscribeList from './default/SubscribeList.vue'
+import Tags from './default/Tags.vue'
+import ViewBox from './default/ViewBox.vue'
 
 defineSlots<{
   subscribeRow(args: LayoutInject.SubscribeRowProps): any
@@ -35,31 +42,10 @@ const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)
 const isScrolled = shallowRef(false)
 const scrollbar = useTemplateRef('scrollbar')
 
-const contentSource = PromiseContent.withResolvers<uni.item.Item>(true)
-watch(
-  $props.page.union,
-  union => {
-    if (!union) return
-    console.log('resolve', union)
-    contentSource.resolve(union)
-  },
-  { immediate: true }
-)
-
-$props.page.detail.content.onError(err => {
-  console.error('resolve catch', err)
-  contentSource.reset(false)
-  contentSource.reject(err)
+const { data: shortId } = useQuery({
+  query: ({ signal }) => $props.page.fetchShortId(signal),
+  key: () => [LayoutInject.QueryKey.ShortId, LayoutInject.createPageQueryKey($props.page)]
 })
-$props.page.detail.content.onSuccess(data => {
-  console.log('resolve then', $props.page.preload.value)
-  contentSource.reset(false)
-  contentSource.resolve(data)
-})
-
-const config = useConfig()
-
-const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plugin, key])!
 </script>
 
 <template>
@@ -88,7 +74,11 @@ const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plu
         : 'var(--nui-body-color)'
     }"
   >
-    <ViewBox />
+    <ViewBox :isScrolled :scrollbar>
+      <template #view>
+        <slot name="view" />
+      </template>
+    </ViewBox>
     <VanTabs
       shrink
       swipeable
@@ -103,13 +93,8 @@ const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plu
         title="简介"
         name="info"
       >
-        <DcContent
-          :source="contentSource.content"
-          retriable
-          @reset-retry="$props.page.reloadAll"
-          class="min-h-[60vh]"
-        >
-          <SubscribeList />
+        <div class="min-h-[60vh] w-full">
+          <SubscribeList :page :union />
           <div class="mx-auto mt-2 w-[95%]">
             <div class="relative flex h-fit">
               <div class="relative w-[89%] text-[17px] font-medium">
@@ -133,17 +118,19 @@ const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plu
                     {{ union?.title }}
                   </span>
                   <Title />
+
                   <div
+                    v-if="shortId"
                     class="mt-0.5 flex justify-start text-xs font-light text-(--van-text-color-2)"
                   >
                     <div class="mr-2">
-                      {{ page.pid.content.data.value }}
+                      {{ shortId }}
                     </div>
                   </div>
 
-                  <Description />
+                  <Description :page :union />
 
-                  <Tags />
+                  <Tags :union />
                 </NCollapseTransition>
               </div>
               <NIcon
@@ -156,19 +143,23 @@ const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plu
                 <KeyboardArrowDownRound />
               </NIcon>
             </div>
-            <Actions />
-            <EpController />
+            <Actions :page :union>
+              <template #action="{ item, page }">
+                <slot name="action" :item :page />
+              </template>
+            </Actions>
+            <EpController :page :union :scrollbar />
           </div>
           <Recommends />
-        </DcContent>
+        </div>
       </VanTab>
 
-      <VanTab class="van-hairline--top h-full!" title="评论" name="comment">
+      <VanTab class="van-hairline--top h-full!" title="评论" name="comment" v-if="union">
         <template #title>
           <span>评论</span>
           <span class="ml-0.5 text-xs! font-light">{{ union?.commentNumber ?? '' }}</span>
         </template>
-        <Comment :comments="page.comments" :item="union" class="h-[calc(70vh-38px)]" />
+        <Comment :fetchComments="page.fetchComments" :item="union" class="h-[calc(70vh-38px)]" />
       </VanTab>
 
       <slot name="tab" :="{ page }" />
