@@ -23,7 +23,7 @@ defineSlots<{
   description(args: LayoutInject.ContentProps): any
   recommend(args: LayoutInject.ContentProps): any
   tab(args: LayoutInject.TabProps): any
-  view(): any
+  view(args: { item?: uni.item.Item }): any
 }>()
 
 const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>()
@@ -76,7 +76,7 @@ const { data: shortId } = useQuery({
   >
     <ViewBox :isScrolled :scrollbar>
       <template #view>
-        <slot name="view" />
+        <slot :item="union" name="view" />
       </template>
     </ViewBox>
     <VanTabs

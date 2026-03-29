@@ -22,7 +22,7 @@ export enum QueryKey {
   Recommends = 'layout::default::recommends',
   ShortId = 'layout::default::shortId'
 }
-export const createPageQueryKey = (page: uni.content.ContentPage) => ({
+export const createPageQueryKey = (page: uni.content.ContentPage | uni.item.Item) => ({
   id: page.id,
   ct: uni.content.ContentPage.contentPages.key.toString(page.contentType)
 })

@@ -6,8 +6,7 @@ import 'swiper/css/zoom'
 import 'swiper/css/free-mode'
 import { uni } from '@delta-comic/model'
 import { Inject, useConfig } from '@delta-comic/plugin'
-import { SmartAbortController } from '@delta-comic/request'
-import { useQuery } from '@pinia/colada'
+import { useInfiniteQuery, useQuery } from '@pinia/colada'
 import { LikeOutlined } from '@vicons/antd'
 import { ArrowBackIosNewRound, FullscreenExitRound } from '@vicons/material'
 import { computedWithControl, useResizeObserver } from '@vueuse/core'
@@ -24,11 +23,15 @@ import { useRoute } from 'vue-router'
 import ButtonPopup from '@/components/ButtonPopup.vue'
 import Settings from '@/components/Settings.vue'
 import { imageViewConfig } from '@/config'
+import { createPageQueryKey } from '@/layout/default'
 import type { ContentImagePage } from '@/model'
+import { useLike } from '@/utils/content'
 import { useSwipeDbClick } from '@/utils/ui'
 
-import type * as ImageViewInject from './image'
-const $props = defineProps<{ page: ContentImagePage }>()
+import * as LayoutInject from '../layout/default'
+import * as ImageViewInject from './image'
+
+const $props = defineProps<{ page: ContentImagePage; union?: uni.item.Item }>()
 
 const config = useConfig().$load(imageViewConfig)
 
@@ -36,8 +39,11 @@ const swiper = shallowRef<SwiperClass>()
 
 const { isFullscreen } = useFullscreen()
 
-const images = useQuery({})
-// const images = computed(() => $props.page.images.content.data.value ?? [])
+const imagesQuery = useQuery({
+  key: () => [ImageViewInject.QueryKey.Images, createPageQueryKey($props.page)],
+  query: async ({ signal }) => await $props.page.fetchImages(signal)
+})
+const images = computed(() => imagesQuery.data.value ?? [])
 
 const pageOnIndex = shallowRef(0)
 const selectPage = shallowRef(pageOnIndex.value)
@@ -59,8 +65,6 @@ const goToSlide = (offset: 1 | -1) => {
     offset < 0 ? swiper.value?.slidePrev() : swiper.value?.slideNext()
   }
 }
-const goPrev = () => goToSlide(-1)
-const goNext = () => goToSlide(1)
 
 const isShowMenu = shallowRef(true)
 
@@ -68,13 +72,19 @@ const { handleTouchend, handleTouchmove, handleTouchstart, handleDbTap } = useSw
   isShowMenu.value = !isShowMenu.value
 })
 
-const nowEp = computed(() =>
-  $props.page.eps.content.data.value?.find(v => v.index === $props.page.ep)
-)
+const { likeItem } = useLike()
 
+const queryEps = useInfiniteQuery({
+  key: () => [LayoutInject.QueryKey.Ep, LayoutInject.createPageQueryKey($props.page)],
+  query: async ({ signal, pageParam }) => await $props.page.fetchEps(pageParam, signal),
+  initialPageParam: $props.page.fetchEps.initialPageParam,
+  getNextPageParam: lp => lp.nextPage
+})
+const eps = computed(() => queryEps.data.value?.pages.flat() ?? [])
+const nowEp = computed(() => eps.value?.find(v => v.id === $props.page.ep))
 const $route = useRoute()
 const nowEpId = $route.params.ep.toString()
-const handleEpSelect = (preload: uni.item.RawItem) =>
+const routeToContent = (preload: uni.item.RawItem) =>
   SharedFunction.call(
     'routeToContent',
     preload.contentType,
@@ -82,23 +92,6 @@ const handleEpSelect = (preload: uni.item.RawItem) =>
     preload.thisEp.id,
     uni.item.Item.create(preload)
   )
-
-const { data: detail } = useQuery({
-  query: ({ signal }) => $props.page.fetchDetail(signal),
-  key: () => [LayoutInject.QueryKey.Detail, LayoutInject.createPageQueryKey($props.page)]
-})
-const union = computed(() => detail.value ?? $props.page.preload)
-
-const isLiked = shallowRef(union.value?.isLiked ?? false)
-const likeSignal = new SmartAbortController()
-const handleLike = async () => {
-  likeSignal.abort()
-  try {
-    union.value.like(likeSignal.signal).then(v => (isLiked.value = v))
-  } catch (error) {
-    console.error('liked fail')
-  }
-}
 
 const slides = shallowReactive<InstanceType<typeof SwiperSlide>[]>([])
 const freeModeHeightCache = shallowReactive(new Array<number>())
@@ -205,14 +198,14 @@ defineSlots<{
       ref="imgIns"
       class="absolute top-0 size-full"
       fit="contain"
-      :src="comic.$cover"
+      :src="union?.$cover"
       v-if="isEmpty(images)"
     />
     <div
       class="pointer-events-none absolute top-0 left-0 z-2 h-full w-full *:pointer-events-auto *:absolute *:top-0 *:h-full *:w-10"
     >
-      <div class="left-0" @click.stop="goPrev" />
-      <div class="right-0" @click.stop="goNext" />
+      <div class="left-0" @click.stop="goToSlide(-1)" />
+      <div class="right-0" @click.stop="goToSlide(1)" />
     </div>
     <AnimatePresence>
       <motion.div
@@ -229,7 +222,7 @@ defineSlots<{
           </NIcon>
         </NButton>
         <div class="flex w-1/2 flex-col text-nowrap">
-          <span class="van-ellipsis text-[1rem]">{{ comic.title }}</span>
+          <span class="van-ellipsis text-[1rem]">{{ union?.title }}</span>
           <span class="van-ellipsis ml-1 text-xs">{{ nowEp?.name }}</span>
         </div>
         <div class="flex h-full w-full items-center justify-around">
@@ -239,13 +232,14 @@ defineSlots<{
             :args="{ page, images, swiper, index: pageOnIndex }"
           />
           <DcToggleIcon
+            v-if="union"
             padding
             size="30px"
-            v-model="isLiked"
-            @click="handleLike"
+            v-model="union.isLiked"
+            @click="likeItem(union)"
             :icon="LikeOutlined"
           />
-          <FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
+          <FavouriteSelect :item="union" v-if="union" plain />
         </div>
       </motion.div>
       <motion.div
@@ -299,7 +293,7 @@ defineSlots<{
             <Settings />
           </ButtonPopup>
           <ButtonPopup
-            v-if="(page.eps.content.data.value?.length ?? 1) > 1"
+            v-if="(eps.length ?? 1) > 1"
             class="flex h-[70vh] flex-col bg-black/50! backdrop-blur"
           >
             <template #button>
@@ -310,7 +304,7 @@ defineSlots<{
             </div>
             <DcList
               class="h-full w-full"
-              :source="{ data: page.eps.content, isEnd: true }"
+              :source="{ type: 'infinite', value: queryEps }"
               :itemHeight="40"
               v-slot="{ data: { item: ep, index }, height }"
               :data-processor="v => v.toReversed()"
@@ -318,9 +312,9 @@ defineSlots<{
             >
               <VanCell
                 clickable
-                @click="handleEpSelect({ ...page.union.value!.toJSON(), thisEp: ep.toJSON() })"
-                :title="ep.name || `第${page.eps.content.data.value!.length - index}话`"
-                :title-class="['text-white', nowEpId === ep.index && 'font-bold !text-(--p-color)']"
+                @click="union && routeToContent({ ...union.toJSON(), thisEp: ep.toJSON() })"
+                :title="ep.name || `第${eps.length - index}话`"
+                :title-class="['text-white', nowEpId === ep.id && 'font-bold !text-(--p-color)']"
                 class="flex w-full items-center bg-transparent!"
                 :style="{ height: `${height}px !important` }"
               >

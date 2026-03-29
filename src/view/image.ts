@@ -17,3 +17,7 @@ export interface ContentProps {
   swiper: SwiperClass
   index: number
 }
+export enum QueryKey {
+  Images = 'layout::view::image'
+}
+export const createImageQueryKey = () => {}
