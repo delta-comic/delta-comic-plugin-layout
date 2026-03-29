@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { SharedFunction } from '@delta-comic/core'
+import type { uni } from '@delta-comic/model'
+
+defineProps<{
+  union?: uni.item.Item
+}>()
+</script>
 
 <template>
   <div
@@ -23,7 +30,7 @@
           SharedFunction.call(
             'routeToSearch',
             category.search.keyword,
-            [page.plugin, category.search.source],
+            [category.$$plugin, category.search.source],
             category.search.sort
           )
         "

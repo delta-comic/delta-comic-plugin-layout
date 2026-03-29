@@ -3,6 +3,7 @@ import { SharedFunction } from '@delta-comic/core'
 import { uni } from '@delta-comic/model'
 import { useConfig } from '@delta-comic/plugin'
 import { useInfiniteQuery } from '@pinia/colada'
+import type { NScrollbar } from 'naive-ui'
 import { computed, nextTick, shallowRef, useTemplateRef } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -12,6 +13,7 @@ const $props = defineProps<{
   union?: uni.item.Item
   page: uni.content.ContentPage
   isR18g?: boolean
+  scrollbar: InstanceType<typeof NScrollbar>
 }>()
 
 const $route = useRoute()
@@ -41,6 +43,7 @@ const nowEpId = $route.params.ep.toString()
 const nowEp = computed(() => eps.value.find(ep => ep.id === nowEpId))
 const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.id === nowEpId))
 const openEpSelectPopup = async () => {
+  $props.scrollbar.scrollTo(0, 0)
   isShowEpSelectPopup.value = true
   await nextTick()
   epSelList.value?.listInstance?.scrollTo({

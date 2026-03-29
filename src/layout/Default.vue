@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import type { uni } from '@delta-comic/model'
+import { useQuery } from '@pinia/colada'
+import { createReusableTemplate, useCssVar } from '@vueuse/core'
+import { computed, shallowRef, useTemplateRef } from 'vue'
+
 import Comment from '@/components/comment/Comment.vue'
 import ItemCard from '@/components/ItemCard.vue'
 import { createDateString } from '@/utils/date'
@@ -14,12 +19,7 @@ defineSlots<{
   view(): any
 }>()
 
-const $router = useRouter()
-const $route = useRoute()
 const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>()
-
-const fullscreen = useFullscreen()
-const setFullscreen = async (isFull: boolean) => (isFull ? fullscreen.entry() : fullscreen.exit())
 
 const { data: detail } = useQuery({
   query: ({ signal }) => $props.page.fetchDetail(signal),
@@ -34,20 +34,6 @@ const safeHeightTopCss = useCssVar('--safe-area-inset-top')
 const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)?.[0]))
 const isScrolled = shallowRef(false)
 const scrollbar = useTemplateRef('scrollbar')
-
-const getItemCard = (contentType: uni.content.ContentType_) =>
-  uni.item.Item.itemCard.get(contentType) ?? ItemCard
-
-const isLiked = shallowRef(union.value?.isLiked ?? false)
-const likeSignal = new SmartAbortController()
-const handleLike = async () => {
-  likeSignal.abort()
-  try {
-    union.value?.like(likeSignal.signal).then(v => (isLiked.value = v))
-  } catch (error) {
-    console.error('liked fail')
-  }
-}
 
 const contentSource = PromiseContent.withResolvers<uni.item.Item>(true)
 watch(
@@ -74,34 +60,6 @@ $props.page.detail.content.onSuccess(data => {
 const config = useConfig()
 
 const getActionInfo = (key: string) => Global.userActions.get([union.value.$$plugin, key])!
-
-const getIsSubscribe = (author: uni.item.Author) =>
-  db.value
-    .selectFrom('subscribe')
-    .where('key', '=', `${author.$$plugin}:${author.label}`)
-    .selectAll()
-    .execute()
-    .then(v => v.length != 0)
-
-const showDetailUsers = shallowRef(false)
-
-const addSubscribe = (author: uni.item.Author) =>
-  createLoadingMessage('关注中').bind(
-    SubscribeDB.upsert({
-      type: 'author',
-      author,
-      plugin: author.$$plugin,
-      key: SubscribeDB.key.toString([author.$$plugin, author.label]),
-      itemKey: null
-    })
-  )
-const removeSubscribe = (author: uni.item.Author) =>
-  createLoadingMessage('取消中').bind(
-    db.value
-      .deleteFrom('subscribe')
-      .where('key', '=', SubscribeDB.key.toString([author.$$plugin, author.label]))
-      .execute()
-  )
 </script>
 
 <template>

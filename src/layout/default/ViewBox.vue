@@ -1,4 +1,25 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useFullscreen } from '@delta-comic/core'
+import { usePreventBack } from '@delta-comic/ui'
+import { ArrowBackRound, FullscreenRound, PlayArrowRound } from '@vicons/material'
+import type { NScrollbar } from 'naive-ui'
+import { computed, ref } from 'vue'
+defineProps<{
+  isScrolled: boolean
+  scrollbar: InstanceType<typeof NScrollbar>
+}>()
+
+const fullscreen = useFullscreen()
+const isFullscreen = computed({
+  get: () => fullscreen.isFullscreen.value,
+  set: isFull => (isFull ? fullscreen.entry() : fullscreen.exit())
+})
+usePreventBack(isFullscreen, ref(true))
+
+defineSlots<{
+  view(): any
+}>()
+</script>
 
 <template>
   <div class="relative flex h-[30vh] justify-center bg-black text-white">
@@ -46,14 +67,14 @@
         </div>
       </VanSticky>
     </div>
-    <Teleport to="#cover" :disabled="!fullscreen.isFullscreen.value">
+    <Teleport to="#cover" :disabled="!isFullscreen">
       <slot name="view" />
     </Teleport>
     <VanRow class="pointer-events-none absolute bottom-0 z-2 w-full">
       <VanCol span="1" offset="21">
         <NButton
           class="pointer-events-auto text-3xl!"
-          @click="setFullscreen(true)"
+          @click="isFullscreen = true"
           text
           color="#fff"
         >

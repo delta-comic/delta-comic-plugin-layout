@@ -1,18 +1,59 @@
 <script setup lang="ts">
+import { SubscribeDB } from '@delta-comic/db'
 import type { uni } from '@delta-comic/model'
+import { Global } from '@delta-comic/plugin'
+import { createLoadingMessage } from '@delta-comic/ui'
+import { createReusableTemplate } from '@vueuse/core'
 
-defineProps<{
+const $props = defineProps<{
+  page: uni.content.ContentPage
   author: uni.item.Author
   isSmall?: boolean
 }>()
 
 const [DefineAvatar, Avatar] = createReusableTemplate<{ author: uni.item.Author }>()
+
+const getIsSubscribe = (author: uni.item.Author) =>
+  SubscribeDB.useQuery(db =>
+    db
+      .where('key', '=', `${author.$$plugin}:${author.label}`)
+      .selectAll()
+      .execute()
+      .then(v => v.length != 0)
+  )
+
+const addSubscribe = (author: uni.item.Author) =>
+  createLoadingMessage('关注中').bind(
+    SubscribeDB.upsert({
+      type: 'author',
+      author,
+      plugin: author.$$plugin,
+      key: SubscribeDB.key.toString([author.$$plugin, author.label]),
+      itemKey: null
+    })
+  )
+const removeSubscribe = (author: uni.item.Author) =>
+  createLoadingMessage('取消中').bind(
+    db.value
+      .deleteFrom('subscribe')
+      .where('key', '=', SubscribeDB.key.toString([author.$$plugin, author.label]))
+      .execute()
+  )
+
+const getActionInfo = (key: string) => Global.userActions.get([$props.page.plugin, key])!
 </script>
 
 <template>
   <div class="relative w-full" v-if="isSmall">
     <Avatar :author />
-    <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+    <DcVar
+      :value="getIsSubscribe(author)"
+      v-slot="{
+        value: {
+          data: { value: isSubscribe }
+        }
+      }"
+    >
       <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'small' }" />
       <Inject
         key="layout::layout::default.subscribe-row"
@@ -33,11 +74,18 @@ const [DefineAvatar, Avatar] = createReusableTemplate<{ author: uni.item.Author 
           </NIcon>
         </template>
       </NButton>
-    </DcAwait>
+    </DcVar>
   </div>
   <div class="relative w-full" v-else>
     <Avatar :author />
-    <DcAwait :promise="() => getIsSubscribe(author)" v-slot="{ result: isSubscribe }">
+    <DcVar
+      :value="getIsSubscribe(author)"
+      v-slot="{
+        value: {
+          data: { value: isSubscribe }
+        }
+      }"
+    >
       <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'common' }" />
       <Inject
         key="layout::layout::default.subscribe-row"
@@ -61,7 +109,7 @@ const [DefineAvatar, Avatar] = createReusableTemplate<{ author: uni.item.Author 
           {{ isSubscribe ? '取关' : '关注' }}
         </template>
       </NButton>
-    </DcAwait>
+    </DcVar>
   </div>
   <DefineAvatar v-slot="{ author }">
     <VanPopover
