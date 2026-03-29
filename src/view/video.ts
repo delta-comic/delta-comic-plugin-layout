@@ -7,3 +7,6 @@ export interface BarProps {
   page: model.ContentVideoPage
   isFullscreen: boolean
 }
+export enum QueryKey {
+  Videos = 'layout::view::video'
+}

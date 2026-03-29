@@ -20,4 +20,3 @@ export interface ContentProps {
 export enum QueryKey {
   Images = 'layout::view::image'
 }
-export const createImageQueryKey = () => {}

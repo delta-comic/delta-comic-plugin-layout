@@ -1,29 +1,38 @@
 <script setup lang="ts">
+import { useFullscreen } from '@delta-comic/core'
+import type { uni } from '@delta-comic/model'
+import { Inject } from '@delta-comic/plugin'
+import 'vidstack/bundle'
+import 'vidstack/icons'
+import 'hls.js'
+import { useQuery } from '@pinia/colada'
+import { LikeOutlined } from '@vicons/antd'
+import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
+import type { MediaPlayerElement } from 'vidstack/elements'
 import { computed, onBeforeUnmount, shallowRef, useTemplateRef } from 'vue'
 import { watch } from 'vue'
-import type { MediaPlayerElement } from 'vidstack/elements'
-import 'vidstack/icons'
-import 'vidstack/bundle'
-import 'hls.js'
-import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
-import { LikeOutlined } from '@vicons/antd'
 import { useRouter } from 'vue-router'
-import { useFullscreen } from '@delta-comic/core'
-import type { ContentVideoPage, VideoConfig } from '@/model'
-import { SmartAbortController } from '@delta-comic/request'
-import type * as VideoViewInject from './video'
-import { Inject } from '@delta-comic/plugin'
+
 import ButtonPopup from '@/components/ButtonPopup.vue'
 import Settings from '@/components/Settings.vue'
+import { createPageQueryKey } from '@/layout/default'
+import type { ContentVideoPage, VideoConfig } from '@/model'
+import { useLike } from '@/utils/content'
 
-const $props = defineProps<{ page: ContentVideoPage }>()
+import * as VideoViewInject from './video'
+
+const $props = defineProps<{ page: ContentVideoPage; union?: uni.item.Item }>()
 
 const { isFullscreen, ...fc } = useFullscreen()
 const setFullscreen = async (isFull: boolean) => (isFull ? fc.entry() : fc.exit())
 
 const player = useTemplateRef<MediaPlayerElement>('player')
-const union = computed(() => $props.page.union.value)
-const videos = computed(() => $props.page.videos.content.data.value ?? [])
+
+const videosQuery = useQuery({
+  key: () => [VideoViewInject.QueryKey.Videos, createPageQueryKey($props.page)],
+  query: async ({ signal }) => await $props.page.fetchVideo(signal)
+})
+const videos = computed(() => videosQuery.data.value ?? [])
 
 watch(
   player,
@@ -84,16 +93,7 @@ watch(
   { immediate: true }
 )
 
-const isLiked = shallowRef(union.value?.isLiked ?? false)
-const likeSignal = new SmartAbortController()
-const handleLike = async () => {
-  likeSignal.abort()
-  try {
-    union.value?.like(likeSignal.signal).then(v => (isLiked.value = v))
-  } catch (error) {
-    console.error('liked fail')
-  }
-}
+const { likeItem } = useLike()
 
 defineSlots<{
   topBar(args: VideoViewInject.BarProps): any
@@ -142,9 +142,15 @@ defineSlots<{
             <slot name="topBar" :="{ player, page, isFullscreen }"></slot>
             <Inject key="layout::view::video.top-bar" :args="{ player, page, isFullscreen }" />
 
-            <DcToggleIcon size="23px" v-model="isLiked" @click="handleLike" :icon="LikeOutlined" />
+            <DcToggleIcon
+              size="23px"
+              v-model="union.isLiked"
+              @click="likeItem(union)"
+              v-if="union"
+              :icon="LikeOutlined"
+            />
 
-            <FavouriteSelect :item="page.union.value" v-if="page.union.value" plain />
+            <FavouriteSelect :item="union" v-if="union" plain />
 
             <media-pip-button>
               <media-icon
