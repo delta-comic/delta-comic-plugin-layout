@@ -1,3 +1,11 @@
+# [0.8.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.7.2...0.8.0) (2026-03-29)
+
+
+### Features
+
+* 解耦布局组件 ([335daae](https://github.com/delta-comic/delta-comic-plugin-layout/commit/335daaeea6c593304750aafa522717f89bfb8354))
+* 重构全部适配新版本 [pub] ([0993166](https://github.com/delta-comic/delta-comic-plugin-layout/commit/0993166c7e80b73a6495246a390fac2934b29d22))
+
 ## [0.7.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.7.1...0.7.2) (2026-03-03)
 
 
