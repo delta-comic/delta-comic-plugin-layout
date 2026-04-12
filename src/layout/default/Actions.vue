@@ -7,7 +7,7 @@ import { FolderOutlined, ReportGmailerrorredRound } from '@vicons/material'
 import FavouriteSelect from '@/components/FavouriteSelect.vue'
 import { useLike } from '@/utils/content'
 
-const $props = defineProps<{
+defineProps<{
   union?: uni.item.Item
   page: uni.content.ContentPage
 }>()

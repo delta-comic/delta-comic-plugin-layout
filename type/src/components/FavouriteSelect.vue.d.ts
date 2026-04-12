@@ -23,6 +23,6 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
             description: string;
             isPrivate: boolean;
         }) => void;
-    }, {}, {}, {}, {}> | null;
+    }, {}, {}, {}, {}>;
 }, any>;
 export default _default;

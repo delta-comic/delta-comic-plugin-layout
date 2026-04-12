@@ -1,24 +1,32 @@
-import { fileURLToPath, URL } from "node:url";
+import { fileURLToPath, URL } from "node:url"
 
-import { DeltaComicUiResolver } from "@delta-comic/ui/vite";
-import { deltaComicPlus } from "@delta-comic/vite";
-import tailwindcss from "@tailwindcss/vite";
-import vue from "@vitejs/plugin-vue";
-import browserslist from "browserslist";
-import { browserslistToTargets } from "lightningcss";
-import { NaiveUiResolver, VantResolver } from "unplugin-vue-components/resolvers";
-import Components from "unplugin-vue-components/vite";
-import { vite as vidstack } from "vidstack/plugins";
-import { defineConfig, type UserConfigExport } from "vite-plus";
-import dts from "vite-plugin-dts";
+import { DeltaComicUiResolver } from "@delta-comic/ui/vite"
+import { deltaComicPlus } from "@delta-comic/vite"
+import tailwindcss from "@tailwindcss/vite"
+import vue from "@vitejs/plugin-vue"
+import browserslist from "browserslist"
+import { browserslistToTargets } from "lightningcss"
+import { NaiveUiResolver, VantResolver } from "unplugin-vue-components/resolvers"
+import Components from "unplugin-vue-components/vite"
+import { vite as vidstack } from "vidstack/plugins"
+import { defineConfig, type UserConfigExport } from "vite-plus"
+import dts from "vite-plugin-dts"
 
-import _package from "./package.json";
+import _package from "./package.json"
 
 export default defineConfig(
   ({ command }) =>
     ({
       plugins: [
-        dts({ include: ["./src"], outDir: "./type", tsconfigPath: "./tsconfig.json" }),
+        dts({
+          include: ["./src"], outDir: "./type",
+          compilerOptions: {
+            skipLibCheck: true,
+            strict: false,
+            skipDefaultLibCheck: true,
+            noCheck: true,
+          }
+        }),
         vue({
           template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith("media-") } },
         }),
@@ -51,4 +59,4 @@ export default defineConfig(
       server: { port: 6174, host: true },
       base: "./",
     }) satisfies UserConfigExport,
-);
+)

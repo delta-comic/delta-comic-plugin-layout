@@ -8,7 +8,7 @@ declare function __VLS_template(): {
     slots: {
         description?(_: {
             page: uni.content.ContentPage;
-            item: uni.item.Item | undefined;
+            item: uni.item.Item;
         }): any;
     };
     refs: {};

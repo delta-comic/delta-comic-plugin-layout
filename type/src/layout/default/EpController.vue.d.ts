@@ -10,6 +10,6 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
     epSelList: {
         scrollTop: number;
         listInstance: import('naive-ui').VirtualListInst;
-    } | null;
+    };
 }, any>;
 export default _default;

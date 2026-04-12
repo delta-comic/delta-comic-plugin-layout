@@ -21,31 +21,31 @@ declare function __VLS_template(): {
     };
     refs: {
         container: HTMLDivElement;
-        cover: ({
+        cover: {
             $: import('vue').ComponentInternalInstance;
             $data: {};
             $props: {
-                readonly src?: uni.image.Image_ | undefined;
-                readonly alt?: string | undefined;
-                readonly previewable?: boolean | undefined;
-                readonly retryMax?: number | undefined;
-                readonly round?: boolean | undefined;
-                readonly fit?: "fill" | "none" | "cover" | "contain" | "scale-down" | undefined;
+                readonly src?: uni.image.Image_;
+                readonly alt?: string;
+                readonly previewable?: boolean;
+                readonly retryMax?: number;
+                readonly round?: boolean;
+                readonly fit?: import('naive-ui').ImageProps["objectFit"];
                 readonly class?: any;
-                readonly hideLoading?: boolean | undefined;
-                readonly hideError?: boolean | undefined;
-                readonly inline?: boolean | undefined;
+                readonly hideLoading?: boolean;
+                readonly hideError?: boolean;
+                readonly inline?: boolean;
                 readonly style?: StyleValue;
-                readonly imgProp?: import('vue').ImgHTMLAttributes | undefined;
+                readonly imgProp?: import('vue').ImgHTMLAttributes;
                 readonly cacheList?: {
                     loaded: Set<string>;
                     error: Set<string>;
-                } | undefined;
-                readonly fetchpriority?: "high" | "low" | "auto" | undefined;
-                readonly fallback?: uni.image.Image_ | undefined;
-                readonly onLoad?: ((...args: any[]) => any) | undefined | undefined;
-                readonly onClick?: (() => any) | undefined | undefined;
-                readonly onError?: (() => any) | undefined | undefined;
+                };
+                readonly fetchpriority?: "high" | "low" | "auto";
+                readonly fallback?: uni.image.Image_;
+                readonly onLoad?: ((...args: any[]) => any) | undefined;
+                readonly onClick?: (() => any) | undefined;
+                readonly onError?: (() => any) | undefined;
             } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps;
             $attrs: import('vue').Attrs;
             $refs: {
@@ -419,7 +419,7 @@ declare function __VLS_template(): {
                 }> | null;
             };
             $slots: Readonly<{
-                [name: string]: import('vue').Slot<any> | undefined;
+                [name: string]: import('vue').Slot<any>;
             }>;
             $root: import('vue').ComponentPublicInstance | null;
             $parent: import('vue').ComponentPublicInstance | null;
@@ -873,7 +873,7 @@ declare function __VLS_template(): {
             onError?: (() => any) | undefined;
         }>, "retryMax" | "fetchpriority" | "isLoaded" | "imageEl" | "imageIns"> & {
             isLoaded: boolean;
-            imageEl: HTMLImageElement | null | undefined;
+            imageEl: HTMLImageElement;
             imageIns: import('vue').CreateComponentPublicInstanceWithMixins<Readonly<import('vue').ExtractPropTypes<{
                 onPreviewPrev: import('vue').PropType<() => void>;
                 onPreviewNext: import('vue').PropType<() => void>;
@@ -1239,7 +1239,7 @@ declare function __VLS_template(): {
                 showToolbar: boolean;
                 showToolbarTooltip: boolean;
                 previewDisabled: boolean;
-            }> | null;
+            }>;
         } & {} & import('vue').ComponentCustomProperties & {} & {
             $slots: Readonly<{
                 loading?(): any;
@@ -1248,7 +1248,7 @@ declare function __VLS_template(): {
                 loading?(): any;
                 fail?(): any;
             };
-        }) | null;
+        };
     };
     rootEl: any;
 };
@@ -1256,36 +1256,36 @@ type __VLS_TemplateResult = ReturnType<typeof __VLS_template>;
 declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
     click: () => any;
 }, string, import('vue').PublicProps, Readonly<__VLS_Props> & Readonly<{
-    onClick?: (() => any) | undefined;
+    onClick?: () => any;
 }>, {
     type: "default" | "big" | "small";
 }, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {
     container: HTMLDivElement;
-    cover: ({
+    cover: {
         $: import('vue').ComponentInternalInstance;
         $data: {};
         $props: {
-            readonly src?: uni.image.Image_ | undefined;
-            readonly alt?: string | undefined;
-            readonly previewable?: boolean | undefined;
-            readonly retryMax?: number | undefined;
-            readonly round?: boolean | undefined;
-            readonly fit?: "fill" | "none" | "cover" | "contain" | "scale-down" | undefined;
+            readonly src?: uni.image.Image_;
+            readonly alt?: string;
+            readonly previewable?: boolean;
+            readonly retryMax?: number;
+            readonly round?: boolean;
+            readonly fit?: import('naive-ui').ImageProps["objectFit"];
             readonly class?: any;
-            readonly hideLoading?: boolean | undefined;
-            readonly hideError?: boolean | undefined;
-            readonly inline?: boolean | undefined;
+            readonly hideLoading?: boolean;
+            readonly hideError?: boolean;
+            readonly inline?: boolean;
             readonly style?: StyleValue;
-            readonly imgProp?: import('vue').ImgHTMLAttributes | undefined;
+            readonly imgProp?: import('vue').ImgHTMLAttributes;
             readonly cacheList?: {
                 loaded: Set<string>;
                 error: Set<string>;
-            } | undefined;
-            readonly fetchpriority?: "high" | "low" | "auto" | undefined;
-            readonly fallback?: uni.image.Image_ | undefined;
-            readonly onLoad?: ((...args: any[]) => any) | undefined | undefined;
-            readonly onClick?: (() => any) | undefined | undefined;
-            readonly onError?: (() => any) | undefined | undefined;
+            };
+            readonly fetchpriority?: "high" | "low" | "auto";
+            readonly fallback?: uni.image.Image_;
+            readonly onLoad?: ((...args: any[]) => any) | undefined;
+            readonly onClick?: (() => any) | undefined;
+            readonly onError?: (() => any) | undefined;
         } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps;
         $attrs: import('vue').Attrs;
         $refs: {
@@ -1659,7 +1659,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
             }> | null;
         };
         $slots: Readonly<{
-            [name: string]: import('vue').Slot<any> | undefined;
+            [name: string]: import('vue').Slot<any>;
         }>;
         $root: import('vue').ComponentPublicInstance | null;
         $parent: import('vue').ComponentPublicInstance | null;
@@ -2113,7 +2113,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
         onError?: (() => any) | undefined;
     }>, "retryMax" | "fetchpriority" | "isLoaded" | "imageEl" | "imageIns"> & {
         isLoaded: boolean;
-        imageEl: HTMLImageElement | null | undefined;
+        imageEl: HTMLImageElement;
         imageIns: import('vue').CreateComponentPublicInstanceWithMixins<Readonly<import('vue').ExtractPropTypes<{
             onPreviewPrev: import('vue').PropType<() => void>;
             onPreviewNext: import('vue').PropType<() => void>;
@@ -2479,7 +2479,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
             showToolbar: boolean;
             showToolbarTooltip: boolean;
             previewDisabled: boolean;
-        }> | null;
+        }>;
     } & {} & import('vue').ComponentCustomProperties & {} & {
         $slots: Readonly<{
             loading?(): any;
@@ -2488,7 +2488,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
             loading?(): any;
             fail?(): any;
         };
-    }) | null;
+    };
 }, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
 export default _default;

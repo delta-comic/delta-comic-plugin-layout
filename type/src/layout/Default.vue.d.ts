@@ -195,7 +195,7 @@ declare function __VLS_template(): {
             readonly xScrollable: boolean;
             readonly yPlacement: "left" | "right";
             readonly xPlacement: "top" | "bottom";
-        }> | null;
+        }>;
     };
     rootEl: any;
 };
@@ -370,7 +370,7 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
         readonly xScrollable: boolean;
         readonly yPlacement: "left" | "right";
         readonly xPlacement: "top" | "bottom";
-    }> | null;
+    }>;
 }, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
 export default _default;

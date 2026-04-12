@@ -19,12 +19,12 @@
   "type": "module",
   "types": "./type/main.d.ts",
   "exports": {
-    "types": "./type/main.d.ts",
-    "import": "./type/main.d.ts",
-    "node": "./type/main.d.ts",
-    "require": "./type/main.d.ts",
-    "module-sync": "./type/main.d.ts",
-    "default": "./type/main.d.ts"
+    "types": "./type/src/main.d.ts",
+    "import": "./type/src/main.d.ts",
+    "node": "./type/src/main.d.ts",
+    "require": "./type/src/main.d.ts",
+    "module-sync": "./type/src/main.d.ts",
+    "default": "./type/src/main.d.ts"
   },
   "scripts": {
     "dev": "vp dev",
@@ -37,13 +37,13 @@
     "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
   },
   "dependencies": {
-    "@delta-comic/core": "^1.3.5",
-    "@delta-comic/db": "^1.3.5",
-    "@delta-comic/model": "^1.3.5",
-    "@delta-comic/plugin": "^1.3.5",
-    "@delta-comic/request": "^1.3.5",
-    "@delta-comic/ui": "^1.3.5",
-    "@delta-comic/utils": "^1.3.5",
+    "@delta-comic/core": "^1.3.6",
+    "@delta-comic/db": "^1.3.6",
+    "@delta-comic/model": "^1.3.6",
+    "@delta-comic/plugin": "^1.3.6",
+    "@delta-comic/request": "^1.3.6",
+    "@delta-comic/ui": "^1.3.6",
+    "@delta-comic/utils": "^1.3.6",
     "@pinia/colada": "^1.1.0",
     "@tauri-apps/api": "^2.10.1",
     "@vicons/antd": "^0.13.0",
@@ -69,7 +69,7 @@
     "@commitlint/types": "^20.5.0",
     "@cspell/dict-npm": "^5.2.38",
     "@cspell/dict-rust": "^4.1.2",
-    "@delta-comic/vite": "^1.3.5",
+    "@delta-comic/vite": "^1.3.6",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.6",
@@ -87,13 +87,13 @@
     "tailwindcss": "4.2.2",
     "typescript": "^6.0.2",
     "unplugin-vue-components": "32.0.0",
-    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.16",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-externals": "^0.6.2",
     "vite-plugin-monkey": "^7.1.9",
+    "vite-plus": "latest",
     "vue-component-type-helpers": "^3.2.6",
-    "vue-tsc": "^3.2.6",
-    "vite-plus": "latest"
+    "vue-tsc": "^3.2.6"
   },
   "pnpm": {
     "overrides": {

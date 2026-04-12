@@ -28,8 +28,8 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
     click: (c: uni.comment.Comment) => any;
     clickUser: (u: uni.user.User) => any;
 }, string, import('vue').PublicProps, Readonly<__VLS_Props> & Readonly<{
-    onClick?: ((c: uni.comment.Comment) => any) | undefined;
-    onClickUser?: ((u: uni.user.User) => any) | undefined;
+    onClick?: (c: uni.comment.Comment) => any;
+    onClickUser?: (u: uni.user.User) => any;
 }>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {}, any>;
 declare const _default: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
 export default _default;

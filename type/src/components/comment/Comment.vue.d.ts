@@ -1,66 +1,63 @@
-import { uni, RStream } from '@delta-comic/model';
+import { uni, StreamQuery } from '@delta-comic/model';
 type __VLS_Props = {
     item: uni.item.Item;
-    comments: RStream<uni.comment.Comment>;
+    fetchComments: StreamQuery<uni.comment.Comment>;
     class?: any;
 };
 declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, string, import('vue').PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {}, {}, {}, {}, string, import('vue').ComponentProvideOptions, false, {
-    waterfall: import('vue').ShallowUnwrapRef<{
-        scrollTop: import('vue').WritableComputedRef<number, number>;
-        scrollParent: import('vue').ComputedRef<HTMLDivElement | null | undefined>;
-        reloadList(): Promise<void>;
-    }> | null;
+    waterfall: {
+        scrollTop: number;
+        scrollParent: HTMLDivElement;
+        reloadList: () => Promise<void>;
+    };
     children: import('vue').CreateComponentPublicInstanceWithMixins<Readonly<{
         item: uni.item.Item;
     }> & Readonly<{
-        onUser?: ((u: uni.user.User) => any) | undefined;
+        onUser?: (u: uni.user.User) => any;
     }>, {
         loadChild(parent: uni.comment.Comment): void;
     }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
         user: (u: uni.user.User) => any;
     }, import('vue').PublicProps, {}, false, {}, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, {
-        floatPopup: ({
+        floatPopup: {
             $: import('vue').ComponentInternalInstance;
             $data: {};
             $props: {
                 readonly show: boolean;
-                readonly overlay?: boolean | undefined;
-                readonly lockScroll?: boolean | undefined;
-                readonly lazyRender?: boolean | undefined;
-                readonly transitionAppear?: boolean | undefined;
-                readonly closeOnClickOverlay?: boolean | undefined;
-                readonly round?: boolean | undefined;
-                readonly position?: import('vant').PopupPosition | undefined;
-                readonly closeIcon?: string | undefined;
-                readonly closeable?: boolean | undefined;
-                readonly closeOnPopstate?: boolean | undefined;
-                readonly closeIconPosition?: import('vant').PopupCloseIconPosition | undefined;
-                readonly destroyOnClose?: boolean | undefined;
-                readonly safeAreaInsetTop?: boolean | undefined;
-                readonly safeAreaInsetBottom?: boolean | undefined;
-                readonly iconPrefix?: string | undefined;
-                readonly transition?: string | undefined;
-                readonly zIndex?: string | number | undefined;
-                readonly duration?: string | number | undefined;
-                readonly teleport?: string | import('vue').RendererElement | null | undefined;
-                readonly beforeClose?: import('vant/lib/utils').Interceptor | undefined;
-                readonly overlayProps?: Partial<import('vant').OverlayProps> | undefined;
-                readonly overlayStyle?: import('vue').CSSProperties | undefined;
+                readonly overlay?: boolean;
+                readonly lockScroll?: boolean;
+                readonly lazyRender?: boolean;
+                readonly transitionAppear?: boolean;
+                readonly closeOnClickOverlay?: boolean;
+                readonly round?: boolean;
+                readonly position?: import('vant').PopupPosition;
+                readonly closeIcon?: string;
+                readonly closeable?: boolean;
+                readonly closeOnPopstate?: boolean;
+                readonly closeIconPosition?: import('vant').PopupCloseIconPosition;
+                readonly destroyOnClose?: boolean;
+                readonly safeAreaInsetTop?: boolean;
+                readonly safeAreaInsetBottom?: boolean;
+                readonly zIndex?: string | number;
+                readonly duration?: string | number;
+                readonly teleport?: string | import('vue').RendererElement;
+                readonly beforeClose?: import('vant/lib/utils').Interceptor;
+                readonly overlayProps?: Partial<import('vant').OverlayProps>;
+                readonly overlayStyle?: import('vue').CSSProperties;
                 readonly overlayClass?: unknown;
-                readonly noBorder?: boolean | undefined;
-                readonly useTrulyShow?: boolean | undefined;
+                readonly transition?: string;
+                readonly iconPrefix?: string;
                 readonly style?: import('vue').StyleValue;
-                readonly onClosed?: (() => any) | undefined | undefined;
-                readonly "onUpdate:show"?: ((value: boolean) => any) | undefined | undefined;
+                readonly class?: any;
+                readonly onClosed?: (() => any) | undefined;
+                readonly "onUpdate:show"?: ((value: boolean) => any) | undefined;
             } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps;
-            $attrs: {
-                [x: string]: unknown;
-            };
+            $attrs: import('vue').Attrs;
             $refs: {
                 [x: string]: unknown;
             };
             $slots: Readonly<{
-                [name: string]: import('vue').Slot<any> | undefined;
+                [name: string]: import('vue').Slot<any>;
             }>;
             $root: import('vue').ComponentPublicInstance | null;
             $parent: import('vue').ComponentPublicInstance | null;
@@ -86,33 +83,29 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
                 safeAreaInsetTop: boolean;
                 safeAreaInsetBottom: boolean;
             } & {
-                iconPrefix?: string | undefined;
-                transition?: string | undefined;
-                zIndex?: string | number | undefined;
-                duration?: string | number | undefined;
-                teleport?: string | import('vue').RendererElement | null | undefined;
-                beforeClose?: import('vant/lib/utils').Interceptor | undefined;
-                overlayProps?: Partial<import('vant').OverlayProps> | undefined;
-                overlayStyle?: import('vue').CSSProperties | undefined;
+                zIndex?: string | number;
+                duration?: string | number;
+                teleport?: string | import('vue').RendererElement;
+                beforeClose?: import('vant/lib/utils').Interceptor;
+                overlayProps?: Partial<import('vant').OverlayProps>;
+                overlayStyle?: import('vue').CSSProperties;
                 overlayClass?: unknown;
-            } & {
-                noBorder?: boolean;
-                useTrulyShow: boolean;
-                style?: import('vue').StyleValue;
-            }>> & Readonly<{
+                transition?: string;
+                iconPrefix?: string;
+            } & import('@delta-comic/ui').StyleProps>> & Readonly<{
                 onClosed?: (() => any) | undefined;
                 "onUpdate:show"?: ((value: boolean) => any) | undefined;
             }>, {
                 zIndex: import('vue').ComputedRef<number>;
-                trulyShow: import('vue').ShallowRef<boolean, boolean>;
             }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {
                 closed: () => any;
                 "update:show": (value: boolean) => any;
             }, string, {
+                teleport: string | import('vue').RendererElement | null;
                 closeOnClickOverlay: boolean;
                 overlay: boolean;
                 position: import('vant').PopupPosition;
-                noBorder: boolean;
+                destroyOnClose: boolean;
             }, {}, string, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, import('vue').ComponentProvideOptions> & {
                 beforeCreate?: (() => void) | (() => void)[];
                 created?: (() => void) | (() => void)[];
@@ -134,10 +127,11 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
             $nextTick: typeof import('vue').nextTick;
             $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (...args: [R, R, import('@vue/reactivity').OnCleanup]) => any : (...args: [any, any, import('@vue/reactivity').OnCleanup]) => any, options?: import('vue').WatchOptions): import('vue').WatchStopHandle;
         } & Readonly<{
+            teleport: string | import('vue').RendererElement | null;
             closeOnClickOverlay: boolean;
             overlay: boolean;
             position: import('vant').PopupPosition;
-            noBorder: boolean;
+            destroyOnClose: boolean;
         }> & Omit<Readonly<{
             show: boolean;
         } & Partial<{
@@ -157,32 +151,27 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
             safeAreaInsetTop: boolean;
             safeAreaInsetBottom: boolean;
         } & {
-            iconPrefix?: string | undefined;
-            transition?: string | undefined;
-            zIndex?: string | number | undefined;
-            duration?: string | number | undefined;
-            teleport?: string | import('vue').RendererElement | null | undefined;
-            beforeClose?: import('vant/lib/utils').Interceptor | undefined;
-            overlayProps?: Partial<import('vant').OverlayProps> | undefined;
-            overlayStyle?: import('vue').CSSProperties | undefined;
+            zIndex?: string | number;
+            duration?: string | number;
+            teleport?: string | import('vue').RendererElement;
+            beforeClose?: import('vant/lib/utils').Interceptor;
+            overlayProps?: Partial<import('vant').OverlayProps>;
+            overlayStyle?: import('vue').CSSProperties;
             overlayClass?: unknown;
-        } & {
-            noBorder?: boolean;
-            useTrulyShow: boolean;
-            style?: import('vue').StyleValue;
-        }>> & Readonly<{
+            transition?: string;
+            iconPrefix?: string;
+        } & import('@delta-comic/ui').StyleProps>> & Readonly<{
             onClosed?: (() => any) | undefined;
             "onUpdate:show"?: ((value: boolean) => any) | undefined;
-        }>, "zIndex" | "overlay" | "closeOnClickOverlay" | "position" | "noBorder" | "trulyShow"> & import('vue').ShallowUnwrapRef<{
-            zIndex: import('vue').ComputedRef<number>;
-            trulyShow: import('vue').ShallowRef<boolean, boolean>;
-        }> & {} & import('vue').ComponentCustomProperties & {} & {
+        }>, "zIndex" | "overlay" | "teleport" | "closeOnClickOverlay" | "position" | "destroyOnClose"> & {
+            zIndex: number;
+        } & {} & import('vue').ComponentCustomProperties & {} & {
             $slots: Readonly<{
                 default(): void;
             }> & {
                 default(): void;
             };
-        }) | null;
+        };
     }, any, import('vue').ComponentProvideOptions, {
         P: {};
         B: {};
@@ -193,10 +182,10 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
     }, Readonly<{
         item: uni.item.Item;
     }> & Readonly<{
-        onUser?: ((u: uni.user.User) => any) | undefined;
+        onUser?: (u: uni.user.User) => any;
     }>, {
         loadChild(parent: uni.comment.Comment): void;
-    }, {}, {}, {}, {}> | null;
+    }, {}, {}, {}, {}>;
     previewUser: import('vue').CreateComponentPublicInstanceWithMixins<Readonly<{}> & Readonly<{}>, {
         show(u: uni.user.User): void;
     }, {}, {}, {}, import('vue').ComponentOptionsMixin, import('vue').ComponentOptionsMixin, {}, import('vue').PublicProps, {}, true, {}, {}, import('vue').GlobalComponents, import('vue').GlobalDirectives, string, {}, any, import('vue').ComponentProvideOptions, {
@@ -208,6 +197,6 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
         Defaults: {};
     }, Readonly<{}> & Readonly<{}>, {
         show(u: uni.user.User): void;
-    }, {}, {}, {}, {}> | null;
+    }, {}, {}, {}, {}>;
 }, any>;
 export default _default;
