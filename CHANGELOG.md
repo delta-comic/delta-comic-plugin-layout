@@ -1,3 +1,11 @@
+## [0.9.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.9.0...0.9.1) (2026-04-12)
+
+
+### Bug Fixes
+
+* lockfile错误 ([92d406b](https://github.com/delta-comic/delta-comic-plugin-layout/commit/92d406b187152e41591c89f8cb026da2a7406bab))
+* 修复类型泄漏错误 [pub] ([100c6bb](https://github.com/delta-comic/delta-comic-plugin-layout/commit/100c6bb95059e40952152323f00d35faa3ef07cd))
+
 # [0.9.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.8.0...0.9.0) (2026-04-12)
 
 
