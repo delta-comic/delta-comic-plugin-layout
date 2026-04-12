@@ -18,7 +18,6 @@ declare module 'vue' {
     CreateFavouriteCard: typeof import('./src/components/CreateFavouriteCard.vue')['default']
     DcAuthorIcon: typeof import('@delta-comic/ui')['DcAuthorIcon']
     DcAwait: typeof import('@delta-comic/ui')['DcAwait']
-    DcContent: typeof import('@delta-comic/ui')['DcContent']
     DcImage: typeof import('@delta-comic/ui')['DcImage']
     DcImagedIcon: typeof import('@delta-comic/ui')['DcImagedIcon']
     DcList: typeof import('@delta-comic/ui')['DcList']

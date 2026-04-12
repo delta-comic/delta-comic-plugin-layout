@@ -382,7 +382,7 @@ declare const _default: import('vue').DefineComponent<__VLS_Props, {}, {}, {}, {
         onClickLeftIcon?: ((...args: any[]) => any) | undefined;
         onClickRightIcon?: ((...args: any[]) => any) | undefined;
         "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
-    }>, "tag" | "center" | "isLink" | "border" | "required" | "clickable" | "autofocus" | "clearable" | "clearIcon" | "modelValue" | "clearTrigger" | "formatTrigger" | "spellcheck" | "error" | "disabled" | "readonly" | "type" | "showWordLimit" | "colon"> & import('vue').ShallowUnwrapRef<() => import("vue/jsx-runtime").JSX.Element> & {} & import('vue').ComponentCustomProperties & {} & {
+    }>, "tag" | "center" | "isLink" | "border" | "required" | "clickable" | "autofocus" | "clearable" | "clearIcon" | "modelValue" | "clearTrigger" | "formatTrigger" | "spellcheck" | "error" | "disabled" | "readonly" | "type" | "showWordLimit" | "colon"> & {} & {} & import('vue').ComponentCustomProperties & {} & {
         $props: {
             onClick?: (...args: any[]) => void;
         };

@@ -29,6 +29,7 @@ import { useLike } from '@/utils/content'
 import { useSwipeDbClick } from '@/utils/ui'
 
 import * as LayoutInject from '../layout/default'
+
 import * as ImageViewInject from './image'
 
 const $props = defineProps<{ page: ContentImagePage; union?: uni.item.Item }>()
@@ -76,11 +77,15 @@ const { likeItem } = useLike()
 
 const queryEps = useInfiniteQuery({
   key: () => [LayoutInject.QueryKey.Ep, LayoutInject.createPageQueryKey($props.page)],
-  query: async ({ signal, pageParam }) => await $props.page.fetchEps(pageParam, signal),
-  initialPageParam: $props.page.fetchEps.initialPageParam,
-  getNextPageParam: lp => lp.nextPage
+  query: async ({ signal, pageParam }) => await $props.page.fetchEps.query({}, pageParam, signal),
+  initialPageParam: $props.page.fetchEps.initPage,
+  getNextPageParam: lp => lp.nextPage,
+  getPreviousPageParam: lp => lp.lastPage
 })
-const eps = computed(() => queryEps.data.value?.pages.flat() ?? [])
+const eps = computed(
+  () =>
+    queryEps.data.value?.pages.reduce((acc, v) => acc.concat(v.data), new Array<uni.ep.Ep>()) ?? []
+)
 const nowEp = computed(() => eps.value?.find(v => v.id === $props.page.ep))
 const $route = useRoute()
 const nowEpId = $route.params.ep.toString()
@@ -304,7 +309,7 @@ defineSlots<{
             </div>
             <DcList
               class="h-full w-full"
-              :source="{ type: 'infinite', value: queryEps }"
+              :source="{ type: 'stream', value: queryEps }"
               :itemHeight="40"
               v-slot="{ data: { item: ep, index }, height }"
               :data-processor="v => v.toReversed()"

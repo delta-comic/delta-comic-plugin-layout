@@ -5,8 +5,9 @@ import { useInfiniteQuery } from '@pinia/colada'
 import { CloseRound } from '@vicons/material'
 import { computed, shallowRef } from 'vue'
 
-import { createChildrenCommentQueryKey, QueryKey } from '.'
 import Sender from './Sender.vue'
+
+import { createChildrenCommentQueryKey, QueryKey } from '.'
 const $props = defineProps<{ item: uni.item.Item }>()
 const parentComment = shallowRef<uni.comment.Comment>()
 
@@ -32,9 +33,10 @@ const query = useInfiniteQuery({
     )
   ],
   query: async ({ signal, pageParam }) =>
-    await parentComment.value!.fetchChildren(pageParam, signal),
-  initialPageParam: parentComment.value!.fetchChildren.initialPageParam,
-  getNextPageParam: lastPage => lastPage.nextPage
+    await parentComment.value!.fetchChildren.query({}, pageParam, signal),
+  initialPageParam: parentComment.value!.fetchChildren.initPage,
+  getNextPageParam: lastPage => lastPage.nextPage,
+  getPreviousPageParam: lastPage => lastPage.lastPage
 })
 </script>
 
@@ -59,7 +61,7 @@ const query = useInfiniteQuery({
       </NIcon>
     </div>
     <DcWaterfall
-      :source="{ type: 'infinite', value: query }"
+      :source="{ type: 'stream', value: query }"
       :padding="0"
       :col="1"
       :gap="0"

@@ -30,11 +30,15 @@ const config = useConfig()
 
 const queryEps = useInfiniteQuery({
   key: () => [LayoutInject.QueryKey.Ep, LayoutInject.createPageQueryKey($props.page)],
-  query: async ({ signal, pageParam }) => await $props.page.fetchEps(pageParam, signal),
-  initialPageParam: $props.page.fetchEps.initialPageParam,
-  getNextPageParam: lp => lp.nextPage
+  query: async ({ signal, pageParam }) => await $props.page.fetchEps.query({}, pageParam, signal),
+  initialPageParam: $props.page.fetchEps.initPage,
+  getNextPageParam: lp => lp.nextPage,
+  getPreviousPageParam: lp => lp.lastPage
 })
-const eps = computed(() => queryEps.data.value?.pages.flat() ?? [])
+const eps = computed(
+  () =>
+    queryEps.data.value?.pages.reduce((acc, v) => acc.concat(v.data), new Array<uni.ep.Ep>()) ?? []
+)
 
 const epSelList = useTemplateRef('epSelList')
 const isShowEpSelectPopup = shallowRef(false)
@@ -80,13 +84,13 @@ const openEpSelectPopup = async () => {
   <DcPopup
     round
     position="bottom"
-    class="flex h-[70vh] flex-col"
+    class="flex h-[70vh]! flex-col"
     v-model:show="isShowEpSelectPopup"
   >
     <div class="flex h-10 w-full items-center pt-2 pl-8 text-lg font-bold">选集</div>
     <DcList
-      class="h-full w-full"
-      :source="{ type: 'infinite', value: queryEps }"
+      class="h-[calc(100%---spacing(12))] w-full"
+      :source="{ type: 'stream', value: queryEps }"
       :itemHeight="40"
       v-slot="{ data: { item: ep, index }, height }"
       ref="epSelList"

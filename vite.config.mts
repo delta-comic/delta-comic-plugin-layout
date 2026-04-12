@@ -1,54 +1,54 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
-import { DeltaComicUiResolver } from '@delta-comic/ui/vite'
-import { deltaComicPlus } from '@delta-comic/vite'
-import tailwindcss from '@tailwindcss/vite'
-import vue from '@vitejs/plugin-vue'
-import browserslist from 'browserslist'
-import { browserslistToTargets } from 'lightningcss'
-import { NaiveUiResolver, VantResolver } from 'unplugin-vue-components/resolvers'
-import Components from 'unplugin-vue-components/vite'
-import { vite as vidstack } from 'vidstack/plugins'
-import { defineConfig, type UserConfigExport } from 'vite'
-import dts from 'vite-plugin-dts'
+import { DeltaComicUiResolver } from "@delta-comic/ui/vite";
+import { deltaComicPlus } from "@delta-comic/vite";
+import tailwindcss from "@tailwindcss/vite";
+import vue from "@vitejs/plugin-vue";
+import browserslist from "browserslist";
+import { browserslistToTargets } from "lightningcss";
+import { NaiveUiResolver, VantResolver } from "unplugin-vue-components/resolvers";
+import Components from "unplugin-vue-components/vite";
+import { vite as vidstack } from "vidstack/plugins";
+import { defineConfig, type UserConfigExport } from "vite-plus";
+import dts from "vite-plugin-dts";
 
-import _package from './package.json'
+import _package from "./package.json";
 
 export default defineConfig(
   ({ command }) =>
     ({
       plugins: [
-        dts({ include: ['./src'], outDir: './type', tsconfigPath: './tsconfig.json' }),
+        dts({ include: ["./src"], outDir: "./type", tsconfigPath: "./tsconfig.json" }),
         vue({
-          template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } }
+          template: { compilerOptions: { isCustomElement: (tag) => tag.startsWith("media-") } },
         }),
-        vidstack({ include: './src/view/*' }),
+        vidstack({ include: "./src/view/*" }),
         Components({
           dts: true,
-          resolvers: [NaiveUiResolver(), VantResolver(), DeltaComicUiResolver()]
+          resolvers: [NaiveUiResolver(), VantResolver(), DeltaComicUiResolver()],
         }),
         tailwindcss(),
         deltaComicPlus(
           {
-            require: [{ id: 'core' }],
+            require: [{ id: "core" }],
             author: _package.author.name,
             beforeBoot: [],
             description: _package.description,
-            entry: { jsPath: './index.js', cssPath: 'auto' },
-            name: { display: '基础布局组件', id: 'layout' },
-            version: { plugin: _package.version, supportCore: '^1.2' }
+            entry: { jsPath: "./index.js", cssPath: "auto" },
+            name: { display: "基础布局组件", id: "layout" },
+            version: { plugin: _package.version, supportCore: "^1.2" },
           },
-          command
-        )
+          command,
+        ),
       ],
-      resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+      resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
       css: {
-        transformer: 'lightningcss',
+        transformer: "lightningcss",
         lightningcss: {
-          targets: browserslistToTargets(browserslist('> 1%, last 2 versions, not ie <= 8'))
-        }
+          targets: browserslistToTargets(browserslist("> 1%, last 2 versions, not ie <= 8")),
+        },
       },
       server: { port: 6174, host: true },
-      base: './'
-    }) satisfies UserConfigExport
-)
+      base: "./",
+    }) satisfies UserConfigExport,
+);

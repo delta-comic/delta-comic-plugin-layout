@@ -27,24 +27,24 @@
     "default": "./type/main.d.ts"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && cd ./dist && zip -r plugin.zip ./*",
-    "preview": "vite preview",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "oxlint --fix --type-aware",
+    "dev": "vp dev",
+    "build": "vp build && cd ./dist && zip -r plugin.zip ./*",
+    "preview": "vp preview",
+    "lint": "vp lint --type-aware",
+    "lint:fix": "vp lint --fix --type-aware",
     "prepare": "husky",
     "lint-staged": "lint-staged",
     "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
   },
   "dependencies": {
-    "@delta-comic/core": "^1.3.2",
-    "@delta-comic/db": "^1.3.2",
-    "@delta-comic/model": "^1.3.2",
-    "@delta-comic/plugin": "^1.3.2",
-    "@delta-comic/request": "^1.3.2",
-    "@delta-comic/ui": "^1.3.2",
-    "@delta-comic/utils": "^1.3.2",
-    "@pinia/colada": "^1.0.0",
+    "@delta-comic/core": "^1.3.5",
+    "@delta-comic/db": "^1.3.5",
+    "@delta-comic/model": "^1.3.5",
+    "@delta-comic/plugin": "^1.3.5",
+    "@delta-comic/request": "^1.3.5",
+    "@delta-comic/ui": "^1.3.5",
+    "@delta-comic/utils": "^1.3.5",
+    "@pinia/colada": "^1.1.0",
     "@tauri-apps/api": "^2.10.1",
     "@vicons/antd": "^0.13.0",
     "@vicons/material": "^0.13.0",
@@ -55,12 +55,12 @@
     "hls.js": "^1.6.15",
     "media-icons": "^1.1.5",
     "mitt": "^3.0.1",
-    "motion-v": "2.2.0",
+    "motion-v": "2.2.1",
     "naive-ui": "^2.44.1",
     "swiper": "^12.1.3",
     "vant": "^4.9.24",
     "vidstack": "^1.12.13",
-    "vue": "^3.5.31",
+    "vue": "^3.5.32",
     "vue-router": "^5.0.4"
   },
   "devDependencies": {
@@ -69,7 +69,7 @@
     "@commitlint/types": "^20.5.0",
     "@cspell/dict-npm": "^5.2.38",
     "@cspell/dict-rust": "^4.1.2",
-    "@delta-comic/vite": "^1.3.2",
+    "@delta-comic/vite": "^1.3.5",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^12.0.6",
@@ -77,29 +77,29 @@
     "@tailwindcss/vite": "^4.2.2",
     "@vitejs/plugin-vue": "^6.0.5",
     "@vue/tsconfig": "^0.9.1",
-    "browserslist": "^4.28.1",
-    "commitlint-plugin-cspell": "^0.6.0",
-    "cspell": "^9.7.0",
+    "browserslist": "^4.28.2",
+    "commitlint-plugin-cspell": "^0.8.0",
+    "cspell": "^10.0.0",
     "husky": "^9.1.7",
     "lightningcss": "^1.32.0",
     "lint-staged": "^16.4.0",
-    "oxfmt": "^0.42.0",
-    "oxlint": "^1.57.0",
-    "oxlint-tsgolint": "^0.18.1",
     "semantic-release": "^25.0.3",
     "tailwindcss": "4.2.2",
     "typescript": "^6.0.2",
     "unplugin-vue-components": "32.0.0",
-    "vite": "8.0.3",
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-externals": "^0.6.2",
     "vite-plugin-monkey": "^7.1.9",
     "vue-component-type-helpers": "^3.2.6",
-    "vue-tsc": "^3.2.6"
+    "vue-tsc": "^3.2.6",
+    "vite-plus": "latest"
   },
   "pnpm": {
     "overrides": {
-      "@microsoft/api-extractor": "7.48.1"
+      "@microsoft/api-extractor": "7.48.1",
+      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
@@ -107,5 +107,6 @@
       "core-js",
       "esbuild"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.33.0"
 }

@@ -871,10 +871,10 @@ declare function __VLS_template(): {
             onLoad?: ((...args: any[]) => any) | undefined;
             onClick?: (() => any) | undefined;
             onError?: (() => any) | undefined;
-        }>, "retryMax" | "fetchpriority" | "isLoaded" | "imageEl" | "imageIns"> & import('vue').ShallowUnwrapRef<{
-            isLoaded: import('vue').ComputedRef<boolean>;
-            imageEl: import('vue').ComputedRef<HTMLImageElement | null | undefined>;
-            imageIns: Readonly<import('vue').ShallowRef<import('vue').CreateComponentPublicInstanceWithMixins<Readonly<import('vue').ExtractPropTypes<{
+        }>, "retryMax" | "fetchpriority" | "isLoaded" | "imageEl" | "imageIns"> & {
+            isLoaded: boolean;
+            imageEl: HTMLImageElement | null | undefined;
+            imageIns: import('vue').CreateComponentPublicInstanceWithMixins<Readonly<import('vue').ExtractPropTypes<{
                 onPreviewPrev: import('vue').PropType<() => void>;
                 onPreviewNext: import('vue').PropType<() => void>;
                 showToolbar: {
@@ -1239,8 +1239,8 @@ declare function __VLS_template(): {
                 showToolbar: boolean;
                 showToolbarTooltip: boolean;
                 previewDisabled: boolean;
-            }> | null>>;
-        }> & {} & import('vue').ComponentCustomProperties & {} & {
+            }> | null;
+        } & {} & import('vue').ComponentCustomProperties & {} & {
             $slots: Readonly<{
                 loading?(): any;
                 fail?(): any;
@@ -2111,10 +2111,10 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
         onLoad?: ((...args: any[]) => any) | undefined;
         onClick?: (() => any) | undefined;
         onError?: (() => any) | undefined;
-    }>, "retryMax" | "fetchpriority" | "isLoaded" | "imageEl" | "imageIns"> & import('vue').ShallowUnwrapRef<{
-        isLoaded: import('vue').ComputedRef<boolean>;
-        imageEl: import('vue').ComputedRef<HTMLImageElement | null | undefined>;
-        imageIns: Readonly<import('vue').ShallowRef<import('vue').CreateComponentPublicInstanceWithMixins<Readonly<import('vue').ExtractPropTypes<{
+    }>, "retryMax" | "fetchpriority" | "isLoaded" | "imageEl" | "imageIns"> & {
+        isLoaded: boolean;
+        imageEl: HTMLImageElement | null | undefined;
+        imageIns: import('vue').CreateComponentPublicInstanceWithMixins<Readonly<import('vue').ExtractPropTypes<{
             onPreviewPrev: import('vue').PropType<() => void>;
             onPreviewNext: import('vue').PropType<() => void>;
             showToolbar: {
@@ -2479,8 +2479,8 @@ declare const __VLS_component: import('vue').DefineComponent<__VLS_Props, {}, {}
             showToolbar: boolean;
             showToolbarTooltip: boolean;
             previewDisabled: boolean;
-        }> | null>>;
-    }> & {} & import('vue').ComponentCustomProperties & {} & {
+        }> | null;
+    } & {} & import('vue').ComponentCustomProperties & {} & {
         $slots: Readonly<{
             loading?(): any;
             fail?(): any;
