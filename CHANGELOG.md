@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.8.0...0.9.0) (2026-04-12)
+
+
+### Features
+
+* 适配新版本内核 [pub] ([dc915b1](https://github.com/delta-comic/delta-comic-plugin-layout/commit/dc915b137802fab10e5a4768dff63c079c441b2c))
+
 # [0.8.0](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.7.2...0.8.0) (2026-03-29)
 
 
