@@ -16,7 +16,7 @@ export const useLike = defineMutation(() => {
       const key = createQueryKey(item)
       const oldItem = queryCache.getQueryData<uni.item.Item>(key)!
       const newItem = uni.item.Item.create({
-        ...oldItem,
+        ...oldItem.toJSON(),
         isLiked: !oldItem.isLiked,
         likeNumber: oldItem.isLiked ? (oldItem.likeNumber ?? 0) - 1 : (oldItem.likeNumber ?? 0) + 1
       })
@@ -33,17 +33,14 @@ export const useLike = defineMutation(() => {
     // on both error and success
     onSettled(_data, _error, item, { newItem }) {
       const key = createQueryKey(item)
-      if (newItem) {
-        queryCache.invalidateQueries({ key })
-      }
+      if (!newItem) return
+      return queryCache.invalidateQueries({ key })
     },
 
     onError(err, item, { newItem, oldItem }) {
       const key = createQueryKey(item)
-      if (newItem === queryCache.getQueryData(key)) {
+      if (newItem === queryCache.getQueryData(key))
         queryCache.setQueryData(key, oldItem)
-      }
-
       window.$message.error(err.message)
     }
   })

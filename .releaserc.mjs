@@ -15,7 +15,7 @@ const production = {
     [
       '@semantic-release/git',
       {
-        assets: ['CHANGELOG.md', './type/**/*', './type'],
+        assets: ['CHANGELOG.md'],
         message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
       }
     ]

@@ -19,7 +19,7 @@ export default defineConfig(
     ({
       plugins: [
         dts({
-          include: ["./src"], outDir: "./type",
+          include: ["./src"],
           compilerOptions: {
             skipLibCheck: true,
             strict: false,

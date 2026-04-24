@@ -87,3 +87,4 @@ const plugin = definePlugin({
 })
 
 export type LayoutLib = PluginExpose<() => typeof plugin>
+export default plugin

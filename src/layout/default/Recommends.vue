@@ -2,7 +2,7 @@
 import { uni } from '@delta-comic/model'
 import { useQuery } from '@pinia/colada'
 
-import ItemCard from '@/components/ItemCard'
+import ItemCard from '@/components/ItemCard.vue'
 
 import * as LayoutInject from '../default'
 
@@ -15,7 +15,9 @@ const getItemCard = (contentType: uni.content.ContentType_) =>
   uni.item.Item.itemCards.get(contentType) ?? ItemCard
 
 const recommendsQuery = useQuery({
-  key: () => [LayoutInject.QueryKey.Recommends]
+  key: () => [LayoutInject.QueryKey.Recommends],
+  query: async ({ signal }) =>
+    (await $props.page.fetchRecommends.query({}, $props.page.fetchRecommends.initPage, signal)).data
 })
 </script>
 
@@ -26,7 +28,7 @@ const recommendsQuery = useQuery({
     <component
       :is="getItemCard(item.contentType)"
       :item
-      v-for="item of page.recommends.content.data.value"
+      v-for="item of recommendsQuery.data.value"
     />
   </div>
 </template>

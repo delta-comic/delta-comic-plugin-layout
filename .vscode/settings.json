@@ -1,6 +1,5 @@
 {
   "editor.defaultFormatter": "oxc.oxc-vscode",
-  "oxc.path.oxfmt": "node_modules/oxfmt/bin/oxfmt",
   "[vue]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },

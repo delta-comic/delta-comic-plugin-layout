@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   build:
@@ -48,10 +49,6 @@ jobs:
       - name: Build
         run: |
           pnpm run build || pnpm run build
-
-      - name: Restore version
-        run: |
-          node ./script/set-version.mts ${{ steps.set-version.outputs.old_version }}
 
       #publish
       - name: Run semantic-release

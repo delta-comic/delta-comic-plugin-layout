@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { SharedFunction, useFullscreen } from '@delta-comic/core'
+// @ts-ignore sideeffect no need to define
 import 'swiper/css'
+// @ts-ignore sideeffect no need to define
 import 'swiper/css/virtual'
+// @ts-ignore sideeffect no need to define
 import 'swiper/css/zoom'
+// @ts-ignore sideeffect no need to define
 import 'swiper/css/free-mode'
 import { uni } from '@delta-comic/model'
 import { Inject, useConfig } from '@delta-comic/plugin'
