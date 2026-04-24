@@ -1,3 +1,11 @@
+## [0.9.2](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.9.1...0.9.2) (2026-04-24)
+
+
+### Bug Fixes
+
+* [pub] 尝试github package ([ec3199d](https://github.com/delta-comic/delta-comic-plugin-layout/commit/ec3199df018bc06165a8651f0f3d2f00a72427c7))
+* recommend ([875d86e](https://github.com/delta-comic/delta-comic-plugin-layout/commit/875d86e46fa52e40cf28bdf8b7ef498d6fb46a37))
+
 ## [0.9.1](https://github.com/delta-comic/delta-comic-plugin-layout/compare/0.9.0...0.9.1) (2026-04-12)
 
 
