@@ -1,6 +1,6 @@
 {
   "name": "@delta-comic/delta-comic-plugin-layout",
-  "version": "0.7.2",
+  "version": "0.9.2",
   "description": "希望的涟漪",
   "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
   "license": "AGPL-3.0-only",
@@ -36,6 +36,7 @@
     "lint-staged": "lint-staged",
     "lint:fix": "vp lint --fix --type-aware",
     "preview": "vp preview",
+    "publish:github": "pnpm run build && pnpm publish --registry=https://npm.pkg.github.com --no-git-checks",
     "set-ver": "node ./script/set-version.mts",
     "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
   },

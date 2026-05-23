@@ -3,6 +3,7 @@ name: 构建和发布
 on:
   push:
     branches: ['main']
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -10,7 +11,6 @@ permissions:
 
 jobs:
   build:
-    if: ${{ github.event.head_commit && contains(github.event.head_commit.message, '[pub]') }}
     runs-on: ubuntu-latest
     env:
       HUSKY: 0
@@ -22,38 +22,51 @@ jobs:
           persist-credentials: true
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 10.27.0
+          version: 10.33.2
 
       - name: Use Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@delta-comic'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # build
-      - name: Change version
-        id: set-version
+      - name: Resolve release version
+        id: release-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IS_DUR_RUN: true
         run: |
           OLD_VERSION="$(node ./script/update-version.mts)"
+          if [ -z "$OLD_VERSION" ]; then
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          NEW_VERSION="$(node -p "JSON.parse(require('node:fs').readFileSync('./package.json', 'utf8')).version")"
           echo "old_version=$OLD_VERSION" >> "$GITHUB_OUTPUT"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "should_publish=true" >> "$GITHUB_OUTPUT"
 
       - name: Build
-        run: |
-          pnpm run build || pnpm run build
+        if: steps.release-version.outputs.should_publish == 'true'
+        run: pnpm run build
 
-      #publish
-      - name: Run semantic-release
+      - name: Publish GitHub package
+        if: steps.release-version.outputs.should_publish == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm publish --registry=https://npm.pkg.github.com --no-git-checks
+
+      - name: Create GitHub release
+        if: steps.release-version.outputs.should_publish == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pnpm publish
-          pnpm exec semantic-release
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm exec semantic-release
