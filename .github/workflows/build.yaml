@@ -31,8 +31,6 @@ jobs:
         with:
           node-version: 24
           cache: 'pnpm'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@delta-comic'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -62,7 +60,9 @@ jobs:
         if: steps.release-version.outputs.should_publish == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm publish --registry=https://npm.pkg.github.com --no-git-checks
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
+          pnpm publish --registry=https://npm.pkg.github.com --no-git-checks
 
       - name: Create GitHub release
         if: steps.release-version.outputs.should_publish == 'true'
