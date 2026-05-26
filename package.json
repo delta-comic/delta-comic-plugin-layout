@@ -45,7 +45,6 @@
     "@delta-comic/db": "^2.1.0",
     "@delta-comic/model": "^2.1.0",
     "@delta-comic/plugin": "^2.1.0",
-    "@delta-comic/request": "^2.1.0",
     "@delta-comic/ui": "^2.1.0",
     "@delta-comic/utils": "^2.1.0",
     "@pinia/colada": "^1.1.0",
@@ -99,7 +98,7 @@
     "vue-component-type-helpers": "^3.2.6",
     "vue-tsc": "^3.2.6"
   },
-  "packageManager": "pnpm@10.33.2",
+  "packageManager": "pnpm@11.2.2",
   "pnpm": {
     "overrides": {
       "@microsoft/api-extractor": "7.48.1",
