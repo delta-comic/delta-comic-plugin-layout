@@ -1,59 +1,59 @@
 <script setup lang="ts">
-import { SharedFunction } from '@delta-comic/core'
-import { uni } from '@delta-comic/model'
-import { useConfig } from '@delta-comic/plugin'
-import { useInfiniteQuery } from '@pinia/colada'
-import type { NScrollbar } from 'naive-ui'
-import { computed, nextTick, shallowRef, useTemplateRef } from 'vue'
-import { useRoute } from 'vue-router'
+import { SharedFunction } from "@delta-comic/core";
+import { uni } from "@delta-comic/model";
+import { useConfig } from "@delta-comic/plugin";
+import { useInfiniteQuery } from "@pinia/colada";
+import type { NScrollbar } from "naive-ui";
+import { computed, nextTick, shallowRef, useTemplateRef } from "vue";
+import { useRoute } from "vue-router";
 
-import * as LayoutInject from '../default'
+import * as LayoutInject from "../default";
 
 const $props = defineProps<{
-  union?: uni.item.Item
-  page: uni.content.ContentPage
-  isR18g?: boolean
-  scrollbar: InstanceType<typeof NScrollbar> | null
-}>()
+  union?: uni.item.Item;
+  page: uni.content.ContentPage;
+  isR18g?: boolean;
+  scrollbar: InstanceType<typeof NScrollbar> | null;
+}>();
 
-const $route = useRoute()
+const $route = useRoute();
 const routeToContent = (preload: uni.item.RawItem) =>
   SharedFunction.call(
-    'routeToContent',
+    "routeToContent",
     preload.contentType,
     preload.id,
     preload.thisEp.id,
-    uni.item.Item.create(preload)
-  )
+    uni.item.Item.create(preload),
+  );
 
-const config = useConfig()
+const config = useConfig();
 
 const queryEps = useInfiniteQuery({
   key: () => [LayoutInject.QueryKey.Ep, LayoutInject.createPageQueryKey($props.page)],
   query: async ({ signal, pageParam }) => await $props.page.fetchEps.query({}, pageParam, signal),
   initialPageParam: $props.page.fetchEps.initPage,
-  getNextPageParam: lp => lp.nextPage,
-  getPreviousPageParam: lp => lp.lastPage
-})
+  getNextPageParam: (lp) => lp.nextPage,
+  getPreviousPageParam: (lp) => lp.lastPage,
+});
 const eps = computed(
   () =>
-    queryEps.data.value?.pages.reduce((acc, v) => acc.concat(v.data), new Array<uni.ep.Ep>()) ?? []
-)
+    queryEps.data.value?.pages.reduce((acc, v) => acc.concat(v.data), new Array<uni.ep.Ep>()) ?? [],
+);
 
-const epSelList = useTemplateRef('epSelList')
-const isShowEpSelectPopup = shallowRef(false)
+const epSelList = useTemplateRef("epSelList");
+const isShowEpSelectPopup = shallowRef(false);
 
-const nowEpId = $route.params.ep.toString()
-const nowEp = computed(() => eps.value.find(ep => ep.id === nowEpId))
-const nowEpIndex = computed(() => eps.value.findIndex(ep => ep.id === nowEpId))
+const nowEpId = $route.params.ep.toString();
+const nowEp = computed(() => eps.value.find((ep) => ep.id === nowEpId));
+const nowEpIndex = computed(() => eps.value.findIndex((ep) => ep.id === nowEpId));
 const openEpSelectPopup = async () => {
-  $props.scrollbar?.scrollTo(0, 0)
-  isShowEpSelectPopup.value = true
-  await nextTick()
+  $props.scrollbar?.scrollTo(0, 0);
+  isShowEpSelectPopup.value = true;
+  await nextTick();
   epSelList.value?.listInstance?.scrollTo({
-    index: eps.value.findIndex(ep => ep.id === nowEpId)
-  })
-}
+    index: eps.value.findIndex((ep) => ep.id === nowEpId),
+  });
+};
 </script>
 
 <template>
@@ -66,7 +66,7 @@ const openEpSelectPopup = async () => {
           : 'bg-(--van-gray-1)/70'
         : config.isDark
           ? 'bg-(--van-gray-8)'
-          : 'bg-(--van-gray-2)'
+          : 'bg-(--van-gray-2)',
     ]"
     v-if="eps && eps.length > 1"
     @click="openEpSelectPopup"
@@ -91,7 +91,7 @@ const openEpSelectPopup = async () => {
     <DcList
       class="h-[calc(100%---spacing(12))] w-full"
       :source="{ type: 'stream', value: queryEps }"
-      :itemHeight="40"
+      :minHeight="40"
       v-slot="{ data: { item: ep, index }, height }"
       ref="epSelList"
     >

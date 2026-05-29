@@ -1,147 +1,147 @@
 <script setup lang="ts">
-import { SharedFunction, useFullscreen } from '@delta-comic/core'
+import { SharedFunction, useFullscreen } from "@delta-comic/core";
 // @ts-ignore sideeffect no need to define
-import 'swiper/css'
+import "swiper/css";
 // @ts-ignore sideeffect no need to define
-import 'swiper/css/virtual'
+import "swiper/css/virtual";
 // @ts-ignore sideeffect no need to define
-import 'swiper/css/zoom'
+import "swiper/css/zoom";
 // @ts-ignore sideeffect no need to define
-import 'swiper/css/free-mode'
-import { uni } from '@delta-comic/model'
-import { Inject, useConfig } from '@delta-comic/plugin'
-import { useInfiniteQuery, useQuery } from '@pinia/colada'
-import { LikeOutlined } from '@vicons/antd'
-import { ArrowBackIosNewRound, FullscreenExitRound } from '@vicons/material'
-import { computedWithControl, useResizeObserver } from '@vueuse/core'
-import { inRange, sum } from 'es-toolkit'
-import { isEmpty } from 'es-toolkit/compat'
-import { AnimatePresence, motion } from 'motion-v'
-import { Swiper as SwiperClass } from 'swiper'
-import { Virtual, Zoom, HashNavigation, Keyboard, Mousewheel, FreeMode } from 'swiper/modules'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import { computed, shallowReactive, shallowRef, watchEffect } from 'vue'
-import { watch } from 'vue'
-import { useRoute } from 'vue-router'
+import "swiper/css/free-mode";
+import { uni } from "@delta-comic/model";
+import { Inject, useConfig } from "@delta-comic/plugin";
+import { useInfiniteQuery, useQuery } from "@pinia/colada";
+import { LikeOutlined } from "@vicons/antd";
+import { ArrowBackIosNewRound, FullscreenExitRound } from "@vicons/material";
+import { computedWithControl, useResizeObserver } from "@vueuse/core";
+import { inRange, sum } from "es-toolkit";
+import { isEmpty } from "es-toolkit/compat";
+import { AnimatePresence, motion } from "motion-v";
+import { Swiper as SwiperClass } from "swiper";
+import { Virtual, Zoom, HashNavigation, Keyboard, Mousewheel, FreeMode } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { computed, shallowReactive, shallowRef, watchEffect } from "vue";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 
-import ButtonPopup from '@/components/ButtonPopup.vue'
-import Settings from '@/components/Settings.vue'
-import { imageViewConfig } from '@/config'
-import { createPageQueryKey } from '@/layout/default'
-import type { ContentImagePage } from '@/model'
-import { useLike } from '@/utils/content'
-import { useSwipeDbClick } from '@/utils/ui'
+import ButtonPopup from "@/components/ButtonPopup.vue";
+import Settings from "@/components/Settings.vue";
+import { imageViewConfig } from "@/config";
+import { createPageQueryKey } from "@/layout/default";
+import type { ContentImagePage } from "@/model";
+import { useLike } from "@/utils/content";
+import { useSwipeDbClick } from "@/utils/ui";
 
-import * as LayoutInject from '../layout/default'
+import * as LayoutInject from "../layout/default";
 
-import * as ImageViewInject from './image'
+import * as ImageViewInject from "./image";
 
-const $props = defineProps<{ page: ContentImagePage; union?: uni.item.Item }>()
+const $props = defineProps<{ page: ContentImagePage; union?: uni.item.Item }>();
 
-const config = useConfig().$load(imageViewConfig)
+const config = useConfig().$load(imageViewConfig);
 
-const swiper = shallowRef<SwiperClass>()
+const swiper = shallowRef<SwiperClass>();
 
-const { isFullscreen } = useFullscreen()
+const { isFullscreen } = useFullscreen();
 
 const imagesQuery = useQuery({
   key: () => [ImageViewInject.QueryKey.Images, createPageQueryKey($props.page)],
-  query: async ({ signal }) => await $props.page.fetchImages(signal)
-})
-const images = computed(() => imagesQuery.data.value ?? [])
+  query: async ({ signal }) => await $props.page.fetchImages(signal),
+});
+const images = computed(() => imagesQuery.data.value ?? []);
 
-const pageOnIndex = shallowRef(0)
-const selectPage = shallowRef(pageOnIndex.value)
-watch(pageOnIndex, pageOnIndex => (selectPage.value = pageOnIndex))
-let initTimes = 0
+const pageOnIndex = shallowRef(0);
+const selectPage = shallowRef(pageOnIndex.value);
+watch(pageOnIndex, (pageOnIndex) => (selectPage.value = pageOnIndex));
+let initTimes = 0;
 const onInit = async () => {
-  if (!pageOnIndex.value) return
+  if (!pageOnIndex.value) return;
   const id = setInterval(async () => {
-    initTimes++
-    if (initTimes > 10) return clearInterval(id)
-    swiper.value?.slideTo(pageOnIndex.value, 0)
-    if (pageOnIndex.value === pageOnIndex.value) clearInterval(id)
-  }, 1)
-}
+    initTimes++;
+    if (initTimes > 10) return clearInterval(id);
+    swiper.value?.slideTo(pageOnIndex.value, 0);
+    if (pageOnIndex.value === pageOnIndex.value) clearInterval(id);
+  }, 1);
+};
 
 const goToSlide = (offset: 1 | -1) => {
-  const targetIndex = pageOnIndex.value + offset
+  const targetIndex = pageOnIndex.value + offset;
   if (inRange(targetIndex, 0, images.value.length)) {
-    offset < 0 ? swiper.value?.slidePrev() : swiper.value?.slideNext()
+    offset < 0 ? swiper.value?.slidePrev() : swiper.value?.slideNext();
   }
-}
+};
 
-const isShowMenu = shallowRef(true)
+const isShowMenu = shallowRef(true);
 
 const { handleTouchend, handleTouchmove, handleTouchstart, handleDbTap } = useSwipeDbClick(() => {
-  isShowMenu.value = !isShowMenu.value
-})
+  isShowMenu.value = !isShowMenu.value;
+});
 
-const { likeItem } = useLike()
+const { likeItem } = useLike();
 
 const queryEps = useInfiniteQuery({
   key: () => [LayoutInject.QueryKey.Ep, LayoutInject.createPageQueryKey($props.page)],
   query: async ({ signal, pageParam }) => await $props.page.fetchEps.query({}, pageParam, signal),
   initialPageParam: $props.page.fetchEps.initPage,
-  getNextPageParam: lp => lp.nextPage,
-  getPreviousPageParam: lp => lp.lastPage
-})
+  getNextPageParam: (lp) => lp.nextPage,
+  getPreviousPageParam: (lp) => lp.lastPage,
+});
 const eps = computed(
   () =>
-    queryEps.data.value?.pages.reduce((acc, v) => acc.concat(v.data), new Array<uni.ep.Ep>()) ?? []
-)
-const nowEp = computed(() => eps.value?.find(v => v.id === $props.page.ep))
-const $route = useRoute()
-const nowEpId = $route.params.ep.toString()
+    queryEps.data.value?.pages.reduce((acc, v) => acc.concat(v.data), new Array<uni.ep.Ep>()) ?? [],
+);
+const nowEp = computed(() => eps.value?.find((v) => v.id === $props.page.ep));
+const $route = useRoute();
+const nowEpId = $route.params.ep.toString();
 const routeToContent = (preload: uni.item.RawItem) =>
   SharedFunction.call(
-    'routeToContent',
+    "routeToContent",
     preload.contentType,
     preload.id,
     preload.thisEp.id,
-    uni.item.Item.create(preload)
-  )
+    uni.item.Item.create(preload),
+  );
 
-const slides = shallowReactive<InstanceType<typeof SwiperSlide>[]>([])
-const freeModeHeightCache = shallowReactive(new Array<number>())
+const slides = shallowReactive<InstanceType<typeof SwiperSlide>[]>([]);
+const freeModeHeightCache = shallowReactive(new Array<number>());
 const virtualShowIndex = computedWithControl<number[]>([swiper], () =>
-  Array.from(swiper.value?.wrapperEl.children ?? []).map(el =>
-    Number((el as HTMLDivElement).dataset.swiperSlideIndex)
-  )
-)
-watchEffect(onCleanup => {
-  const mut = new MutationObserver(() => virtualShowIndex.trigger())
+  Array.from(swiper.value?.wrapperEl.children ?? []).map((el) =>
+    Number((el as HTMLDivElement).dataset.swiperSlideIndex),
+  ),
+);
+watchEffect((onCleanup) => {
+  const mut = new MutationObserver(() => virtualShowIndex.trigger());
   if (swiper.value?.wrapperEl)
     mut.observe(swiper.value.wrapperEl, {
       childList: true,
       attributes: false,
-      characterData: false
-    })
-  onCleanup(() => mut.disconnect())
-})
+      characterData: false,
+    });
+  onCleanup(() => mut.disconnect());
+});
 
 const isLastPreloadItem = (index: number) =>
-  index == pageOnIndex.value ? false : index == virtualShowIndex.value[0]
-watchEffect(onCleanup => {
+  index == pageOnIndex.value ? false : index == virtualShowIndex.value[0];
+watchEffect((onCleanup) => {
   const { stop } = useResizeObserver(
-    slides.filter(Boolean).map(slide => slide.$el),
-    sizes => {
+    slides.filter(Boolean).map((slide) => slide.$el),
+    (sizes) => {
       sizes.forEach((size, index) => {
         freeModeHeightCache[index] = Math.max(
           freeModeHeightCache[index] ?? 0,
-          size.contentRect.height
-        )
-      })
-    }
-  )
-  onCleanup(() => stop())
-})
+          size.contentRect.height,
+        );
+      });
+    },
+  );
+  onCleanup(() => stop());
+});
 
 defineSlots<{
-  topBar(args: ImageViewInject.BarProps): any
-  content(args: ImageViewInject.ContentProps): any
-  bottomBar(args: ImageViewInject.BarProps): any
-}>()
+  topBar(args: ImageViewInject.BarProps): any;
+  content(args: ImageViewInject.ContentProps): any;
+  bottomBar(args: ImageViewInject.BarProps): any;
+}>();
 </script>
 
 <template>
@@ -149,10 +149,10 @@ defineSlots<{
     <Swiper
       mousewheel
       :modules="[Virtual, Zoom, HashNavigation, Keyboard, Mousewheel, FreeMode]"
-      @swiper="sw => (swiper = sw)"
+      @swiper="(sw) => (swiper = sw)"
       :initialSlide="pageOnIndex"
       :slidesPerView="config.doubleImage ? 2 : 1"
-      @slideChange="sw => (pageOnIndex = sw.activeIndex)"
+      @slideChange="(sw) => (pageOnIndex = sw.activeIndex)"
       class="size-full"
       :freeMode="{ enabled: config.isFollowView, sticky: false, momentum: true }"
       @double-tap="handleDbTap"
@@ -161,7 +161,7 @@ defineSlots<{
       :virtual="{
         enabled: true,
         addSlidesAfter: config.preloadImages,
-        addSlidesBefore: config.preloadImages
+        addSlidesBefore: config.preloadImages,
       }"
       @init="onInit"
       zoom
@@ -176,7 +176,7 @@ defineSlots<{
         :data-is-last="isLastPreloadItem(index)"
         class="mt-[attr(data-mt_px,0px)]! overflow-hidden"
         :class="[config.isFollowView && 'h-auto!']"
-        :ref="ins => (slides[index] = ins as any)"
+        :ref="(ins) => (slides[index] = ins as any)"
         :data-mt="
           isLastPreloadItem(index) ? sum(freeModeHeightCache.filter((_, i) => i < index - 1)) : 0
         "
@@ -262,7 +262,7 @@ defineSlots<{
         <DcVar :value="{ showNum: false }" v-slot="{ value }">
           <VanSlider
             v-model="selectPage"
-            @change="v => pageOnIndex === v || swiper?.slideTo(v, 0)"
+            @change="(v) => pageOnIndex === v || swiper?.slideTo(v, 0)"
             :min="0"
             :max="images.length > 1 ? images.length - 1 : selectPage + 1"
             @drag-start="value.showNum = true"
@@ -314,9 +314,9 @@ defineSlots<{
             <DcList
               class="h-full w-full"
               :source="{ type: 'stream', value: queryEps }"
-              :itemHeight="40"
+              :minHeight="40"
               v-slot="{ data: { item: ep, index }, height }"
-              :data-processor="v => v.toReversed()"
+              :data-processor="(v) => v.toReversed()"
               ref="epSelList"
             >
               <VanCell
