@@ -1,14 +1,17 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "noEmit": true,
+    "module": "nodenext",
+    "skipLibCheck": true,
+    /* Bundler mode */
+    "moduleResolution": "nodenext",
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
-  "include": [
-    "vite.config.mts",
-    "./script/**/*",
-    "./*.ts"
+  "files": [],
+  "references": [
+    { "path": "./packages/app/tsconfig.node.json" }
   ]
 }

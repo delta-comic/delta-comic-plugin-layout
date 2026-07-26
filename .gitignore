@@ -1,5 +1,5 @@
 # Logs
-logs
+/logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -12,6 +12,7 @@ dist
 dev-dist
 dist-ssr
 coverage
+.vitest
 *.local
 *.local.*
 debug
@@ -29,5 +30,16 @@ release
 *.sw?
 
 .vercel
+.codex
+.codex/config.toml
 
 .wrangler
+.dev.vars
+.dev.vars.*
+
+target
+dist-vite
+packages/app/public/runtime/
+*.tsbuildinfo
+packages/*/android/.tauri
+packages/*/android/.gradle

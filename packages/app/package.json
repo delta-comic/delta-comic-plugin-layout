@@ -1,0 +1,39 @@
+{
+  "name": "app",
+  "description": "希望的涟漪",
+  "scripts": {
+    "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsgo -p tsconfig.node.json --noEmit"
+  },
+  "dependencies": {
+    "@delta-comic/db": "catalog:",
+    "@delta-comic/downloader": "catalog:",
+    "@delta-comic/logger": "catalog:",
+    "@delta-comic/model": "catalog:",
+    "@delta-comic/plugin": "catalog:",
+    "@delta-comic/ui": "catalog:",
+    "@delta-comic/utils": "catalog:",
+    "@octokit/rest": "catalog:",
+    "es-toolkit": "catalog:",
+    "motion-v": "catalog:",
+    "naive-ui": "catalog:",
+    "vue": "catalog:",
+    "vue-i18n": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vitejs/plugin-legacy": "^8.2.2",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vitejs/plugin-vue-jsx": "catalog:",
+    "browserslist": "catalog:",
+    "lightningcss": "catalog:",
+    "tailwindcss": "catalog:",
+    "tailwindcss-safe-area-capacitor": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-vue-components": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vue-tsc": "catalog:"
+  },
+  "readme": "../../README.md"
+}

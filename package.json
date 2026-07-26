@@ -1,6 +1,6 @@
 {
-  "name": "@delta-comic/delta-comic-plugin-layout",
-  "version": "0.9.2",
+  "name": "delta-comic",
+  "private": true,
   "description": "希望的涟漪",
   "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
   "license": "AGPL-3.0-only",
@@ -12,104 +12,67 @@
     "type": "git",
     "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
   },
-  "files": [
-    "./dist/**/*",
-    "./package.json"
-  ],
+  "bugs": {
+    "url": "https://github.com/delta-comic/delta-comic/issues",
+    "email": "wenxinguo12@gmail.com"
+  },
   "type": "module",
-  "types": "./dist/src/main.d.ts",
-  "exports": {
-    "types": "./dist/src/main.d.ts",
-    "import": "./dist/src/main.d.ts",
-    "node": "./dist/src/main.d.ts",
-    "require": "./dist/src/main.d.ts",
-    "module-sync": "./dist/src/main.d.ts",
-    "default": "./dist/src/main.d.ts"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "scripts": {
-    "build": "vp build && cd ./dist && zip -r plugin.zip ./*",
-    "dev": "vp dev",
-    "lint": "vp lint --type-aware",
-    "lint-staged": "lint-staged",
-    "lint:fix": "vp lint --fix --type-aware",
-    "preview": "vp preview",
-    "publish:github": "pnpm run build && pnpm publish --registry=https://npm.pkg.github.com --no-git-checks",
+    "branch:develop": "node ./script/release-branches.mts develop",
+    "branch:develop:dry-run": "node ./script/release-branches.mts develop --dry-run",
+    "check": "vp check",
+    "dev": "vp run --filter app dev",
+    "lib-build": "vp run -t app#build",
+    "release": "node ./script/release.mts",
+    "release:dry-run": "node ./script/release.mts --dry-run",
+    "release:preview": "node ./script/release-branches.mts preview",
+    "release:preview:dry-run": "node ./script/release-branches.mts preview --dry-run",
+    "release:stable": "node ./script/release-branches.mts stable",
+    "release:stable:dry-run": "node ./script/release-branches.mts stable --dry-run",
     "set-ver": "node ./script/set-version.mts",
-    "typecheck": "vue-tsc --noEmit -p ./tsconfig.json --composite false"
-  },
-  "dependencies": {
-    "@delta-comic/core": "^2.1.0",
-    "@delta-comic/db": "^2.1.0",
-    "@delta-comic/model": "^2.1.0",
-    "@delta-comic/plugin": "^2.1.0",
-    "@delta-comic/ui": "^2.1.0",
-    "@delta-comic/utils": "^2.1.0",
-    "@pinia/colada": "^1.1.0",
-    "@tauri-apps/api": "^2.10.1",
-    "@vicons/antd": "^0.13.0",
-    "@vicons/material": "^0.13.0",
-    "@vueuse/core": "^14.2.1",
-    "dayjs": "^1.11.20",
-    "dompurify": "^3.3.3",
-    "es-toolkit": "^1.45.1",
-    "hls.js": "^1.6.15",
-    "media-icons": "^1.1.5",
-    "mitt": "^3.0.1",
-    "motion-v": "2.2.1",
-    "naive-ui": "^2.44.1",
-    "swiper": "^12.1.3",
-    "vant": "^4.9.24",
-    "vidstack": "^1.12.13",
-    "vue": "^3.5.32",
-    "vue-router": "^5.0.4"
+    "test": "vp test",
+    "test:coverage": "vp test run --coverage",
+    "typecheck": "vp run -r typecheck",
+    "vp:install": "vp install"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
-    "@commitlint/types": "^20.5.0",
-    "@cspell/dict-npm": "^5.2.38",
-    "@cspell/dict-rust": "^4.1.2",
-    "@delta-comic/vite": "^2.1.0",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
     "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^12.0.6",
-    "@semantic-release/release-notes-generator": "^14.1.0",
-    "@tailwindcss/vite": "^4.2.2",
-    "@vitejs/plugin-vue": "^6.0.5",
-    "@vue/tsconfig": "^0.9.1",
-    "browserslist": "^4.28.2",
-    "commitlint-plugin-cspell": "^0.8.0",
-    "cspell": "^10.0.0",
-    "husky": "^9.1.7",
-    "lightningcss": "^1.32.0",
-    "lint-staged": "^16.4.0",
-    "semantic-release": "^25.0.3",
-    "tailwindcss": "4.2.2",
-    "typescript": "^6.0.2",
-    "unplugin-vue-components": "32.0.0",
-    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.16",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-externals": "^0.6.2",
-    "vite-plugin-monkey": "^7.1.9",
-    "vite-plus": "latest",
-    "vue-component-type-helpers": "^3.2.6",
-    "vue-tsc": "^3.2.6"
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "@typescript/native-preview": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "commitlint-plugin-cspell": "catalog:",
+    "cspell": "catalog:",
+    "happy-dom": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "semantic-release": "^25.0.7",
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
   },
-  "packageManager": "pnpm@11.3.0",
-  "pnpm": {
-    "overrides": {
-      "@microsoft/api-extractor": "7.48.1",
-      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-      "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  "badges": [
+    {
+      "description": "semantic-release: angular",
+      "href": "https://github.com/semantic-release/semantic-release",
+      "url": "https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release"
     },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@tailwindcss/oxide",
-      "core-js",
-      "esbuild"
-    ]
-  }
+    {
+      "description": "Repo License",
+      "href": "https://github.com/delta-comic/delta-comic/blob/main/LICENSE",
+      "url": "https://github.com/delta-comic/delta-comic/blob/main/LICENSE"
+    },
+    {
+      "description": "GitHub Downloads (all assets, all releases)",
+      "href": "https://github.com/delta-comic/delta-comic/releases/latest",
+      "url": "https://img.shields.io/github/downloads/delta-comic/delta-comic/total"
+    },
+    {
+      "description": "Wakatime",
+      "href": "https://wakatime.com/projects/delta-comic",
+      "url": "https://wakatime.com/badge/user/018cf362-35ff-48f2-af6b-61f09a441de4/project/9f2c18ca-6eec-4e82-8041-5d23c1aba440.svg"
+    }
+  ],
+  "packageManager": "pnpm@11.13.0",
+  "readme": "./README.md"
 }
