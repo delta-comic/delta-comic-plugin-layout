@@ -50,40 +50,22 @@ declare module '@delta-comic/plugin' {
 
 const plugin = definePlugin({
   name: pluginName,
-  onBooted: () =>
-    ({
-      view: { Image, Video },
-      layout: { Default },
-      model,
-      component: {
-        ItemCard,
-        ShareButton,
-        FavouriteSelect,
-        CreateFavouriteCard,
-        comment: { Comment, Children, Sender, CommentRow },
-        previewUser: PreviewUser
-      },
-      helper: { createDateString }
-    }) as {
-      view: { Image: typeof Image; Video: typeof Video }
-      layout: { Default: typeof Default }
-      model: typeof model
-      component: {
-        ShareButton: typeof ShareButton
-        ItemCard: typeof ItemCard
-        FavouriteSelect: typeof FavouriteSelect
-        CreateFavouriteCard: typeof CreateFavouriteCard
-        comment: {
-          Comment: typeof Comment
-          Children: typeof Children
-          Sender: typeof Sender
-          CommentRow: typeof CommentRow
-        }
-        previewUser: typeof PreviewUser
-      }
-      helper: { createDateString: typeof createDateString }
+  onBooted: () => ({
+    view: { Image, Video },
+    layout: { Default },
+    model,
+    component: {
+      ItemCard,
+      ShareButton,
+      FavouriteSelect,
+      CreateFavouriteCard,
+      comment: { Comment, Children, Sender, CommentRow },
+      previewUser: PreviewUser,
     },
-  config: [imageViewConfig]
+    helper: { createDateString },
+  }),
+  
+  config: [imageViewConfig],
 })
 
 export type LayoutLib = PluginExpose<() => typeof plugin>

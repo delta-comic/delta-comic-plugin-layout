@@ -1,23 +1,50 @@
 {
   "name": "app",
+  "version": "0.9.2",
   "description": "希望的涟漪",
+  "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
+  "bugs": {
+    "url": "https://github.com/delta-comic/delta-comic/issues",
+    "email": "wenxinguo12@gmail.com"
+  },
+  "license": "AGPL-3.0-only",
+  "author": {
+    "name": "wenxig",
+    "email": "wenxinguo12@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
+  },
+  "type": "module",
   "scripts": {
     "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsgo -p tsconfig.node.json --noEmit"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@delta-comic/db": "catalog:",
     "@delta-comic/downloader": "catalog:",
     "@delta-comic/logger": "catalog:",
     "@delta-comic/model": "catalog:",
     "@delta-comic/plugin": "catalog:",
     "@delta-comic/ui": "catalog:",
-    "@delta-comic/utils": "catalog:",
+    "@delta-comic/utils": "catalog:"
+  },
+  "dependencies": {
     "@octokit/rest": "catalog:",
+    "@pinia/colada": "catalog:",
+    "@vicons/antd": "^0.13.0",
+    "@vicons/material": "^0.13.0",
+    "@vueuse/core": "catalog:",
+    "dayjs": "catalog:",
     "es-toolkit": "catalog:",
+    "hls.js": "^1.6.16",
     "motion-v": "catalog:",
     "naive-ui": "catalog:",
+    "swiper": "catalog:",
+    "vidstack": "^0.6.15",
     "vue": "catalog:",
-    "vue-i18n": "catalog:"
+    "vue-i18n": "catalog:",
+    "vue-router": "catalog:"
   },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:",

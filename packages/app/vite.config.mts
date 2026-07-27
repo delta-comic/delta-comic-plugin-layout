@@ -6,14 +6,16 @@ import { browserslistToTargets } from 'lightningcss'
 import type { UserConfig } from 'vite-plus'
 import { defineConfig, lazyPlugins } from 'vite-plus'
 
+import pkg from './package.json' with { type: 'json' }
+
 const host = process.env.TAURI_DEV_HOST
 
 export default defineConfig(
-  () =>
+  ({ command }) =>
     ({
       plugins: lazyPlugins(async () => {
         const [
-          { exposeHostLibraries },
+          { deltaComic },
           { default: tailwindcss },
           { default: vue },
           { default: vueJsx },
@@ -21,8 +23,9 @@ export default defineConfig(
           { NaiveUiResolver },
           { default: Components },
           { DeltaComicUiResolver },
+          { default: legacy },
         ] = await Promise.all([
-          import('@delta-comic/utils/vite'),
+          import('@delta-comic/plugin/vite'),
           import('@tailwindcss/vite'),
           import('@vitejs/plugin-vue'),
           import('@vitejs/plugin-vue-jsx'),
@@ -30,6 +33,7 @@ export default defineConfig(
           import('unplugin-vue-components/resolvers'),
           import('unplugin-vue-components/vite'),
           import('@delta-comic/ui/vite'),
+          import('@vitejs/plugin-legacy'),
         ])
 
         return [
@@ -43,7 +47,17 @@ export default defineConfig(
             dtsTsx: false,
           }),
           tailwindcss(),
-          exposeHostLibraries({ entry: fileURLToPath(new URL('./src/main.tsx', import.meta.url)) }),
+          deltaComic(
+            {
+              version: { plugin: pkg.version, supportCore: '^3.0' },
+              name: { display: '图像与视频布局', id: 'layout' },
+              author: pkg.author.name,
+              description: pkg.description,
+              require: [],
+            },
+            command,
+          ),
+          legacy({ modernPolyfills: true, renderLegacyChunks: true, renderModernChunks: false }),
         ]
       }),
       resolve: {
