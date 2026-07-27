@@ -9,13 +9,13 @@ allowBuilds:
   workerd: true
 
 catalog:
-  "@delta-comic/db": "3.0.0-next.4"
-  "@delta-comic/downloader": "3.0.0-next.4"
-  "@delta-comic/logger": "3.0.0-next.4"
-  "@delta-comic/model": "3.0.0-next.4"
-  "@delta-comic/plugin": "3.0.0-next.4"
-  "@delta-comic/ui": "3.0.0-next.4"
-  "@delta-comic/utils": "3.0.0-next.4"
+  "@delta-comic/db": "3.0.0-next.5"
+  "@delta-comic/downloader": "3.0.0-next.5"
+  "@delta-comic/logger": "3.0.0-next.5"
+  "@delta-comic/model": "3.0.0-next.5"
+  "@delta-comic/plugin": "3.0.0-next.5"
+  "@delta-comic/ui": "3.0.0-next.5"
+  "@delta-comic/utils": "3.0.0-next.5"
   vue-tsc: ^3.3.3
   rolldown-plugin-dts: ^0.27.14
   '@commitlint/cli': ^21.2.1
@@ -119,10 +119,10 @@ minimumReleaseAgeExclude:
   - '@vue/server-renderer@3.5.40'
   - '@vue/shared@3.5.40'
   - vue@3.5.40
-  - '@delta-comic/db@3.0.0-next.4'
-  - '@delta-comic/downloader@3.0.0-next.4'
-  - '@delta-comic/logger@3.0.0-next.4'
-  - '@delta-comic/model@3.0.0-next.4'
-  - '@delta-comic/plugin@3.0.0-next.4'
-  - '@delta-comic/ui@3.0.0-next.4'
-  - '@delta-comic/utils@3.0.0-next.4'
+  - '@delta-comic/db@3.0.0-next.4 || 3.0.0-next.5 || 3.0.0-next.6'
+  - '@delta-comic/downloader@3.0.0-next.4 || 3.0.0-next.5 || 3.0.0-next.6'
+  - '@delta-comic/logger@3.0.0-next.4 || 3.0.0-next.5 || 3.0.0-next.6'
+  - '@delta-comic/model@3.0.0-next.4 || 3.0.0-next.5 || 3.0.0-next.6'
+  - '@delta-comic/plugin@3.0.0-next.4 || 3.0.0-next.5 || 3.0.0-next.6'
+  - '@delta-comic/ui@3.0.0-next.4 || 3.0.0-next.5 || 3.0.0-next.6'
+  - '@delta-comic/utils@3.0.0-next.4 || 3.0.0-next.5 || 3.0.0-next.6'

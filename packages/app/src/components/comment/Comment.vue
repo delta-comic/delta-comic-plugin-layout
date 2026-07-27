@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { uni, type StreamQuery } from '@delta-comic/model'
+import {
+  UniComment,
+  UniContentPage,
+  type StreamQuery,
+  type UniItem,
+  type UniUser,
+} from '@delta-comic/model'
 import { DcWaterfall } from '@delta-comic/ui'
 import { useInfiniteQuery } from '@pinia/colada'
 import { computed, useTemplateRef } from 'vue'
@@ -11,14 +17,8 @@ import _CommentRow from './CommentRow.vue'
 
 import { createMainCommentQueryKey, QueryKey } from '.'
 
-const $props = defineProps<{
-  item: uni.item.Item
-  fetchComments: StreamQuery<uni.comment.Comment>
-  class?: any
-}>()
-const CommentRow = computed(
-  () => uni.comment.Comment.commentRow.get($props.item.contentType) ?? _CommentRow
-)
+const $props = defineProps<{ item: UniItem; fetchComments: StreamQuery<UniComment>; class?: any }>()
+const CommentRow = computed(() => UniComment.commentRow.get($props.item.contentType) ?? _CommentRow)
 
 const children = useTemplateRef('children')
 
@@ -29,13 +29,13 @@ const query = useInfiniteQuery({
     QueryKey.MainComment,
     createMainCommentQueryKey(
       $props.item.id,
-      uni.content.ContentPage.contentPages.key.toString($props.item.contentType)
-    )
+      UniContentPage.contentPages.key.toString($props.item.contentType),
+    ),
   ],
   query: async ({ signal, pageParam }) => await $props.fetchComments.query({}, pageParam, signal),
   initialPageParam: $props.fetchComments.initPage,
   getNextPageParam: lastPage => lastPage.nextPage,
-  getPreviousPageParam: lastPage => lastPage.lastPage
+  getPreviousPageParam: lastPage => lastPage.lastPage,
 })
 </script>
 
@@ -55,7 +55,7 @@ const query = useInfiniteQuery({
           :is="CommentRow"
           :comment
           :item
-          @clickUser="(user: uni.user.User) => previewUser?.show(user)"
+          @clickUser="(user: UniUser) => previewUser?.show(user)"
           @click="children?.loadChild(comment)"
         />
       </DcWaterfall>

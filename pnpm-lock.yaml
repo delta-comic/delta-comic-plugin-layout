@@ -154,26 +154,26 @@ importers:
   packages/app:
     dependencies:
       '@delta-comic/db':
-        specifier: 'catalog:'
-        version: 3.0.0-next.4(@delta-comic/model@3.0.0-next.4(vue@3.5.40(typescript@6.0.3)))(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
+        specifier: 3.0.0-next.6
+        version: 3.0.0-next.6(@delta-comic/model@3.0.0-next.6(vue@3.5.40(typescript@6.0.3)))(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
       '@delta-comic/downloader':
-        specifier: 'catalog:'
-        version: 3.0.0-next.4
+        specifier: 3.0.0-next.6
+        version: 3.0.0-next.6
       '@delta-comic/logger':
-        specifier: 'catalog:'
-        version: 3.0.0-next.4
+        specifier: 3.0.0-next.6
+        version: 3.0.0-next.6
       '@delta-comic/model':
-        specifier: 'catalog:'
-        version: 3.0.0-next.4(vue@3.5.40(typescript@6.0.3))
+        specifier: 3.0.0-next.6
+        version: 3.0.0-next.6(vue@3.5.40(typescript@6.0.3))
       '@delta-comic/plugin':
-        specifier: 'catalog:'
-        version: 3.0.0-next.4(f330d7828f6fb2c4d34a069a7bb551d7)
+        specifier: 3.0.0-next.6
+        version: 3.0.0-next.6(86be3046c0f206a45d1753f5c7e972bd)
       '@delta-comic/ui':
-        specifier: 'catalog:'
-        version: 3.0.0-next.4(28014956c360dd7a6174c3f1f00637bd)
+        specifier: 3.0.0-next.6
+        version: 3.0.0-next.6(4afdf30a9f8ea7505cb086992ec12b5e)
       '@delta-comic/utils':
-        specifier: 'catalog:'
-        version: 3.0.0-next.4(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
+        specifier: 3.0.0-next.6
+        version: 3.0.0-next.6(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
       '@octokit/rest':
         specifier: 'catalog:'
         version: 22.0.1
@@ -192,6 +192,9 @@ importers:
       dayjs:
         specifier: 'catalog:'
         version: 1.11.21
+      dompurify:
+        specifier: ^3.4.12
+        version: 3.4.12
       es-toolkit:
         specifier: 'catalog:'
         version: 1.49.0
@@ -258,7 +261,7 @@ importers:
         version: '@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)'
       vite-plus:
         specifier: 'catalog:'
-        version: 0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)
+        version: 0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.5(typescript@6.0.3)
@@ -1160,47 +1163,51 @@ packages:
     peerDependencies:
       vue: ^3.0.11
 
-  '@delta-comic/db@3.0.0-next.4':
-    resolution: {integrity: sha512-Wj4DQDSa52dTWVee2GnpzLRxQJenJcg/mO7zNqXcNzkNVFpu3W4J3TUnCWwq6/csrTGeOPQxCtXJLPcHt9bSdQ==}
+  '@delta-comic/db@3.0.0-next.6':
+    resolution: {integrity: sha512-mFzvK2EWWZJnNX12vQdQexyohnyq6nwjXi7W6iCNBvCSd/iWZmhZu3Cj3am9esr4JtdubngQ2FW1io1RiqwSEw==}
     peerDependencies:
-      '@delta-comic/model': 3.0.0-next.4
+      '@delta-comic/model': 3.0.0-next.6
       '@pinia/colada': ^1.3.1
       vue: ^3.5.40
 
-  '@delta-comic/downloader@3.0.0-next.4':
-    resolution: {integrity: sha512-pLMQtpRqpYycttLuws10xJZIBT4QwEXphV8S2CK1v3UfDLr2kd4Nn2iutsMAbLR/PdRKg3vJLtngYGQAi8cDXw==}
+  '@delta-comic/downloader@3.0.0-next.6':
+    resolution: {integrity: sha512-6/3LQdEYgxyKeXAVwXQL3tzKX7WaaBqHnQv33JmJkXc4m9+lICSe98i8aZSfT9Jzezi38HdK0yLpBQ+mx3bjkw==}
 
-  '@delta-comic/logger@3.0.0-next.4':
-    resolution: {integrity: sha512-86/wqm3WpVWO41DGp9P+FV3lRyXo242tgxE5vSJFtNEn29ThdqX0aUFiTL9yV9fQRCq1zYch798q9VxNY7wMlw==}
+  '@delta-comic/logger@3.0.0-next.6':
+    resolution: {integrity: sha512-3ngy9RdJicVtZL/Jf6p7VTxv1xfwShCyS19f8AnbPHGbuLxWggT8nHtfUzMSDB1I+jLslc5EVO3YvP58TLmhnA==}
 
-  '@delta-comic/model@3.0.0-next.4':
-    resolution: {integrity: sha512-hmXcbbA7VOOgzEctuUrDm7r7MGKW+QasuqIU4PYgAfED5owj6iWwhXX9by2s699Lzne+8HJd+rVYCXasHcPfRA==}
+  '@delta-comic/model@3.0.0-next.6':
+    resolution: {integrity: sha512-Xh696PF5VW9SVh/YqgO0SMNAww5PldgkYequH9hBfNpDzqefakrzivQdMsXMHsXnLVjt27tkzXBNRutVXUP4Zg==}
     peerDependencies:
       vue: ^3.5.40
 
-  '@delta-comic/plugin@3.0.0-next.4':
-    resolution: {integrity: sha512-Af4nXCEZe5OORKKKk5OQpPHO6bPdfCNFmPfV2AIDLmRInqGZ2IFDzg/J4cOZTlrVu2e87EwJYjZwgjJ81mftxA==}
+  '@delta-comic/plugin@3.0.0-next.6':
+    resolution: {integrity: sha512-/dRuYeAZEjGbCJWr5swIgs+tgjRvhYMRU0fGDEF69kIkh+M5XYl4qO3cornTafAHWwRyPK97bbF4MbfTFev1Hw==}
     peerDependencies:
-      '@delta-comic/db': 3.0.0-next.4
-      '@delta-comic/model': 3.0.0-next.4
-      '@delta-comic/ui': 3.0.0-next.4
-      '@delta-comic/utils': 3.0.0-next.4
+      '@delta-comic/db': 3.0.0-next.6
+      '@delta-comic/model': 3.0.0-next.6
+      '@delta-comic/ui': 3.0.0-next.6
+      '@delta-comic/utils': 3.0.0-next.6
       naive-ui: ^2.44.1
       vue: ^3.5.40
 
-  '@delta-comic/ui@3.0.0-next.4':
-    resolution: {integrity: sha512-5Ozex1rkl0EapooSUNIabXP7hs9FAYW3UkNrS3/rV7k896cnSvnZaXcrExd8fF/2+fqZh4MJs7h5xaI1H9rrmg==}
+  '@delta-comic/ui@3.0.0-next.6':
+    resolution: {integrity: sha512-pOM+2MWxBoXMeNsLgGU3fHrI7gfkkduY0sWKAipkHeDD0KBI1fimuxrniJY/MpS3qEYJtGJMgXLpLhURpoqnSg==}
     peerDependencies:
-      '@delta-comic/model': 3.0.0-next.4
-      '@delta-comic/utils': 3.0.0-next.4
+      '@delta-comic/model': 3.0.0-next.6
+      '@delta-comic/utils': 3.0.0-next.6
       '@pinia/colada': ^1.3.1
       naive-ui: ^2.44.1
       pinia: ^3.0.4
+      tailwindcss: ^4.3.0
       vue: ^3.5.40
       vue-router: ^5.1.0
+    peerDependenciesMeta:
+      tailwindcss:
+        optional: true
 
-  '@delta-comic/utils@3.0.0-next.4':
-    resolution: {integrity: sha512-4OR8Lfny3fUCQ8a5F7bmFfy9x91b2rT93iyTC2ZkRxKRwJviCBkXXpelhMl3H4Lxc8+HqPtZOBas9zPlOaGByA==}
+  '@delta-comic/utils@3.0.0-next.6':
+    resolution: {integrity: sha512-hiVwyKOsM5SeH/Qjj+BZjq0Q+NyoRmUDop9Egu6Mm7sq2956IlPL6rCAP08W/js87sUPPwXl4XOeRkFjHsHgoA==}
     peerDependencies:
       naive-ui: ^2.44.1
       vue: ^3.5.40
@@ -2268,6 +2275,9 @@ packages:
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
+  '@types/trusted-types@2.0.7':
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
+
   '@types/web-bluetooth@0.0.21':
     resolution: {integrity: sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA==}
 
@@ -3293,6 +3303,9 @@ packages:
   domhandler@6.0.1:
     resolution: {integrity: sha512-gYzvtM72ZtxQO0T048kd6HWSbbGCNOUwcnfQ01cqIJ4X2IYKFFHZ5mKvrQETcFXxsRObZulDaKmy//R7TPtsBg==}
     engines: {node: '>=20.19.0'}
+
+  dompurify@3.4.12:
+    resolution: {integrity: sha512-zQvGet8Z2sWbQhCmfFz/T5QWH2oBmjnqK3qvOjaqaNLrLEF912WamU+ohnTp0TCep/MFVHpdJuCZEdFOdTnEFg==}
 
   domutils@4.0.2:
     resolution: {integrity: sha512-qI4JLRKnSzqFqr7hAlS5xQDusBCjKSEG4t4+7aNrIQMHBcsC2TGEhuyABJdYkgSewL57PNLYEiibY2iPKhKpaA==}
@@ -6372,10 +6385,10 @@ snapshots:
     dependencies:
       vue: 3.5.40(typescript@6.0.3)
 
-  '@delta-comic/db@3.0.0-next.4(@delta-comic/model@3.0.0-next.4(vue@3.5.40(typescript@6.0.3)))(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))':
+  '@delta-comic/db@3.0.0-next.6(@delta-comic/model@3.0.0-next.6(vue@3.5.40(typescript@6.0.3)))(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))':
     dependencies:
-      '@delta-comic/logger': 3.0.0-next.4
-      '@delta-comic/model': 3.0.0-next.4(vue@3.5.40(typescript@6.0.3))
+      '@delta-comic/logger': 3.0.0-next.6
+      '@delta-comic/model': 3.0.0-next.6(vue@3.5.40(typescript@6.0.3))
       '@pinia/colada': 1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
       '@subframe7536/sqlite-wasm': 1.3.1
       '@tauri-apps/api': 2.11.0
@@ -6388,28 +6401,28 @@ snapshots:
       mitt: 3.0.1
       vue: 3.5.40(typescript@6.0.3)
 
-  '@delta-comic/downloader@3.0.0-next.4':
+  '@delta-comic/downloader@3.0.0-next.6':
     dependencies:
       '@tauri-apps/api': 2.11.0
 
-  '@delta-comic/logger@3.0.0-next.4':
+  '@delta-comic/logger@3.0.0-next.6':
     dependencies:
       '@tauri-apps/api': 2.11.0
 
-  '@delta-comic/model@3.0.0-next.4(vue@3.5.40(typescript@6.0.3))':
+  '@delta-comic/model@3.0.0-next.6(vue@3.5.40(typescript@6.0.3))':
     dependencies:
-      '@delta-comic/logger': 3.0.0-next.4
+      '@delta-comic/logger': 3.0.0-next.6
       es-toolkit: 1.49.0
       vue: 3.5.40(typescript@6.0.3)
 
-  '@delta-comic/plugin@3.0.0-next.4(f330d7828f6fb2c4d34a069a7bb551d7)':
+  '@delta-comic/plugin@3.0.0-next.6(86be3046c0f206a45d1753f5c7e972bd)':
     dependencies:
-      '@delta-comic/db': 3.0.0-next.4(@delta-comic/model@3.0.0-next.4(vue@3.5.40(typescript@6.0.3)))(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
-      '@delta-comic/downloader': 3.0.0-next.4
-      '@delta-comic/logger': 3.0.0-next.4
-      '@delta-comic/model': 3.0.0-next.4(vue@3.5.40(typescript@6.0.3))
-      '@delta-comic/ui': 3.0.0-next.4(28014956c360dd7a6174c3f1f00637bd)
-      '@delta-comic/utils': 3.0.0-next.4(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
+      '@delta-comic/db': 3.0.0-next.6(@delta-comic/model@3.0.0-next.6(vue@3.5.40(typescript@6.0.3)))(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
+      '@delta-comic/downloader': 3.0.0-next.6
+      '@delta-comic/logger': 3.0.0-next.6
+      '@delta-comic/model': 3.0.0-next.6(vue@3.5.40(typescript@6.0.3))
+      '@delta-comic/ui': 3.0.0-next.6(4afdf30a9f8ea7505cb086992ec12b5e)
+      '@delta-comic/utils': 3.0.0-next.6(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
       '@octokit/rest': 22.0.1
       '@tauri-apps/api': 2.11.0
       '@tauri-apps/plugin-fs': 2.5.1
@@ -6426,11 +6439,11 @@ snapshots:
       - postcss
       - vite
 
-  '@delta-comic/ui@3.0.0-next.4(28014956c360dd7a6174c3f1f00637bd)':
+  '@delta-comic/ui@3.0.0-next.6(4afdf30a9f8ea7505cb086992ec12b5e)':
     dependencies:
-      '@delta-comic/logger': 3.0.0-next.4
-      '@delta-comic/model': 3.0.0-next.4(vue@3.5.40(typescript@6.0.3))
-      '@delta-comic/utils': 3.0.0-next.4(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
+      '@delta-comic/logger': 3.0.0-next.6
+      '@delta-comic/model': 3.0.0-next.6(vue@3.5.40(typescript@6.0.3))
+      '@delta-comic/utils': 3.0.0-next.6(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
       '@lhlyu/vue-virtual-waterfall': 1.0.8(vue@3.5.40(typescript@6.0.3))
       '@pinia/colada': 1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
       '@tauri-apps/api': 2.11.0
@@ -6450,16 +6463,17 @@ snapshots:
       tlds: 1.261.0
       vue: 3.5.40(typescript@6.0.3)
       vue-router: 5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))
+    optionalDependencies:
+      tailwindcss: 4.3.1
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
       - react
       - react-dom
-      - tailwindcss
 
-  '@delta-comic/utils@3.0.0-next.4(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))':
+  '@delta-comic/utils@3.0.0-next.6(naive-ui@2.44.1(vue@3.5.40(typescript@6.0.3)))(vue-router@5.1.0(@pinia/colada@1.3.1(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(@vue/compiler-sfc@3.5.40)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3)))(vue@3.5.40(typescript@6.0.3))':
     dependencies:
       '@aptabase/tauri': 0.4.1
-      '@delta-comic/logger': 3.0.0-next.4
+      '@delta-comic/logger': 3.0.0-next.6
       '@tauri-apps/api': 2.11.0
       '@vue/language-core': 3.3.5
       acorn: 8.17.0
@@ -7235,6 +7249,9 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
+  '@types/trusted-types@2.0.7':
+    optional: true
+
   '@types/web-bluetooth@0.0.21': {}
 
   '@types/whatwg-mimetype@3.0.2': {}
@@ -7320,7 +7337,7 @@ snapshots:
       '@testing-library/dom': 10.4.1
       '@testing-library/user-event': 14.6.1(@testing-library/dom@10.4.1)
       '@vitest/browser': 4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10)
-      vitest: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6)
+      vitest: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6)
     transitivePeerDependencies:
       - bufferutil
       - msw
@@ -7348,7 +7365,7 @@ snapshots:
       pngjs: 7.0.0
       sirv: 3.0.2
       tinyrainbow: 3.1.0
-      vitest: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6)
+      vitest: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6)
       ws: 8.21.1
     transitivePeerDependencies:
       - bufferutil
@@ -7372,23 +7389,6 @@ snapshots:
       - msw
       - utf-8-validate
       - vite
-
-  '@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10)':
-    dependencies:
-      '@bcoe/v8-coverage': 1.0.2
-      '@vitest/utils': 4.1.10
-      ast-v8-to-istanbul: 1.0.5
-      istanbul-lib-coverage: 3.2.2
-      istanbul-lib-report: 3.0.1
-      istanbul-reports: 3.2.0
-      magicast: 0.5.3
-      obug: 2.1.3
-      std-env: 4.2.0
-      tinyrainbow: 3.1.0
-      vitest: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6)
-    optionalDependencies:
-      '@vitest/browser': 4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10)
-    optional: true
 
   '@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)':
     dependencies:
@@ -8261,6 +8261,10 @@ snapshots:
     dependencies:
       domelementtype: 3.0.0
 
+  dompurify@3.4.12:
+    optionalDependencies:
+      '@types/trusted-types': 2.0.7
+
   domutils@4.0.2:
     dependencies:
       dom-serializer: 3.1.1
@@ -9132,7 +9136,7 @@ snapshots:
       powershell-utils: 0.1.0
       wsl-utils: 0.3.1
 
-  oxfmt@0.57.0(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)):
+  oxfmt@0.57.0(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)):
     dependencies:
       tinypool: 2.1.0
     optionalDependencies:
@@ -9155,7 +9159,7 @@ snapshots:
       '@oxfmt/binding-win32-arm64-msvc': 0.57.0
       '@oxfmt/binding-win32-ia32-msvc': 0.57.0
       '@oxfmt/binding-win32-x64-msvc': 0.57.0
-      vite-plus: 0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)
+      vite-plus: 0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)
 
   oxfmt@0.57.0(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(vite@8.0.16(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))(yaml@2.9.0)):
     dependencies:
@@ -9191,7 +9195,7 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 0.24.0
       '@oxlint-tsgolint/win32-x64': 0.24.0
 
-  oxlint@1.72.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)):
+  oxlint@1.72.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)):
     optionalDependencies:
       '@oxlint/binding-android-arm-eabi': 1.72.0
       '@oxlint/binding-android-arm64': 1.72.0
@@ -9213,7 +9217,7 @@ snapshots:
       '@oxlint/binding-win32-ia32-msvc': 1.72.0
       '@oxlint/binding-win32-x64-msvc': 1.72.0
       oxlint-tsgolint: 0.24.0
-      vite-plus: 0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)
+      vite-plus: 0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)
 
   oxlint@1.72.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(vite@8.0.16(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))(yaml@2.9.0)):
     optionalDependencies:
@@ -9933,7 +9937,7 @@ snapshots:
     transitivePeerDependencies:
       - postcss
 
-  vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0):
+  vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0):
     dependencies:
       '@oxc-project/types': 0.138.0
       '@oxlint/plugins': 1.68.0
@@ -9947,10 +9951,10 @@ snapshots:
       '@vitest/spy': 4.1.10
       '@vitest/utils': 4.1.10
       '@voidzero-dev/vite-plus-core': 0.2.4(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0)
-      oxfmt: 0.57.0(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))
-      oxlint: 1.72.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))
+      oxfmt: 0.57.0(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))
+      oxlint: 1.72.0(oxlint-tsgolint@0.24.0)(vite-plus@0.2.4(@types/node@26.1.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.10.6)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))
       oxlint-tsgolint: 0.24.0
-      vitest: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6)
+      vitest: 4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6)
     optionalDependencies:
       '@voidzero-dev/vite-plus-darwin-arm64': 0.2.4
       '@voidzero-dev/vite-plus-darwin-x64': 0.2.4
@@ -10064,7 +10068,7 @@ snapshots:
       terser: 5.49.0
       yaml: 2.9.0
 
-  vitest@4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10))(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6):
+  vitest@4.1.10(@types/node@26.1.0)(@vitest/browser-preview@4.1.10)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(happy-dom@20.10.6):
     dependencies:
       '@vitest/expect': 4.1.10
       '@vitest/mocker': 4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))
@@ -10089,7 +10093,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.0
       '@vitest/browser-preview': 4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10)
-      '@vitest/coverage-v8': 4.1.10(@vitest/browser@4.1.10(@voidzero-dev/vite-plus-core@0.2.6(@types/node@26.1.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript@6.0.3)(yaml@2.9.0))(vitest@4.1.10))(vitest@4.1.10)
+      '@vitest/coverage-v8': 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
       happy-dom: 20.10.6
     transitivePeerDependencies:
       - msw

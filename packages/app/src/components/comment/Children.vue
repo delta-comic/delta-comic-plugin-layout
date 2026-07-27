@@ -1,26 +1,27 @@
 <script setup lang="ts">
-import { uni } from '@delta-comic/model'
-import { DcPopup, DcWaterfall } from '@delta-comic/ui'
+import { UniComment, UniContentPage, type UniItem, type UniUser } from '@delta-comic/model'
+import { DcWaterfall } from '@delta-comic/ui'
 import { useInfiniteQuery } from '@pinia/colada'
 import { CloseRound } from '@vicons/material'
+import { NDrawer } from 'naive-ui'
 import { computed, shallowRef } from 'vue'
 
 import Sender from './Sender.vue'
 
 import { createChildrenCommentQueryKey, QueryKey } from '.'
-const $props = defineProps<{ item: uni.item.Item }>()
-const parentComment = shallowRef<uni.comment.Comment>()
+const $props = defineProps<{ item: UniItem }>()
+const parentComment = shallowRef<UniComment>()
 
 const isShowPopup = shallowRef(false)
 defineExpose({
-  loadChild(parent: uni.comment.Comment) {
+  loadChild(parent: UniComment) {
     parentComment.value = parent
     isShowPopup.value = true
     query.refresh()
-  }
+  },
 })
-defineEmits<{ user: [u: uni.user.User] }>()
-const CommentRow = computed(() => uni.comment.Comment.commentRow.get($props.item.contentType))
+defineEmits<{ user: [u: UniUser] }>()
+const CommentRow = computed(() => UniComment.commentRow.get($props.item.contentType))
 
 const query = useInfiniteQuery({
   enabled: () => !!parentComment.value,
@@ -29,24 +30,24 @@ const query = useInfiniteQuery({
     createChildrenCommentQueryKey(
       $props.item.id,
       parentComment.value?.id ?? 'unknown',
-      uni.content.ContentPage.contentPages.key.toString($props.item.contentType)
-    )
+      UniContentPage.contentPages.key.toString($props.item.contentType),
+    ),
   ],
   query: async ({ signal, pageParam }) =>
     await parentComment.value!.fetchChildren.query({}, pageParam, signal),
   initialPageParam: parentComment.value!.fetchChildren.initPage,
   getNextPageParam: lastPage => lastPage.nextPage,
-  getPreviousPageParam: lastPage => lastPage.lastPage
+  getPreviousPageParam: lastPage => lastPage.lastPage,
 })
 </script>
 
 <template>
-  <DcPopup
+  <NDrawer
     v-model:show="isShowPopup"
-    position="bottom"
-    lock-scroll
+    placement="bottom"
+    blockScroll
     ref="floatPopup"
-    :overlay="false"
+    :maskClosable="false"
     class="h-[70vh] overflow-hidden"
   >
     <div class="van-hairline--bottom relative flex h-9 w-full items-center pl-3 text-base">
@@ -78,5 +79,5 @@ const query = useInfiniteQuery({
       />
     </DcWaterfall>
     <Sender :item :aim="parentComment" v-if="parentComment" />
-  </DcPopup>
+  </NDrawer>
 </template>

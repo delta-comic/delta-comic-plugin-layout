@@ -18,16 +18,8 @@
   },
   "type": "module",
   "scripts": {
+    "dev": "vp dev",
     "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsgo -p tsconfig.node.json --noEmit"
-  },
-  "peerDependencies": {
-    "@delta-comic/db": "catalog:",
-    "@delta-comic/downloader": "catalog:",
-    "@delta-comic/logger": "catalog:",
-    "@delta-comic/model": "catalog:",
-    "@delta-comic/plugin": "catalog:",
-    "@delta-comic/ui": "catalog:",
-    "@delta-comic/utils": "catalog:"
   },
   "dependencies": {
     "@octokit/rest": "catalog:",
@@ -36,6 +28,7 @@
     "@vicons/material": "^0.13.0",
     "@vueuse/core": "catalog:",
     "dayjs": "catalog:",
+    "dompurify": "^3.4.12",
     "es-toolkit": "catalog:",
     "hls.js": "^1.6.16",
     "motion-v": "catalog:",
@@ -61,6 +54,15 @@
     "vite": "catalog:",
     "vite-plus": "catalog:",
     "vue-tsc": "catalog:"
+  },
+  "peerDependencies": {
+    "@delta-comic/db": "3.0.0-next.6",
+    "@delta-comic/downloader": "3.0.0-next.6",
+    "@delta-comic/logger": "3.0.0-next.6",
+    "@delta-comic/model": "3.0.0-next.6",
+    "@delta-comic/plugin": "3.0.0-next.6",
+    "@delta-comic/ui": "3.0.0-next.6",
+    "@delta-comic/utils": "3.0.0-next.6"
   },
   "readme": "../../README.md"
 }

@@ -1,21 +1,24 @@
 <script setup lang="ts">
+import type { UniComment, UniUser } from '@delta-comic/model'
+import { useConfig } from '@delta-comic/plugin'
+import { createLoadingMessage, DcImage, DcToggleIcon, DcEnvironment } from '@delta-comic/ui'
 import { LikeOutlined } from '@vicons/antd'
 import { ArrowForwardIosRound, ChatBubbleOutlineRound, NearbyErrorRound } from '@vicons/material'
-import { computed } from 'vue'
-import userIcon from '@/assets/images/userIcon.webp?url'
+import dayjs from 'dayjs'
 import DOMPurify from 'dompurify'
-import type { uni } from '@delta-comic/model'
-import { Inject, useConfig } from '@delta-comic/plugin'
-import { createDateString } from '@/utils/date'
-import { createLoadingMessage, DcImage, DcToggleIcon } from '@delta-comic/ui'
 import { NPopconfirm } from 'naive-ui'
+import { computed } from 'vue'
+
+import userIcon from '@/assets/images/userIcon.webp?url'
+import { createDateString } from '@/utils/date'
+
 import type * as CommentInject from '.'
 const $props = defineProps<{
-  comment: uni.comment.Comment
-  parentComment?: uni.comment.Comment
+  comment: UniComment
+  parentComment?: UniComment
   usernameHighlight?: boolean
 }>()
-const $emit = defineEmits<{ click: [c: uni.comment.Comment]; clickUser: [u: uni.user.User] }>()
+const $emit = defineEmits<{ click: [c: UniComment]; clickUser: [u: UniUser] }>()
 
 defineSlots<{
   avatar(args: CommentInject.CommentProps): any
@@ -26,7 +29,7 @@ defineSlots<{
 }>()
 
 const isParentSender = computed(
-  () => $props.comment.sender.name == $props.parentComment?.sender.name
+  () => $props.comment.sender.name == $props.parentComment?.sender.name,
 )
 
 const config = useConfig()
@@ -63,7 +66,7 @@ const config = useConfig()
             :class="[
               usernameHighlight || isParentSender
                 ? 'font-bold text-(--nui-primary-color)'
-                : 'text-(--van-text-color)'
+                : 'text-(--van-text-color)',
             ]"
           >
             {{ comment.sender.name ?? '' }}
@@ -74,14 +77,14 @@ const config = useConfig()
             >
 
             <slot name="userExtra" :="{ comment, parentComment, usernameHighlight }" />
-            <Inject
-              key="layout::components::comment::comment-row.userExtra"
+            <DcEnvironment
+              name="layout::components::comment::comment-row.userExtra"
               :args="{ comment, parentComment, usernameHighlight }"
             />
           </div>
         </div>
         <span class="text-[11px] text-(--van-text-color-2)">
-          {{ createDateString(comment.$time) }}
+          {{ createDateString(dayjs(comment.time)) }}
         </span>
       </div>
       <template v-if="comment.reported">

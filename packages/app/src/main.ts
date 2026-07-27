@@ -23,8 +23,8 @@ import Image from './view/Image.vue'
 import type * as VideoViewInject from './view/video'
 import Video from './view/Video.vue'
 
-declare module '@delta-comic/plugin' {
-  interface GlobalInjections {
+declare module '@delta-comic/ui' {
+  export interface EnvironmentKey {
     'layout::view::image.top-bar': Component<ImageViewInject.BarProps>
     'layout::view::image.content': Component<ImageViewInject.ContentProps>
     'layout::view::image.bottom-bar': Component<ImageViewInject.BarProps>
@@ -64,9 +64,9 @@ const plugin = definePlugin({
     },
     helper: { createDateString },
   }),
-  
+
   config: [imageViewConfig],
 })
 
 export type LayoutLib = PluginExpose<() => typeof plugin>
-export default plugin
+// export default plugin
