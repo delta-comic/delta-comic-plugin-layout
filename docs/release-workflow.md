@@ -17,6 +17,33 @@
 
 发布脚本会在上传前检查版本一致性、入口文件存在性及压缩包内容；任何一项不匹配都会终止发布。源码中的 `packages/app/package.json` 只提供本地开发构建的基准版本，发布版本以 semantic-release 及产物 manifest 为准，不生成发布提交。
 
+## 分支晋级
+
+发布必须通过分支晋级脚本触发 GitHub Actions，不直接手动创建 tag 或 GitHub Release。脚本会拒绝脏工作区和未与远端同步的源分支，不使用 force push，并在操作结束后切回源分支。
+
+仓库只有 `main` 时，可先建立 `develop`：
+
+```sh
+vp run --no-cache branch:develop:dry-run
+vp run --no-cache branch:develop
+```
+
+日常预发布从 `develop` 晋级到 `next`。第一次晋级时脚本会自动从 `develop` 创建并推送 `next`；后续会同步现有 `next`、普通合并 `develop` 并推送，由“自动发布”工作流生成 prerelease：
+
+```sh
+vp run --no-cache release:preview:dry-run
+vp run --no-cache release:preview
+```
+
+稳定发布使用同一流程将 `next` 晋级到 `main`：
+
+```sh
+vp run --no-cache release:stable:dry-run
+vp run --no-cache release:stable
+```
+
+如果普通合并发生冲突，脚本会停止且不会推送。解决冲突并完成合并后，应重新执行本地验证，再按仓库保护规则完成推送。稳定版发布完成后可执行 `branch:develop`，把 `origin/main` 的发布历史合回开发线。
+
 ## 本地验证
 
 ```sh
@@ -27,7 +54,7 @@ vp run build
 vp run artifacts
 ```
 
-在 `main` 或 `next` 分支上可以预演版本判定（不会创建 tag 或 Release）：
+在 `main` 或 `next` 分支上可以单独预演 semantic-release 的版本判定（不会创建 tag 或 Release）：
 
 ```sh
 vp run release:dry-run
