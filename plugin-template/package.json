@@ -1,0 +1,54 @@
+{
+  "name": "delta-comic-plugin-template",
+  "private": true,
+  "description": "Delta Comic 插件模板",
+  "homepage": "https://github.com/your-name/delta-comic-plugin-template",
+  "bugs": {
+    "url": "https://github.com/your-name/delta-comic-plugin-template/issues"
+  },
+  "license": "UNLICENSED",
+  "author": {
+    "name": "your-name"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-name/delta-comic-plugin-template.git"
+  },
+  "type": "module",
+  "scripts": {
+    "artifacts": "node ./script/artifacts.mts",
+    "branch:develop": "node ./script/release-branches.mts develop",
+    "branch:develop:dry-run": "node ./script/release-branches.mts develop --dry-run",
+    "build": "vp run --filter @delta-comic/plugin-template build",
+    "check": "vp check",
+    "dev": "vp run --filter @delta-comic/plugin-template dev",
+    "release": "vp exec semantic-release",
+    "release:dry-run": "vp exec semantic-release --dry-run",
+    "release:preview": "node ./script/release-branches.mts preview",
+    "release:preview:dry-run": "node ./script/release-branches.mts preview --dry-run",
+    "release:stable": "node ./script/release-branches.mts stable",
+    "release:stable:dry-run": "node ./script/release-branches.mts stable --dry-run",
+    "test": "vp test",
+    "test:coverage": "vp test run --coverage",
+    "typecheck": "tsgo -p tsconfig.json --noEmit && vp run --filter @delta-comic/plugin-template typecheck"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "@semantic-release/commit-analyzer": "catalog:",
+    "@semantic-release/github": "catalog:",
+    "@semantic-release/release-notes-generator": "catalog:",
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "jszip": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "semantic-release": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsgo": "catalog:"
+  },
+  "packageManager": "pnpm@11.13.0"
+}

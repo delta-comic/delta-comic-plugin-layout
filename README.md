@@ -33,3 +33,9 @@ vp run artifacts
 构建产物位于 `packages/app/dist/`。`vp run artifacts` 会验证外置 manifest、压缩包内 manifest 与实际入口文件完全一致。
 
 发布分支和产物规则见 [发布流程](docs/release-workflow.md)。
+
+## 通用插件模板
+
+新插件可从 [`plugin-template`](plugin-template/README.md) 开始。它是一个可独立复制的完整工程，
+包含最小运行时示例、TypeScript 7/`vue-tsgo`、测试覆盖率、产物校验以及同款 CI 发布流程；它不
+属于当前根 pnpm workspace，避免模板依赖和布局插件互相耦合。
