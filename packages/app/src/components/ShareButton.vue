@@ -1,49 +1,54 @@
 <script setup lang="ts">
-import { uni } from '@delta-comic/model'
-import { Global, type Share } from '@delta-comic/plugin'
-import { DcPopup, DcToggleIcon } from '@delta-comic/ui'
+import type { UniContentPage } from '@delta-comic/model'
+import { Global, type Share, translatePluginText } from '@delta-comic/plugin'
+import { DcImagedIcon, DcToggleIcon } from '@delta-comic/ui'
 import { ShareSharp } from '@vicons/material'
+import { NButton, NDrawer, NDrawerContent } from 'naive-ui'
 import { computed, shallowRef } from 'vue'
 
-const $props = defineProps<{ page: uni.content.ContentPage }>()
-const showShare = shallowRef(false)
+import { translate } from '@/i18n'
+
+const props = defineProps<{ page: UniContentPage }>()
+const show = shallowRef(false)
 const methods = computed(() =>
-  Array.from(Global.share.entries()).filter(v => v[1].filter($props.page))
+  [...Global.share.entries()].filter(([, method]) => method.filter(props.page)),
 )
-const handleClick = (method: Share.InitiativeItem) => {
-  showShare.value = false
-  return method.call($props.page)
+
+const selectMethod = async (method: Share.InitiativeItem) => {
+  show.value = false
+  await method.call(props.page)
 }
 </script>
 
 <template>
-  <DcToggleIcon padding size="27px" :icon="ShareSharp" dis-changed @click="showShare = true">
-    分享
+  <DcToggleIcon dis-changed :icon="ShareSharp" padding size="27px" @click="show = true">
+    {{ translate('layout.actions.share') }}
   </DcToggleIcon>
-  <DcPopup v-model:show="showShare" round position="bottom" class="h-fit bg-(--van-background)!">
-    <div class="w-full bg-(--van-background-2) pt-4 pb-1 text-center text-base!">分享该内容</div>
-    <div
-      class="scrollbar mb-3 flex h-fit w-full gap-1 overflow-x-auto overflow-y-hidden bg-(--van-background-2) px-1 py-5"
-    >
-      <div
-        v-for="method of methods"
-        class="flex h-full w-fit flex-col items-center justify-around"
-        @click="handleClick(method[1])"
-      >
-        <DcImagedIcon
-          :size-spacing="12"
-          :icon="method[1].icon"
-          :bgColor="method[1].bgColor ?? 'var(--color-gray-200)'"
-        />
-        <div
-          class="van-multi-ellipsis--l2 mt-1 w-18 text-center text-xs! text-wrap text-(--van-text-color-2)!"
+  <NDrawer v-model:show="show" placement="bottom">
+    <NDrawerContent :native-scrollbar="false" :title="translate('layout.share.title')">
+      <div class="dc-scrollbar-hidden flex gap-3 overflow-x-auto px-1 py-4">
+        <button
+          v-for="[key, method] of methods"
+          :key="key.toString()"
+          class="flex min-w-20 dc-haptics-feedback flex-col items-center gap-1 border-0 bg-transparent"
+          type="button"
+          @click="selectMethod(method)"
         >
-          {{ method[1].name }}
-        </div>
+          <DcImagedIcon
+            :bg-color="method.bgColor ?? 'var(--dc-gray-1)'"
+            :icon="method.icon"
+            :size-spacing="12"
+          />
+          <span class="dc-clamp-2 w-20 text-center text-xs text-(--dc-color-text-secondary)">
+            {{ translatePluginText(method.name) }}
+          </span>
+        </button>
       </div>
-    </div>
-    <VanButton block size="large" class="w-full! border-none!" @click="showShare = false"
-      >取消</VanButton
-    >
-  </DcPopup>
+      <template #footer>
+        <NButton block size="large" @click="show = false">
+          {{ translate('layout.actions.cancel') }}
+        </NButton>
+      </template>
+    </NDrawerContent>
+  </NDrawer>
 </template>

@@ -22,10 +22,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json-summary', 'html', 'lcov'],
       reportsDirectory: './coverage',
-      include: [
-        'script/**/*.{ts,mts}',
-        'packages/app/src/**/*.{ts,tsx}',
-      ],
+      include: ['script/**/*.{ts,mts}', 'packages/app/src/**/*.{ts,tsx}'],
       exclude: [
         '**/*.{test,spec}.{ts,tsx,mts}',
         '**/*.d.ts',
@@ -33,7 +30,12 @@ export default defineConfig({
         '**/{test,__tests__}/**',
         'packages/app/src/icons.tsx',
         'packages/app/src/i18n/locales/schema.ts',
-        'packages/app/src/main.ts'
+        'packages/app/src/main.ts',
+        'packages/app/src/config.ts',
+        'packages/app/src/model/**',
+        'packages/app/src/symbol.ts',
+        'packages/app/src/utils/query.ts',
+        'packages/app/src/view/{image,video}.ts',
       ],
       thresholds: { lines: 75, functions: 75, branches: 70, statements: 75 },
     },

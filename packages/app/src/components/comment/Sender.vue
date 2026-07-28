@@ -1,94 +1,113 @@
 <script setup lang="ts">
-import { uni } from '@delta-comic/model'
-import { useConfig } from '@delta-comic/plugin'
-import { createLoadingMessage, DcPopup } from '@delta-comic/ui'
-import { useMutation } from '@pinia/colada'
+import { UniContentPage, UniItem, type UniComment } from '@delta-comic/model'
+import { useMutation, useQueryCache } from '@pinia/colada'
 import { isEmpty } from 'es-toolkit/compat'
-import type { FieldInstance } from 'vant'
-import { shallowRef } from 'vue'
+import { NButton, NDrawer, NDrawerContent, NInput, type InputInst, useMessage } from 'naive-ui'
+import { nextTick, shallowRef, type HTMLAttributes, useTemplateRef } from 'vue'
 
-import { createChildrenCommentQueryKey, createMainCommentQueryKey } from '.'
+import { translate } from '@/i18n'
 
-const config = useConfig()
+import { createChildrenCommentQueryKey, createMainCommentQueryKey, QueryKey } from '.'
 
-const $props = defineProps<{
-  class?: any
-  aim: uni.item.Item | uni.comment.Comment
-  item: uni.item.Item
+const props = defineProps<{
+  aim: UniComment | UniItem
+  class?: HTMLAttributes['class']
+  item: UniItem
 }>()
 
 const show = shallowRef(false)
 const input = shallowRef('')
-const inputEl = shallowRef<FieldInstance>()
-const isSubmitting = shallowRef(false)
+const inputElement = useTemplateRef<InputInst>('input')
+const message = useMessage()
+const queryCache = useQueryCache()
 
-const { mutateAsync: submit } = useMutation({
-  key: () => [
-    uni.item.Item.is($props.aim)
-      ? createMainCommentQueryKey(
-          $props.aim.id,
-          uni.content.ContentPage.contentPages.key.toString($props.aim.contentType)
-        )
-      : createChildrenCommentQueryKey(
-          $props.item.id,
-          $props.aim.id,
-          uni.content.ContentPage.contentPages.key.toString($props.item.contentType)
-        )
-  ],
-  async mutation({ content }: { content: string }) {
-    if (isEmpty(content)) return window.$message.info('评论内容不能为空')
-    isSubmitting.value = true
-    const loading = createLoadingMessage('发送中')
-    try {
-      await loading.bind($props.aim.sendComment(input.value))
-    } finally {
-      show.value = false
-      input.value = ''
-      isSubmitting.value = false
+const queryKey = () =>
+  UniItem.is(props.aim)
+    ? [
+        QueryKey.MainComment,
+        createMainCommentQueryKey(
+          props.aim.id,
+          props.item.thisEp.id,
+          UniContentPage.contentPages.key.toString(props.aim.contentType),
+        ),
+      ]
+    : [
+        QueryKey.ChildrenComment,
+        createChildrenCommentQueryKey(
+          props.item.id,
+          props.aim.id,
+          props.item.thisEp.id,
+          UniContentPage.contentPages.key.toString(props.item.contentType),
+        ),
+      ]
+
+const { isLoading, mutateAsync: submit } = useMutation({
+  key: queryKey,
+  mutation: async ({ content }: { content: string }) => {
+    const normalizedContent = content.trim()
+    if (isEmpty(normalizedContent)) {
+      message.info(translate('layout.comment.empty'))
+      return false
     }
-  }
+    await props.aim.sendComment(normalizedContent)
+    return true
+  },
+  onSuccess: async sent => {
+    if (!sent) return
+    input.value = ''
+    show.value = false
+    await queryCache.invalidateQueries({ key: queryKey() })
+  },
 })
+
+const open = async () => {
+  if (!props.item.commentSendable) return
+  show.value = true
+  await nextTick()
+  inputElement.value?.focus()
+}
 </script>
 
 <template>
-  <DcPopup v-model:show="show" position="bottom" class="w-full bg-(--van-background-2) pb-1" round>
-    <VanField
-      type="textarea"
-      class="min-h-[30vh] w-full"
-      autosize
-      v-model="input"
-      placeholder="写下你的留言吧..."
-      @click="inputEl?.focus()"
-      ref="inputEl"
-      :disabled="isSubmitting"
-    />
-    <div class="mt-1 flex h-8 w-full items-center justify-end pr-1">
-      <NButton round type="primary" :loading="isSubmitting" @click="submit({ content: input })">
-        提交
-      </NButton>
-    </div>
-  </DcPopup>
-
-  <div
-    class="van-hairline--top flex h-10 w-full items-center justify-center bg-(--van-background-2)"
-    :class
-    @click="
-      async () => {
-        if (!item.commentSendable) return
-        show = true
-        await $nextTick()
-        inputEl?.focus()
-      }
-    "
-  >
-    <div
-      :class="[config.isDark ? 'bg-[#333] text-[#666]' : 'bg-gray-100 text-gray-300']"
-      class="van-ellipsis flex h-[80%] w-[90%] items-center rounded-full px-2 text-xs!"
-    >
-      <template v-if="item.commentSendable">
-        {{ input || '写下你的留言吧...' }}
+  <NDrawer v-model:show="show" height="min(70vh, 32rem)" placement="bottom">
+    <NDrawerContent :native-scrollbar="false" :title="translate('layout.comment.placeholder')">
+      <NInput
+        ref="input"
+        v-model:value="input"
+        :autosize="{ minRows: 5, maxRows: 12 }"
+        :disabled="isLoading"
+        :placeholder="translate('layout.comment.placeholder')"
+        type="textarea"
+      />
+      <template #footer>
+        <NButton
+          :disabled="!input.trim()"
+          :loading="isLoading"
+          round
+          type="primary"
+          @click="submit({ content: input })"
+        >
+          {{ translate('layout.actions.submit') }}
+        </NButton>
       </template>
-      <template v-else> 评论区已关闭(不可用) </template>
-    </div>
-  </div>
+    </NDrawerContent>
+  </NDrawer>
+
+  <button
+    class="dc-hairline-top flex h-10 w-full items-center justify-center border-0 bg-(--dc-color-surface)"
+    :class="$props.class"
+    :disabled="!item.commentSendable"
+    type="button"
+    @click="open"
+  >
+    <span
+      class="flex h-4/5 w-9/10 items-center dc-ellipsis rounded-full bg-(--dc-gray-1) px-3 text-xs text-(--dc-color-text-tertiary)"
+    >
+      {{
+        item.commentSendable
+          ? input || translate('layout.comment.placeholder')
+          : translate('layout.comment.closedUnavailable')
+      }}
+    </span>
+  </button>
 </template>

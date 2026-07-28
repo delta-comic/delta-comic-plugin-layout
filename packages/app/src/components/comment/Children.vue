@@ -1,83 +1,96 @@
 <script setup lang="ts">
-import { UniComment, UniContentPage, type UniItem, type UniUser } from '@delta-comic/model'
+import {
+  type PageKey,
+  UniComment,
+  UniContentPage,
+  type UniItem,
+  type UniUser,
+} from '@delta-comic/model'
 import { DcWaterfall } from '@delta-comic/ui'
 import { useInfiniteQuery } from '@pinia/colada'
 import { CloseRound } from '@vicons/material'
-import { NDrawer } from 'naive-ui'
+import { NButton, NDrawer, NDrawerContent, NIcon } from 'naive-ui'
 import { computed, shallowRef } from 'vue'
 
+import { translate } from '@/i18n'
+import type { StreamPage } from '@/utils/query'
+
+import DefaultCommentRow from './CommentRow.vue'
 import Sender from './Sender.vue'
 
 import { createChildrenCommentQueryKey, QueryKey } from '.'
-const $props = defineProps<{ item: UniItem }>()
+
+const props = defineProps<{ item: UniItem }>()
+const emit = defineEmits<{ user: [user: UniUser] }>()
 const parentComment = shallowRef<UniComment>()
+const show = shallowRef(false)
 
-const isShowPopup = shallowRef(false)
-defineExpose({
-  loadChild(parent: UniComment) {
-    parentComment.value = parent
-    isShowPopup.value = true
-    query.refresh()
-  },
-})
-defineEmits<{ user: [u: UniUser] }>()
-const CommentRow = computed(() => UniComment.commentRow.get($props.item.contentType))
-
-const query = useInfiniteQuery({
-  enabled: () => !!parentComment.value,
+const commentRow = computed(
+  () => UniComment.commentRow.get(props.item.contentType) ?? DefaultCommentRow,
+)
+const query = useInfiniteQuery<StreamPage<UniComment>, Error, PageKey>({
+  enabled: () => parentComment.value !== undefined,
+  getNextPageParam: page => page.nextPage,
+  getPreviousPageParam: page => page.lastPage,
+  initialPageParam: () => parentComment.value?.fetchChildren.initPage ?? 0,
   key: () => [
     QueryKey.ChildrenComment,
     createChildrenCommentQueryKey(
-      $props.item.id,
-      parentComment.value?.id ?? 'unknown',
-      UniContentPage.contentPages.key.toString($props.item.contentType),
+      props.item.id,
+      parentComment.value?.id ?? 'unselected',
+      props.item.thisEp.id,
+      UniContentPage.contentPages.key.toString(props.item.contentType),
     ),
   ],
-  query: async ({ signal, pageParam }) =>
-    await parentComment.value!.fetchChildren.query({}, pageParam, signal),
-  initialPageParam: parentComment.value!.fetchChildren.initPage,
-  getNextPageParam: lastPage => lastPage.nextPage,
-  getPreviousPageParam: lastPage => lastPage.lastPage,
+  query: async ({ pageParam, signal }) => {
+    const parent = parentComment.value
+    if (!parent) throw new Error('A parent comment is required')
+    return await parent.fetchChildren.query({}, pageParam, signal)
+  },
+})
+
+defineExpose({
+  async loadChild(parent: UniComment) {
+    parentComment.value = parent
+    show.value = true
+    await query.refresh()
+  },
 })
 </script>
 
 <template>
-  <NDrawer
-    v-model:show="isShowPopup"
-    placement="bottom"
-    blockScroll
-    ref="floatPopup"
-    :maskClosable="false"
-    class="h-[70vh] overflow-hidden"
-  >
-    <div class="van-hairline--bottom relative flex h-9 w-full items-center pl-3 text-base">
-      评论详情
-      <NIcon
-        class="absolute! right-3"
-        size="22px"
-        color="var(--van-text-color-2)"
-        @click="isShowPopup = false"
-      >
-        <CloseRound />
-      </NIcon>
-    </div>
-    <DcWaterfall
-      :source="{ type: 'stream', value: query }"
-      :padding="0"
-      :col="1"
-      :gap="0"
-      v-if="parentComment"
-      v-slot="{ item: comment }"
-      class="h-[calc(70vh-40px-36px)]! bg-(--van-background)"
-    >
-      <component
-        :is="CommentRow"
-        :parentComment
-        :comment
-        :item
-        @click-user="$emit('user', $event)"
-      />
-    </DcWaterfall>
-    <Sender :item :aim="parentComment" v-if="parentComment" />
+  <NDrawer v-model:show="show" height="80vh" :mask-closable="false" placement="bottom">
+    <NDrawerContent :native-scrollbar="false">
+      <template #header>
+        <div class="flex w-full items-center justify-between">
+          <span>{{ translate('layout.comment.detail') }}</span>
+          <NButton circle quaternary @click="show = false">
+            <template #icon
+              ><NIcon><CloseRound /></NIcon
+            ></template>
+          </NButton>
+        </div>
+      </template>
+      <div class="flex h-[70vh] flex-col overflow-hidden">
+        <DcWaterfall
+          v-if="parentComment"
+          class="min-h-0 flex-1 bg-(--dc-color-page)"
+          :col="1"
+          :gap="0"
+          :padding="0"
+          :source="{ type: 'stream', value: query }"
+          v-slot="{ item: comment }"
+        >
+          <component
+            :is="commentRow"
+            :comment
+            :item
+            :parent-comment="parentComment"
+            @click-user="emit('user', $event)"
+          />
+        </DcWaterfall>
+        <Sender v-if="parentComment" :aim="parentComment" :item />
+      </div>
+    </NDrawerContent>
   </NDrawer>
 </template>

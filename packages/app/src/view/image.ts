@@ -1,22 +1,22 @@
-import type { uni } from '@delta-comic/model'
+import type { UniImage } from '@delta-comic/model'
 import type { Swiper as SwiperClass } from 'swiper'
 
 import * as model from '../model'
 
 export interface BarProps {
   page: model.ContentImagePage
-  images: uni.image.Image[]
+  images: UniImage[]
   swiper?: SwiperClass
   index: number
 }
 
 export interface ContentProps {
   page: model.ContentImagePage
-  images: uni.image.Image[]
-  image: uni.image.Image
-  swiper: SwiperClass
+  images: UniImage[]
+  image: UniImage
+  swiper?: SwiperClass
   index: number
 }
 export enum QueryKey {
-  Images = 'layout::view::image'
+  Images = 'layout::view::image',
 }

@@ -1,117 +1,110 @@
 <script setup lang="ts">
+import type { FormSingleConfigure } from '@delta-comic/model'
 import { useConfig } from '@delta-comic/plugin'
-import {
-  DcFormDate,
-  DcFormDateRange,
-  DcFormNumber,
-  DcFormPairs,
-  DcFormString,
-  DcFormSwitch
-} from '@delta-comic/ui'
-import { NPopselect } from 'naive-ui'
+import { DcCell, DcCellGroup } from '@delta-comic/ui'
 
-const config = useConfig()
+import { translate } from '@/i18n'
+
+const configStore = useConfig()
+
+const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
+  const localized: FormSingleConfigure = {
+    ...config,
+    info: translate(config.info),
+    placeholder: config.placeholder ? translate(config.placeholder) : undefined,
+  }
+  if (localized.type === 'radio' || localized.type === 'checkbox') {
+    localized.selects = localized.selects.map(option => ({
+      ...option,
+      label: translate(option.label),
+    }))
+  }
+  return localized as T
+}
 </script>
 
 <template>
   <NScrollbar class="size-full">
-    <VanCellGroup
-      v-for="[plugin, { form, value: store }] of config.form.entries()"
-      :title="plugin.description?.split('|')[1] ?? plugin.description"
+    <DcCellGroup
+      v-for="[key, { data, form, name }] of configStore.form.entries()"
+      :key
+      :title="translate(name)"
     >
-      <template v-for="[name, config] of Object.entries(form)">
-        <VanCell center v-if="config.type == 'switch'" :title="config.info">
+      <template v-for="[field, config] of Object.entries(form)" :key="field">
+        <DcCell v-if="config.type === 'switch'" center :title="translate(config.info)">
           <template #right-icon>
-            <DcFormSwitch :config v-model="store.value[name]" />
+            <DcFormSwitch :config="localizeConfig(config)" v-model="data.value[field]" />
           </template>
-        </VanCell>
-        <NPopselect :options="[]" trigger="click" size="huge" v-else-if="config.type == 'string'">
-          <VanCell center :title="config.info" clickable>
-            {{ store.value[name] }}
-          </VanCell>
+        </DcCell>
+        <NPopselect v-else-if="config.type === 'string'" :options="[]" size="huge" trigger="click">
+          <DcCell center clickable :title="translate(config.info)">{{ data.value[field] }}</DcCell>
           <template #empty>
-            <DcFormString :config v-model="store.value[name]" class="max-w-[80vw]!" />
+            <DcFormString
+              v-model="data.value[field]"
+              class="max-w-[80vw]!"
+              :config="localizeConfig(config)"
+            />
           </template>
         </NPopselect>
-        <NPopselect :options="[]" trigger="click" size="huge" v-else-if="config.type == 'number'">
-          <VanCell center :title="config.info" clickable>
-            {{ store.value[name] }}
-          </VanCell>
+        <NPopselect v-else-if="config.type === 'number'" :options="[]" size="huge" trigger="click">
+          <DcCell center clickable :title="translate(config.info)">{{ data.value[field] }}</DcCell>
           <template #empty>
-            <DcFormNumber :config v-model="store.value[name]" class="max-w-[80vw]!" />
+            <DcFormNumber
+              v-model="data.value[field]"
+              class="max-w-[80vw]!"
+              :config="localizeConfig(config)"
+            />
           </template>
         </NPopselect>
         <NPopselect
-          :options="config.selects"
-          trigger="click"
+          v-else-if="config.type === 'radio'"
+          v-model:value="data.value[field]"
+          :options="localizeConfig(config).selects"
           placement="bottom-end"
           size="huge"
-          v-else-if="config.type == 'radio'"
-          v-model:value="store.value[name]"
+          trigger="click"
         >
-          <VanCell center :title="config.info" clickable>
-            {{ config.selects.find(v => v.value == store.value[name])?.label }}
-          </VanCell>
+          <DcCell center clickable :title="translate(config.info)">
+            {{ localizeConfig(config).selects.find(v => v.value === data.value[field])?.label }}
+          </DcCell>
         </NPopselect>
         <NPopselect
-          :options="config.selects"
-          trigger="click"
-          placement="bottom-end"
-          size="huge"
+          v-else-if="config.type === 'checkbox'"
+          v-model:value="data.value[field]"
           multiple
-          v-else-if="config.type == 'checkbox'"
-          v-model:value="store.value[name]"
+          :options="localizeConfig(config).selects"
+          placement="bottom-end"
+          size="huge"
+          trigger="click"
         >
-          <VanCell center :title="config.info" clickable>
-            {{ store.value[name] }}
-          </VanCell>
+          <DcCell center clickable :title="translate(config.info)">{{ data.value[field] }}</DcCell>
         </NPopselect>
-        <DcVar v-else-if="config.type == 'date'" :value="{ show: false }" v-slot="{ value }">
-          <VanCell center :title="config.info" clickable @click="value.show = true">
-            {{ store.value[name] }}
-            <DcPopup
-              v-model:show="value.show"
-              overlay
-              round
-              closeable
-              position="center"
-              class="flex justify-center"
-            >
-              <DcFormDate :config v-model="store.value[name]" class="max-w-[80vw]!" />
-            </DcPopup>
-          </VanCell>
-        </DcVar>
-        <DcVar v-else-if="config.type == 'dateRange'" :value="{ show: false }" v-slot="{ value }">
-          <VanCell center :title="config.info" clickable @click="value.show = true">
-            {{ store.value[name] }}
-            <DcPopup
-              v-model:show="value.show"
-              overlay
-              round
-              closeable
-              position="center"
-              class="flex justify-center"
-            >
-              <DcFormDateRange :config v-model="store.value[name]" class="max-w-[80vw]!" />
-            </DcPopup>
-          </VanCell>
-        </DcVar>
-        <DcVar v-else-if="config.type == 'pairs'" :value="{ show: false }" v-slot="{ value }">
-          <VanCell center :title="config.info" clickable @click="value.show = true">
-            {{ store.value[name] }}
-            <DcPopup
-              v-model:show="value.show"
-              overlay
-              round
-              closeable
-              position="center"
-              class="flex justify-center"
-            >
-              <DcFormPairs :config v-model="store.value[name]" class="max-w-[80vw]!" />
-            </DcPopup>
-          </VanCell>
+        <DcVar v-else :value="{ show: false }" v-slot="{ value }">
+          <DcCell center clickable :title="translate(config.info)" @click="value.show = true">
+            {{ data.value[field] }}
+          </DcCell>
+          <NModal v-model:show="value.show" preset="dialog" :title="translate(config.info)">
+            <DcFormDate
+              v-if="config.type === 'date'"
+              v-model="data.value[field]"
+              class="max-w-[80vw]!"
+              :config="localizeConfig(config)"
+            />
+            <DcFormDateRange
+              v-else-if="config.type === 'dateRange'"
+              v-model="data.value[field]"
+              class="max-w-[80vw]!"
+              :config="localizeConfig(config)"
+            />
+            <DcFormPairs
+              v-else-if="config.type === 'pairs'"
+              v-model="data.value[field]"
+              class="max-w-[80vw]!"
+              :config="localizeConfig(config)"
+            />
+          </NModal>
         </DcVar>
       </template>
-    </VanCellGroup>
+    </DcCellGroup>
   </NScrollbar>
 </template>

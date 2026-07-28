@@ -3,16 +3,16 @@ import { ConfigPointer } from '@delta-comic/plugin'
 export const imageViewConfig = new ConfigPointer(
   'layout.view.image',
   {
-    doubleImage: { type: 'switch', defaultValue: false, info: '同时显示两个图片' },
+    doubleImage: { type: 'switch', defaultValue: false, info: 'layout.config.image.doubleImage' },
     preloadImages: {
       type: 'number',
       defaultValue: 2,
-      info: '图片前后预加载数量',
+      info: 'layout.config.image.preloadImages',
       range: [1, 10],
-      float: false
+      float: false,
     },
-    isFollowView: { type: 'switch', defaultValue: false, info: '条漫连贯阅读' },
-    vertical: { type: 'switch', defaultValue: false, info: '垂直阅读' }
+    isFollowView: { type: 'switch', defaultValue: false, info: 'layout.config.image.continuous' },
+    vertical: { type: 'switch', defaultValue: false, info: 'layout.config.image.vertical' },
   },
-  '图片布局'
+  'layout.config.image.title',
 )

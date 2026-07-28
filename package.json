@@ -1,8 +1,12 @@
 {
-  "name": "delta-comic",
+  "name": "delta-comic-plugin-layout",
   "private": true,
-  "description": "希望的涟漪",
+  "description": "Delta Comic 的基础内容布局插件",
   "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
+  "bugs": {
+    "url": "https://github.com/delta-comic/delta-comic-plugin-layout/issues",
+    "email": "wenxinguo12@gmail.com"
+  },
   "license": "AGPL-3.0-only",
   "author": {
     "name": "wenxig",
@@ -12,44 +16,40 @@
     "type": "git",
     "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
   },
-  "bugs": {
-    "url": "https://github.com/delta-comic/delta-comic/issues",
-    "email": "wenxinguo12@gmail.com"
-  },
   "type": "module",
   "scripts": {
-    "branch:develop": "node ./script/release-branches.mts develop",
-    "branch:develop:dry-run": "node ./script/release-branches.mts develop --dry-run",
+    "artifacts": "node ./script/artifacts.mts",
+    "build": "vp run --filter @delta-comic/plugin-layout build",
     "check": "vp check",
-    "dev": "vp run --filter app dev",
-    "lib-build": "vp run -t app#build",
-    "release": "node ./script/release.mts",
-    "release:dry-run": "node ./script/release.mts --dry-run",
-    "release:preview": "node ./script/release-branches.mts preview",
-    "release:preview:dry-run": "node ./script/release-branches.mts preview --dry-run",
-    "release:stable": "node ./script/release-branches.mts stable",
-    "release:stable:dry-run": "node ./script/release-branches.mts stable --dry-run",
-    "set-ver": "node ./script/set-version.mts",
+    "dev": "vp run --filter @delta-comic/plugin-layout dev",
+    "lib-build": "vp run --filter @delta-comic/plugin-layout build",
+    "release": "vp exec semantic-release",
+    "release:dry-run": "vp exec semantic-release --dry-run",
     "test": "vp test",
     "test:coverage": "vp test run --coverage",
-    "typecheck": "vp run -r typecheck",
+    "typecheck": "tsgo -p tsconfig.json --noEmit && vp run --filter @delta-comic/plugin-layout typecheck",
     "vp:install": "vp install"
   },
   "devDependencies": {
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/release-notes-generator": "^14.1.1",
+    "@semantic-release/commit-analyzer": "catalog:",
+    "@semantic-release/github": "catalog:",
+    "@semantic-release/release-notes-generator": "catalog:",
+    "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "@vue/test-utils": "catalog:",
     "commitlint-plugin-cspell": "catalog:",
     "cspell": "catalog:",
     "happy-dom": "catalog:",
+    "jszip": "catalog:",
     "oxlint-tsgolint": "catalog:",
-    "semantic-release": "^25.0.7",
+    "semantic-release": "catalog:",
     "typescript": "catalog:",
-    "vite-plus": "catalog:"
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:",
+    "vue-tsgo": "catalog:"
   },
   "badges": [
     {
@@ -59,18 +59,13 @@
     },
     {
       "description": "Repo License",
-      "href": "https://github.com/delta-comic/delta-comic/blob/main/LICENSE",
-      "url": "https://github.com/delta-comic/delta-comic/blob/main/LICENSE"
+      "href": "https://github.com/delta-comic/delta-comic-plugin-layout/blob/main/LICENSE",
+      "url": "https://img.shields.io/github/license/delta-comic/delta-comic-plugin-layout"
     },
     {
       "description": "GitHub Downloads (all assets, all releases)",
-      "href": "https://github.com/delta-comic/delta-comic/releases/latest",
-      "url": "https://img.shields.io/github/downloads/delta-comic/delta-comic/total"
-    },
-    {
-      "description": "Wakatime",
-      "href": "https://wakatime.com/projects/delta-comic",
-      "url": "https://wakatime.com/badge/user/018cf362-35ff-48f2-af6b-61f09a441de4/project/9f2c18ca-6eec-4e82-8041-5d23c1aba440.svg"
+      "href": "https://github.com/delta-comic/delta-comic-plugin-layout/releases/latest",
+      "url": "https://img.shields.io/github/downloads/delta-comic/delta-comic-plugin-layout/total"
     }
   ],
   "packageManager": "pnpm@11.13.0",

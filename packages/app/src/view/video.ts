@@ -8,5 +8,5 @@ export interface BarProps {
   isFullscreen: boolean
 }
 export enum QueryKey {
-  Videos = 'layout::view::video'
+  Videos = 'layout::view::video',
 }

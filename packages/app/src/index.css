@@ -4,7 +4,3 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 @plugin '@delta-comic/ui/tailwind';
-
-* {
-  user-select: none;
-}

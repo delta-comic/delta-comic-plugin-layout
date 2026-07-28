@@ -1,59 +1,67 @@
 import { noop } from 'es-toolkit'
 import type { Swiper as SwiperClass } from 'swiper'
 
-export const useSwipeDbClick = (onClick = noop, onDbClick = noop) => {
+type GestureEvent = MouseEvent | PointerEvent | TouchEvent
+
+interface SwipeDoubleClickOptions {
+  clickDelay?: number
+  maxTapDuration?: number
+  moveThreshold?: number
+}
+
+const eventPoint = (event: GestureEvent) => {
+  if ('touches' in event) {
+    const touch = event.touches[0] ?? event.changedTouches[0]
+    return { x: touch?.pageX ?? 0, y: touch?.pageY ?? 0 }
+  }
+  return { x: event.pageX, y: event.pageY }
+}
+
+export const useSwipeDbClick = (
+  onClick = noop,
+  onDbClick = noop,
+  options: SwipeDoubleClickOptions = {},
+) => {
+  const { clickDelay = 300, maxTapDuration = 200, moveThreshold = 30 } = options
   let touchStartTime = 0
   let touchStartX = 0
   let touchStartY = 0
   let isDragging = false
-  let tapEventTimerId = 0
+  let tapTimer: ReturnType<typeof setTimeout> | undefined
 
-  const THRESHOLD = 200 // 单击的时间阈值（毫秒）
-  const MOVE_THRESHOLD = 30 // 拖动的滑动距离阈值
+  const clearTapTimer = () => {
+    if (tapTimer === undefined) return
+    clearTimeout(tapTimer)
+    tapTimer = undefined
+  }
+
   return {
-    handleTouchstart: (_swiper: SwiperClass, e: TouchEvent | PointerEvent | MouseEvent) => {
-      if (e instanceof TouchEvent) {
-        var pageX = e.touches[0].pageX
-        var pageY = e.touches[0].pageY
-      } else {
-        var pageX = e.pageX
-        var pageY = e.pageY
-      }
-      touchStartTime = Date.now() // 记录触摸开始的时间
-      touchStartX = pageX
-      touchStartY = pageY
-      isDragging = false
+    dispose: clearTapTimer,
+    handleDbTap: () => {
+      clearTapTimer()
+      onDbClick()
     },
-    handleTouchmove: (_swiper: SwiperClass, e: TouchEvent | PointerEvent | MouseEvent) => {
-      if (e instanceof TouchEvent) {
-        var pageX = e.touches[0].pageX
-        var pageY = e.touches[0].pageY
-      } else {
-        var pageX = e.pageX
-        var pageY = e.pageY
+    handleTouchend: () => {
+      if (isDragging || Date.now() - touchStartTime >= maxTapDuration || tapTimer !== undefined) {
+        return
       }
-      const distanceX = Math.abs(pageX - touchStartX)
-      const distanceY = Math.abs(pageY - touchStartY)
-
-      // 如果滑动距离超过阈值，则认为是拖动
-      if (distanceX > MOVE_THRESHOLD || distanceY > MOVE_THRESHOLD) {
+      tapTimer = setTimeout(() => {
+        tapTimer = undefined
+        onClick()
+      }, clickDelay)
+    },
+    handleTouchmove: (_swiper: SwiperClass, event: GestureEvent) => {
+      const { x, y } = eventPoint(event)
+      if (Math.abs(x - touchStartX) > moveThreshold || Math.abs(y - touchStartY) > moveThreshold) {
         isDragging = true
       }
     },
-    handleTouchend: () => {
-      const touchEndTime = Date.now()
-      // 判断是否为单击
-      if (!isDragging && touchEndTime - touchStartTime < THRESHOLD && tapEventTimerId === 0) {
-        tapEventTimerId = <number>(<any>setTimeout(() => {
-          tapEventTimerId = 0
-          onClick()
-        }, 300))
-      }
+    handleTouchstart: (_swiper: SwiperClass, event: GestureEvent) => {
+      const { x, y } = eventPoint(event)
+      touchStartTime = Date.now()
+      touchStartX = x
+      touchStartY = y
+      isDragging = false
     },
-    handleDbTap: () => {
-      clearTimeout(tapEventTimerId)
-      tapEventTimerId = 0
-      onDbClick()
-    }
   }
 }

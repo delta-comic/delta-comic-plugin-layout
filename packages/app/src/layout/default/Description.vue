@@ -1,34 +1,38 @@
 <script setup lang="ts">
-import type { uni } from '@delta-comic/model'
-import { Inject } from '@delta-comic/plugin'
+import type { UniContentPage, UniItem } from '@delta-comic/model'
+import { DcEnvironment, DcText } from '@delta-comic/ui'
 import DOMPurify from 'dompurify'
 import { isString } from 'es-toolkit'
+import { computed } from 'vue'
 
-const $props = defineProps<{
-  union?: uni.item.Item
-  page: uni.content.ContentPage
-}>()
+const props = defineProps<{ page: UniContentPage; union?: UniItem }>()
+defineSlots<{ description(args: { item?: UniItem; page: UniContentPage }): unknown }>()
+
+const plainText = computed(() => {
+  const description = props.union?.description
+  if (isString(description)) return description
+  return description?.type === 'text' ? description.content : undefined
+})
+const safeHtml = computed(() => {
+  const description = props.union?.description
+  return !isString(description) && description?.type === 'html'
+    ? DOMPurify.sanitize(description.content)
+    : undefined
+})
 </script>
 
 <template>
   <DcText
-    :text="union.description"
-    v-if="isString(union?.description)"
-    class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
-  >
-  </DcText>
-  <DcText
-    :text="union.description.content"
-    v-else-if="union?.description?.type == 'text'"
-    class="mt-1 justify-start text-xs font-normal text-(--van-text-color-2)"
-  >
-  </DcText>
+    v-if="plainText"
+    class="mt-1 justify-start text-xs font-normal text-(--dc-color-text-secondary)"
+    :text="plainText"
+  />
   <div
-    v-html="DOMPurify.sanitize(union?.description?.content ?? '')"
-    v-else
-    class="mt-1 max-w-full justify-start text-xs font-normal text-(--van-text-color-2)"
-  ></div>
+    v-else-if="safeHtml"
+    class="mt-1 max-w-full text-xs font-normal text-(--dc-color-text-secondary)"
+    v-html="safeHtml"
+  />
 
-  <slot name="description" :="{ page, item: union }" />
-  <Inject key="layout::layout::default.description" :args="{ page, item: union }" />
+  <slot name="description" :item="union" :page />
+  <DcEnvironment :args="{ item: union, page }" name="layout::layout::default.description" />
 </template>

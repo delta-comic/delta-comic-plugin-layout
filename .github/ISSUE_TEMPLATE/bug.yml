@@ -23,8 +23,8 @@ body:
   - type: input
     id: tag
     attributes:
-      label: release
-      description: 启动应用时的`核心版本`的内容
+      label: 版本信息
+      description: 填写 Delta Comic 核心版本和基础布局插件版本
     validations:
       required: true
 

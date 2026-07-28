@@ -52,6 +52,7 @@ msvc
 npmjs
 nvim
 nttld
+nodebuffer
 noopener
 noreferrer
 OPFS
@@ -100,12 +101,15 @@ tsgo
 tsgolint
 typebox
 UIDT
+unfollowing
+unliked
 unplugin
 unlisten
 unlistens
 unstub
 userscript
 vicons
+vidstack
 Videogame
 voidzero
 vueuse

@@ -1,19 +1,29 @@
-import type { Dayjs } from 'dayjs'
-import dayjs from 'dayjs'
+import dayjs, { type ConfigType, type Dayjs } from 'dayjs'
 
-export const createDateString = (date: Dayjs = dayjs()) => {
-  const today = dayjs()
-  const isThisYear = date.isSame(today, 'year')
-  const isInSameMonth = isThisYear && date.isSame(today, 'month')
-  const isToday = isInSameMonth && date.date() === today.date()
-  const isLastDay = isInSameMonth && date.date() === today.date() - 1
-  // const isLastLastDay = isInSameMonth && date.date() === today.date() - 2
-  let format = ''
-  if (!isThisYear) format += 'YYYY年 '
-  if (isToday) format += '今天 '
-  else if (isLastDay) format += '昨天 '
-  // else if (isLastLastDay) format += '前天 '
-  else format += 'M月D日 '
-  format += 'HH:mm'
-  return date.format(format)
+export interface DateFormatLabels {
+  differentYearFormat: string
+  sameYearFormat: string
+  todayFormat: string
+  yesterdayFormat: string
+}
+
+const defaultLabels: DateFormatLabels = {
+  differentYearFormat: 'YYYY年 M月D日 HH:mm',
+  sameYearFormat: 'M月D日 HH:mm',
+  todayFormat: '今天 HH:mm',
+  yesterdayFormat: '昨天 HH:mm',
+}
+
+export const createDateString = (
+  value: ConfigType | Dayjs = dayjs(),
+  labels: DateFormatLabels = defaultLabels,
+  now: Dayjs = dayjs(),
+) => {
+  const date = dayjs(value)
+  if (!date.isValid()) return ''
+
+  const dayDifference = now.startOf('day').diff(date.startOf('day'), 'day')
+  if (dayDifference === 0) return date.format(labels.todayFormat)
+  if (dayDifference === 1) return date.format(labels.yesterdayFormat)
+  return date.format(date.isSame(now, 'year') ? labels.sameYearFormat : labels.differentYearFormat)
 }

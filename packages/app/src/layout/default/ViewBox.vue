@@ -1,88 +1,69 @@
 <script setup lang="ts">
-import { useFullscreen } from '@delta-comic/core'
 import { usePreventBack } from '@delta-comic/ui'
-import { ArrowBackRound, FullscreenRound, PlayArrowRound } from '@vicons/material'
-import type { NScrollbar } from 'naive-ui'
-import { computed, ref } from 'vue'
-defineProps<{
+import { useFullscreen } from '@delta-comic/utils'
+import { ArrowBackRound, FullscreenRound, HomeRound, PlayArrowRound } from '@vicons/material'
+import { NButton, NIcon, type NScrollbar } from 'naive-ui'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+import { translate } from '@/i18n'
+
+const props = defineProps<{
   isScrolled: boolean
   scrollbar: InstanceType<typeof NScrollbar> | null
 }>()
+defineSlots<{ view(): unknown }>()
 
+const router = useRouter()
 const fullscreen = useFullscreen()
 const isFullscreen = computed({
   get: () => fullscreen.isFullscreen.value,
-  set: isFull => (isFull ? fullscreen.entry() : fullscreen.exit())
+  set: value => void (value ? fullscreen.entry() : fullscreen.exit()),
 })
-usePreventBack(isFullscreen, ref(true))
-
-defineSlots<{
-  view(): any
-}>()
+usePreventBack(isFullscreen)
 </script>
 
 <template>
-  <div class="relative flex h-[30vh] justify-center bg-black text-white">
-    <div
-      class="pt-safe pointer-events-none absolute top-0 z-3 flex h-14 w-full items-center *:pointer-events-auto"
-    >
-      <VanSticky>
-        <div
-          class="pt-safe flex h-[calc(56px+var(--safe-area-inset-top))] w-screen items-center transition-colors"
-          :class="[isScrolled ? 'bg-(--p-color)' : 'bg-transparent']"
-        >
-          <NIcon color="white" size="1.5rem" class="ml-5" @click="$router.back()">
-            <ArrowBackRound />
-          </NIcon>
-          <NIcon color="white" size="1.5rem" class="ml-5" @click="$router.force.push('/')">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              viewBox="0 0 24 24"
-            >
-              <g
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M19 8.71l-5.333-4.148a2.666 2.666 0 0 0-3.274 0L5.059 8.71a2.665 2.665 0 0 0-1.029 2.105v7.2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.2c0-.823-.38-1.6-1.03-2.105"
-                ></path>
-                <path d="M16 15c-2.21 1.333-5.792 1.333-8 0"></path>
-              </g>
-            </svg>
-          </NIcon>
-          <div
-            @click="scrollbar?.scrollTo({ behavior: 'smooth', top: 0, left: 0 })"
-            class="flex size-full items-center justify-center text-[16px] transition-opacity"
-            :class="[isScrolled || 'opacity-0']"
-          >
-            <NIcon size="2.5rem">
-              <PlayArrowRound />
-            </NIcon>
-            返回顶部
-          </div>
-        </div>
-      </VanSticky>
-    </div>
-    <Teleport to="#cover" :disabled="!isFullscreen">
-      <slot name="view" />
-    </Teleport>
-    <VanRow class="pointer-events-none absolute bottom-0 z-2 w-full">
-      <VanCol span="1" offset="21">
-        <NButton
-          class="pointer-events-auto text-3xl!"
-          @click="isFullscreen = true"
-          text
-          color="#fff"
-        >
-          <NIcon>
-            <FullscreenRound />
-          </NIcon>
+  <section class="relative flex h-[30vh] justify-center bg-black text-white">
+    <div class="pointer-events-none absolute top-0 z-3 flex h-14 w-full items-center pt-safe">
+      <div
+        class="pointer-events-auto flex h-[calc(56px+var(--safe-area-inset-top))] w-full items-center transition-colors"
+        :class="isScrolled ? 'bg-(--dc-color-primary)' : 'bg-transparent'"
+      >
+        <NButton circle quaternary @click="router.back()">
+          <template #icon
+            ><NIcon color="white" size="1.5rem"><ArrowBackRound /></NIcon
+          ></template>
         </NButton>
-      </VanCol>
-    </VanRow>
-  </div>
+        <NButton circle quaternary @click="router.force.push('/')">
+          <template #icon
+            ><NIcon color="white" size="1.5rem"><HomeRound /></NIcon
+          ></template>
+        </NButton>
+        <NButton
+          class="mx-auto! transition-opacity"
+          :class="!isScrolled && 'pointer-events-none opacity-0'"
+          text
+          @click="props.scrollbar?.scrollTo({ behavior: 'smooth', left: 0, top: 0 })"
+        >
+          <template #icon
+            ><NIcon color="white" size="2rem"><PlayArrowRound /></NIcon
+          ></template>
+          <span class="text-white">{{ translate('layout.actions.backToTop') }}</span>
+        </NButton>
+      </div>
+    </div>
+
+    <Teleport to="body" :disabled="!isFullscreen">
+      <div class="bg-black" :class="isFullscreen ? 'fixed inset-0 z-[100000]' : 'absolute inset-0'">
+        <slot name="view" />
+      </div>
+    </Teleport>
+
+    <NButton class="absolute! right-4 bottom-3 z-2 text-3xl!" text @click="isFullscreen = true">
+      <template #icon
+        ><NIcon color="white"><FullscreenRound /></NIcon
+      ></template>
+    </NButton>
+  </section>
 </template>

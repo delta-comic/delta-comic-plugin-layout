@@ -6,68 +6,70 @@ import {
   type UniItem,
   type UniUser,
 } from '@delta-comic/model'
+import type { PageKey } from '@delta-comic/model'
 import { DcWaterfall } from '@delta-comic/ui'
 import { useInfiniteQuery } from '@pinia/colada'
-import { computed, useTemplateRef } from 'vue'
+import { computed, type HTMLAttributes, useTemplateRef } from 'vue'
+
+import type { StreamPage } from '@/utils/query'
 
 import PreviewUser from '../user/PreviewUser.vue'
 
 import Children from './Children.vue'
-import _CommentRow from './CommentRow.vue'
+import DefaultCommentRow from './CommentRow.vue'
+import Sender from './Sender.vue'
 
 import { createMainCommentQueryKey, QueryKey } from '.'
 
-const $props = defineProps<{ item: UniItem; fetchComments: StreamQuery<UniComment>; class?: any }>()
-const CommentRow = computed(() => UniComment.commentRow.get($props.item.contentType) ?? _CommentRow)
+const props = defineProps<{
+  class?: HTMLAttributes['class']
+  fetchComments: StreamQuery<UniComment>
+  item: UniItem
+}>()
+const commentRow = computed(
+  () => UniComment.commentRow.get(props.item.contentType) ?? DefaultCommentRow,
+)
+const children = useTemplateRef<InstanceType<typeof Children>>('children')
+const previewUser = useTemplateRef<InstanceType<typeof PreviewUser>>('previewUser')
 
-const children = useTemplateRef('children')
-
-const previewUser = useTemplateRef('previewUser')
-
-const query = useInfiniteQuery({
+const query = useInfiniteQuery<StreamPage<UniComment>, Error, PageKey>({
+  getNextPageParam: page => page.nextPage,
+  getPreviousPageParam: page => page.lastPage,
+  initialPageParam: () => props.fetchComments.initPage,
   key: () => [
     QueryKey.MainComment,
     createMainCommentQueryKey(
-      $props.item.id,
-      UniContentPage.contentPages.key.toString($props.item.contentType),
+      props.item.id,
+      props.item.thisEp.id,
+      UniContentPage.contentPages.key.toString(props.item.contentType),
     ),
   ],
-  query: async ({ signal, pageParam }) => await $props.fetchComments.query({}, pageParam, signal),
-  initialPageParam: $props.fetchComments.initPage,
-  getNextPageParam: lastPage => lastPage.nextPage,
-  getPreviousPageParam: lastPage => lastPage.lastPage,
+  query: async ({ pageParam, signal }) => await props.fetchComments.query({}, pageParam, signal),
 })
+
+const showUser = (user: UniUser) => previewUser.value?.show(user)
 </script>
 
 <template>
-  <template v-if="item.commentSendable">
-    <div class="w-full overflow-hidden bg-(--van-background)" :class="$props.class ?? 'non-height'">
-      <DcWaterfall
-        :source="{ type: 'stream', value: query }"
-        ref="waterfall"
-        class="h-[calc(100%-40px)]!"
-        v-slot="{ item: comment }"
-        :col="1"
-        :gap="0"
-        :padding="0"
-      >
-        <component
-          :is="CommentRow"
-          :comment
-          :item
-          @clickUser="(user: UniUser) => previewUser?.show(user)"
-          @click="children?.loadChild(comment)"
-        />
-      </DcWaterfall>
-      <Sender :item :aim="item" />
-    </div>
-    <Children :item ref="children" @user="user => previewUser?.show(user)" />
-  </template>
-  <div
-    v-else
-    class="h-[calc(70vh-var(--van-tabs-line-height))] w-full pt-2 text-center text-(--van-text-color-2)"
-  >
-    评论区已关闭
+  <div class="flex w-full flex-col overflow-hidden bg-(--dc-color-page)" :class="$props.class">
+    <DcWaterfall
+      class="min-h-0 flex-1"
+      :col="1"
+      :gap="0"
+      :padding="0"
+      :source="{ type: 'stream', value: query }"
+      v-slot="{ item: comment }"
+    >
+      <component
+        :is="commentRow"
+        :comment
+        :item
+        @click="children?.loadChild(comment)"
+        @click-user="showUser"
+      />
+    </DcWaterfall>
+    <Sender :aim="item" :item />
   </div>
+  <Children :item ref="children" @user="showUser" />
   <PreviewUser ref="previewUser" />
 </template>

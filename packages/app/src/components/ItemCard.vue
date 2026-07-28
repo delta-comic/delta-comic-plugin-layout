@@ -1,172 +1,171 @@
 <script setup lang="ts">
-import { SharedFunction } from '@delta-comic/core'
 import { RecentDB } from '@delta-comic/db'
-import { uni } from '@delta-comic/model'
-import { appConfig, useConfig } from '@delta-comic/plugin'
+import { UniImage, UniItem, type UniItemRaw } from '@delta-comic/model'
+import { useConfig } from '@delta-comic/plugin'
 import { DcImage } from '@delta-comic/ui'
-import {} from '@delta-comic/utils'
+import { SharedFunction } from '@delta-comic/utils'
 import { EyeInvisibleOutlined } from '@vicons/antd'
 import { MoreVertRound } from '@vicons/material'
 import { createReusableTemplate } from '@vueuse/core'
-import { NPopconfirm } from 'naive-ui'
-import { computed, type StyleValue, useTemplateRef } from 'vue'
+import { NButton, NIcon, NPopconfirm } from 'naive-ui'
+import { computed, type HTMLAttributes, type StyleValue, useTemplateRef } from 'vue'
 
-const $props = withDefaults(
+import { translate } from '@/i18n'
+
+const props = withDefaults(
   defineProps<{
-    item: uni.item.Item | uni.item.RawItem
-    freeHeight?: boolean
+    class?: HTMLAttributes['class']
     disabled?: boolean
-    type?: 'default' | 'big' | 'small'
-    class?: any
+    freeHeight?: boolean
+    item: UniItem | UniItemRaw
     style?: StyleValue
+    type?: 'big' | 'default' | 'small'
   }>(),
-  { type: 'default' }
+  { type: 'default' },
 )
-const $emit = defineEmits<{ click: [] }>()
-const cover = useTemplateRef<InstanceType<typeof DcImage>>('cover')
-const $cover = computed(() =>
-  uni.item.Item.is($props.item) ? $props.item.$cover : uni.image.Image.create($props.item.cover)
+const emit = defineEmits<{ click: [] }>()
+const coverElement = useTemplateRef<InstanceType<typeof DcImage>>('cover')
+const cover = computed(() =>
+  UniItem.is(props.item) ? props.item.$cover : UniImage.create(props.item.cover),
 )
-const imageRatio = computed(() =>
-  cover.value?.isLoaded
-    ? 'unset'
-    : `${$cover.value.aspect?.width || cover.value?.imageEl?.getBoundingClientRect().width || 3} / ${$cover.value.aspect?.height || cover.value?.imageEl?.getBoundingClientRect().height || 4}`
-)
+const imageRatio = computed(() => {
+  if (coverElement.value?.isLoaded) return undefined
+  const width = cover.value.aspect?.width ?? coverElement.value?.imageEl?.clientWidth ?? 3
+  const height = cover.value.aspect?.height ?? coverElement.value?.imageEl?.clientHeight ?? 4
+  return `${width} / ${height}`
+})
 
-defineSlots<{ default(): void; smallTopInfo(): void; cover(): void }>()
-const [TemplateIns, ComponentIns] = createReusableTemplate()
+defineSlots<{ cover(): unknown; default(): unknown; smallTopInfo(): unknown }>()
+const [DefineActions, Actions] = createReusableTemplate()
 const { upsert } = RecentDB.useUpsert()
-const handlePositiveClick = () => {
-  if (uni.item.Item.is($props.item))
-    return upsert({
-      item: $props.item
-    })
+const addToRecent = () => {
+  if (UniItem.is(props.item)) return upsert({ item: props.item })
 }
-const config = useConfig().$load(appConfig)
+
+const appConfig = useConfig().$loadApp()
 const processedTitle = computed(() =>
-  config.value.easilyTitle
-    ? $props.item.title
-        .replace(/(\（[^\）]+\）|\[[^\]]+\]|\([^\)]+\)|\【[^\】]+\】)+?/gi, '')
-        .trim()
-    : $props.item.title
+  appConfig.data.value.easilyTitle
+    ? props.item.title.replace(/(（[^）]+）|\[[^\]]+\]|\([^)]+\)|【[^】]+】)+?/gi, '').trim()
+    : props.item.title,
 )
+const isSafe = computed(() => !window.$$safe$$ || props.item.customIsSafe === true)
+const isUnavailable = computed(() => props.disabled || !isSafe.value)
 
 const handleClick = () => {
-  SharedFunction.call(
+  if (isUnavailable.value) return
+  void SharedFunction.call(
     'routeToContent',
-    $props.item.contentType,
-    $props.item.id,
-    $props.item.thisEp.id,
-    uni.item.Item.is($props.item) ? $props.item : undefined
+    props.item.contentType,
+    props.item.id,
+    props.item.thisEp.id,
+    UniItem.is(props.item) ? props.item : undefined,
   )
-  $emit('click')
+  emit('click')
 }
 
-const isSafetied = computed(() =>
-  window.$$safe$$ ? ($props.item.customIsSafe ? true : $props.item.customIsSafe) : true
-)
+const heightStyle = computed(() => (props.freeHeight ? 'auto' : '140px'))
 </script>
 
 <template>
-  <TemplateIns>
-    <NPopconfirm @positive-click="handlePositiveClick">
+  <DefineActions>
+    <NPopconfirm @positive-click="addToRecent">
       <template #trigger>
-        <NButton @click.stop text class="absolute! right-2 bottom-1.5">
-          <NIcon color="var(--van-text-color-2)" size="1rem">
-            <MoreVertRound />
-          </NIcon>
+        <NButton class="absolute! right-2 bottom-1.5" text @click.stop>
+          <template #icon>
+            <NIcon color="var(--dc-color-text-secondary)" size="1rem"><MoreVertRound /></NIcon>
+          </template>
         </NButton>
       </template>
-      加入"稍后再看"?
+      {{ translate('layout.actions.addToRecent') }}
     </NPopconfirm>
-  </TemplateIns>
-  <div
-    ref="container"
+  </DefineActions>
+
+  <article
+    v-if="type !== 'small'"
+    :aria-disabled="isUnavailable"
+    class="dc-hairline-top-bottom relative flex w-full overflow-hidden bg-(--dc-color-surface) p-2 text-(--dc-color-text)"
+    :class="[
+      { 'dc-haptics-feedback': !isUnavailable, 'cursor-not-allowed opacity-60': isUnavailable },
+      props.class,
+    ]"
+    :style="[{ height: heightStyle }, style]"
     @click="handleClick"
-    :disabled
-    v-if="type != 'small'"
-    class="van-hairline--top-bottom relative flex w-full overflow-hidden bg-(--van-background-2) p-2 text-(--van-text-color)"
-    :style="[{ height: freeHeight ? 'auto' : '140px' }, style]"
-    :class="[{ 'van-haptics-feedback': !disabled }, $props.class]"
   >
     <DcImage
-      :src="$cover"
       v-if="type === 'big'"
       class="absolute top-0 left-0 h-full w-full blur-lg"
       fit="cover"
+      :src="cover"
     />
-    <DcImage :src="$cover" class="image-size z-2 w-3/10 rounded-lg!" fit="contain" ref="cover" />
-    <div class="absolute bottom-0 z-3 h-fit w-3/10">
-      <slot name="cover" />
+    <DcImage
+      ref="cover"
+      class="z-2 w-3/10 rounded-lg!"
+      fit="contain"
+      :src="cover"
+      :style="{ aspectRatio: imageRatio }"
+    />
+    <div class="absolute bottom-0 z-3 h-fit w-3/10"><slot name="cover" /></div>
+    <div class="absolute right-2 flex h-[calc(100%-8px)] w-[calc(70%-18px)] flex-col">
+      <span class="dc-clamp-2">{{ processedTitle }}</span>
+      <div class="absolute bottom-2 text-sm text-(--dc-color-text-secondary)"><slot /></div>
     </div>
+    <Actions />
     <div
-      class="absolute right-2 flex h-[calc(100%-8px)] w-[calc(70%-18px)] flex-col *:text-justify"
-    >
-      <span class="van-multi-ellipsis--l2">{{ processedTitle }}</span>
-      <div class="absolute bottom-2 text-sm text-(--van-text-color-2)">
-        <slot />
-      </div>
-    </div>
-    <ComponentIns />
-    <div
-      class="use-backdrop-blur-md absolute top-0.5 left-0.5 z-100 size-[calc(100%-var(--spacing)*1)] rounded-lg bg-white/10"
-      v-if="!isSafetied"
+      v-if="!isSafe"
+      class="absolute inset-0.5 z-100 rounded-lg bg-(--dc-color-surface)/85 backdrop-blur-md"
+      @click.stop
     >
       <div
-        class="absolute top-1/2 left-3 flex -translate-y-1/2 items-center gap-2 text-xl font-semibold text-(--van-text-color)"
+        class="absolute top-1/2 left-3 flex -translate-y-1/2 items-center gap-2 text-xl font-semibold"
       >
-        <NIcon color="var(--van-text-color)" size="40px">
-          <EyeInvisibleOutlined />
-        </NIcon>
-        该内容疑似不安全
+        <NIcon size="40px"><EyeInvisibleOutlined /></NIcon>
+        {{ translate('layout.content.unsafe') }}
       </div>
     </div>
-  </div>
+  </article>
 
-  <div
-    :style="[{ height: freeHeight ? 'auto' : '140px' }, style]"
+  <article
     v-else
+    :aria-disabled="isUnavailable"
+    class="dc-hairline-top-bottom relative block w-full overflow-hidden rounded-lg bg-(--dc-color-surface) text-(--dc-color-text)"
+    :class="[
+      { 'dc-haptics-feedback': !isUnavailable, 'cursor-not-allowed opacity-60': isUnavailable },
+      props.class,
+    ]"
+    :style="[{ height: heightStyle }, style]"
     @click="handleClick"
-    :disabled
-    :class="[{ 'van-haptics-feedback': !disabled }, $props.class]"
-    ref="container"
-    class="van-hairline--top-bottom relative block w-full items-center overflow-hidden rounded-lg border-none bg-(--van-background-2) bg-center p-0 text-(--van-text-color)"
   >
     <div class="relative flex w-full items-center">
-      <DcImage :src="$cover" class="image-size w-full rounded-t-lg" fit="cover" ref="cover" />
+      <DcImage
+        ref="cover"
+        class="w-full rounded-t-lg"
+        fit="cover"
+        :src="cover"
+        :style="{ aspectRatio: imageRatio }"
+      />
       <slot name="cover" />
       <div
-        class="absolute bottom-0 flex h-6 w-full items-end justify-start gap-1 bg-[linear-gradient(transparent,rgba(0,0,0,0.9))] pb-0.5 pl-1 text-[10px]! text-white *:flex *:items-center"
+        class="absolute bottom-0 flex h-6 w-full items-end gap-1 bg-[linear-gradient(transparent,rgba(0,0,0,0.9))] pb-0.5 pl-1 text-[10px]! text-white"
       >
         <slot name="smallTopInfo" />
       </div>
     </div>
-    <div class="flex w-full flex-col overflow-hidden p-1 text-(--van-text-color)">
-      <div class="flex flex-nowrap">
-        <span class="text-start text-sm">{{ processedTitle }}</span>
-      </div>
-      <div class="my-1 flex h-auto w-full flex-nowrap items-center">
-        <slot />
-      </div>
+    <div class="flex w-full flex-col overflow-hidden p-1">
+      <span class="text-start text-sm">{{ processedTitle }}</span>
+      <div class="my-1 flex h-auto w-full flex-nowrap items-center"><slot /></div>
     </div>
-    <ComponentIns />
+    <Actions />
     <div
-      class="use-backdrop-blur-md absolute top-0.5 left-0 z-100 size-[calc(100%-var(--spacing)*1)] w-full rounded-lg bg-white/10"
-      v-if="!isSafetied"
+      v-if="!isSafe"
+      class="absolute inset-0.5 z-100 rounded-lg bg-(--dc-color-surface)/85 backdrop-blur-md"
+      @click.stop
     >
       <div
-        class="absolute top-1/2 left-3 flex -translate-y-1/2 flex-col items-center gap-2 text-xl font-semibold text-(--van-text-color)"
+        class="absolute top-1/2 left-3 flex -translate-y-1/2 flex-col items-center gap-2 text-center text-lg font-semibold"
       >
-        <NIcon color="var(--van-text-color)" size="40px">
-          <EyeInvisibleOutlined />
-        </NIcon>
-        该内容疑似不安全
+        <NIcon size="40px"><EyeInvisibleOutlined /></NIcon>
+        {{ translate('layout.content.unsafe') }}
       </div>
     </div>
-  </div>
+  </article>
 </template>
-<style scoped lang="css">
-:deep(.image-size) {
-  aspect-ratio: v-bind('imageRatio');
-}
-</style>

@@ -1,39 +1,48 @@
 <script setup lang="ts">
-import { uni } from '@delta-comic/model'
-import { Inject } from '@delta-comic/plugin'
+import type { UniContentPage, UniItem } from '@delta-comic/model'
+import { createLoadingMessage, DcEnvironment, DcToggleIcon } from '@delta-comic/ui'
 import { LikeFilled } from '@vicons/antd'
-import { FolderOutlined, ReportGmailerrorredRound } from '@vicons/material'
+import { ReportGmailerrorredRound } from '@vicons/material'
+import { NPopconfirm } from 'naive-ui'
 
 import FavouriteSelect from '@/components/FavouriteSelect.vue'
+import ShareButton from '@/components/ShareButton.vue'
+import { translate } from '@/i18n'
 import { useLike } from '@/utils/content'
 
-defineProps<{
-  union?: uni.item.Item
-  page: uni.content.ContentPage
-}>()
+const props = defineProps<{ page: UniContentPage; union?: UniItem }>()
+defineSlots<{ action(args: { item: UniItem; page: UniContentPage }): unknown }>()
 
-const { mutate: likeItem } = useLike()
+const { likeItem } = useLike()
+const report = async () => {
+  if (!props.union) return
+  await createLoadingMessage().bind(props.union.report())
+}
 </script>
 
 <template>
-  <div class="mt-8 mb-4 flex justify-around" v-if="union">
+  <div v-if="union" class="mt-8 mb-4 flex flex-wrap justify-around gap-3">
     <DcToggleIcon
+      :icon="LikeFilled"
+      :model-value="union.isLiked"
       padding
       size="27px"
-      :modelValue="union.isLiked"
       @click="likeItem(union)"
-      :icon="LikeFilled"
     >
-      {{ (union.likeNumber ?? 0) || '喜欢' }}
+      {{ union.likeNumber || translate('layout.actions.like') }}
     </DcToggleIcon>
-    <DcToggleIcon padding size="27px" :icon="FolderOutlined" dis-changed> 缓存 </DcToggleIcon>
-    <DcToggleIcon padding size="27px" disChanged :icon="ReportGmailerrorredRound">
-      举报
-    </DcToggleIcon>
+    <NPopconfirm :positive-text="translate('layout.actions.confirm')" @positive-click="report">
+      <template #trigger>
+        <DcToggleIcon dis-changed :icon="ReportGmailerrorredRound" padding size="27px">
+          {{ translate('layout.actions.report') }}
+        </DcToggleIcon>
+      </template>
+      {{ translate('layout.content.reportPrompt') }}
+    </NPopconfirm>
     <FavouriteSelect :item="union" />
     <ShareButton :page />
 
-    <slot name="action" :="{ page, item: union }" />
-    <Inject key="layout::layout::default.action" :args="{ page, item: union }" />
+    <slot name="action" :item="union" :page />
+    <DcEnvironment :args="{ item: union, page }" name="layout::layout::default.action" />
   </div>
 </template>

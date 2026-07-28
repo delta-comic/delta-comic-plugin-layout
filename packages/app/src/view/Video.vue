@@ -1,353 +1,266 @@
 <script setup lang="ts">
-import { useFullscreen } from '@delta-comic/core'
-import type { uni } from '@delta-comic/model'
-import { Inject } from '@delta-comic/plugin'
+import 'hls.js'
 import 'vidstack/bundle'
 import 'vidstack/icons'
-import 'hls.js'
+import 'vidstack/player/styles/default/captions.css'
+import type { UniItem } from '@delta-comic/model'
+import { DcEnvironment, DcToggleIcon } from '@delta-comic/ui'
+import { useFullscreen } from '@delta-comic/utils'
 import { useQuery } from '@pinia/colada'
 import { LikeOutlined } from '@vicons/antd'
-import { ArrowBackIosRound, PauseRound, PlayArrowRound } from '@vicons/material'
+import {
+  ArrowBackIosRound,
+  FullscreenExitRound,
+  FullscreenRound,
+  PauseRound,
+  PlayArrowRound,
+} from '@vicons/material'
 import type { MediaPlayerElement } from 'vidstack/elements'
-import { computed, onBeforeUnmount, shallowRef, useTemplateRef } from 'vue'
-import { watch } from 'vue'
+import { computed, onBeforeUnmount, shallowRef, useTemplateRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import ButtonPopup from '@/components/ButtonPopup.vue'
+import FavouriteSelect from '@/components/FavouriteSelect.vue'
 import Settings from '@/components/Settings.vue'
+import { translate } from '@/i18n'
 import { createPageQueryKey } from '@/layout/default'
 import type { ContentVideoPage, VideoConfig } from '@/model'
 import { useLike } from '@/utils/content'
 
-import * as VideoViewInject from './video'
+import type * as VideoExtension from './video'
+import { QueryKey } from './video'
 
-const $props = defineProps<{ page: ContentVideoPage; union?: uni.item.Item }>()
+const props = defineProps<{ page: ContentVideoPage; union?: UniItem }>()
+defineSlots<{
+  bottomBar(args: VideoExtension.BarProps): unknown
+  centerBar(args: VideoExtension.BarProps): unknown
+  content(args: VideoExtension.BarProps): unknown
+  topBar(args: VideoExtension.BarProps): unknown
+}>()
 
-const { isFullscreen, ...fc } = useFullscreen()
-const setFullscreen = async (isFull: boolean) => (isFull ? fc.entry() : fc.exit())
-
+const router = useRouter()
+const fullscreen = useFullscreen()
 const player = useTemplateRef<MediaPlayerElement>('player')
-
-const videosQuery = useQuery({
-  key: () => [VideoViewInject.QueryKey.Videos, createPageQueryKey($props.page)],
-  query: async ({ signal }) => await $props.page.fetchVideo(signal)
+const query = useQuery({
+  key: () => [QueryKey.Videos, createPageQueryKey(props.page)],
+  query: ({ signal }) => props.page.fetchVideo(signal),
 })
-const videos = computed(() => videosQuery.data.value ?? [])
-
-watch(
-  player,
-  (player, _, onCleanup) => {
-    onCleanup(
-      watch(
-        isFullscreen,
-        isFullScreen => {
-          if (player) {
-            console.log('<Player> isFullScreen change', isFullScreen)
-            if (isFullScreen) {
-              player.enterFullscreen()
-            } else {
-              player.exitFullscreen()
-            }
-          }
-        },
-        { immediate: true }
-      )
-    )
-  },
-  { immediate: true }
-)
+const videos = computed(() => query.data.value)
+const source = shallowRef<VideoConfig[number]>()
 
 watch(
   videos,
-  videos => {
-    if (!player.value) return
-    player.value.textTracks.clear()
-    for (const textTrack of videos.textTrack ?? []) player.value.textTracks.add(textTrack)
+  value => {
+    source.value = value?.[0]
   },
-  { immediate: true }
+  { immediate: true },
+)
+watch(
+  [player, videos],
+  ([playerElement, value]) => {
+    if (!playerElement || !value) return
+    playerElement.textTracks.clear()
+    for (const textTrack of value.textTrack ?? []) playerElement.textTracks.add(textTrack)
+  },
+  { immediate: true },
 )
 
-const $router = useRouter()
-$router.beforeEach(() => {
-  unlockScreenOrientation()
+watch(fullscreen.isFullscreen, async value => {
+  const playerElement = player.value
+  if (!playerElement || playerElement.state.fullscreen === value) return
+  try {
+    if (value) await playerElement.enterFullscreen()
+    else await playerElement.exitFullscreen()
+  } catch {
+    // The host fullscreen state remains authoritative when the browser denies native fullscreen.
+  }
 })
+
+const setFullscreen = async (value: boolean) => {
+  if (value) await fullscreen.entry()
+  else await fullscreen.exit()
+}
+const onFullscreenChange = (event: CustomEvent<boolean>) => void setFullscreen(event.detail)
 
 const unlockScreenOrientation = async () => {
   try {
     screen.orientation.unlock()
-  } catch {}
+  } catch {
+    // Orientation locking is optional and unavailable on most desktop browsers.
+  }
 }
-window.$api.player = player
+const removeRouterGuard = router.beforeEach(() => void unlockScreenOrientation())
 onBeforeUnmount(() => {
-  setFullscreen(false)
+  removeRouterGuard()
+  void setFullscreen(false)
   player.value?.destroy()
-  unlockScreenOrientation()
+  void unlockScreenOrientation()
 })
 
-const src = shallowRef<VideoConfig[number]>()
-watch(
-  videos,
-  videos => {
-    src.value = videos[0]
-  },
-  { immediate: true }
-)
-
 const { likeItem } = useLike()
-
-defineSlots<{
-  topBar(args: VideoViewInject.BarProps): any
-  centerBar(args: VideoViewInject.BarProps): any
-  bottomBar(args: VideoViewInject.BarProps): any
-  content(args: VideoViewInject.BarProps): any
-}>()
+const barArgs = computed<VideoExtension.BarProps>(() => ({
+  isFullscreen: fullscreen.isFullscreen.value,
+  page: props.page,
+  player: player.value,
+}))
+const sourceLabel = (index: number) => translate('layout.reader.line', { number: index + 1 })
+const getCover = () => props.union?.$cover.getUrl() ?? Promise.resolve('')
 </script>
 
 <template>
-  <NSpin :show="!union" class="relative size-full bg-black *:first:size-full">
+  <NSpin
+    :show="query.isLoading.value"
+    class="relative size-full bg-black"
+    content-class="size-full"
+  >
     <media-player
-      :title="union?.title"
-      class="relative z-1! size-full"
-      :src
-      playsinline
       ref="player"
-      @media-orientation-unlock-request="unlockScreenOrientation()"
+      autoplay
+      class="relative z-1! size-full bg-black"
       keep-alive
-      autoPlay
-      @fullscreen-change="setFullscreen($event.detail)"
+      playsinline
+      :src="source"
+      :title="union?.title"
+      @fullscreen-change="onFullscreenChange"
+      @media-orientation-unlock-request="unlockScreenOrientation"
     >
-      <media-provider class="bg-black"></media-provider>
-      <DcAwait v-if="union" :promise="() => union!.$cover.getUrl()" v-slot="{ result }">
+      <media-provider class="size-full bg-black [&>video]:size-full [&>video]:object-contain" />
+      <DcAwait v-if="union" :promise="getCover" v-slot="{ result }">
         <media-poster
-          class="absolute inset-0 block h-full w-full rounded-md bg-black opacity-0 transition-opacity data-visible:opacity-100 [&>img]:h-full [&>img]:w-full [&>img]:object-cover"
+          :alt="translate('layout.reader.coverAlt')"
+          class="absolute inset-0 block size-full bg-black opacity-0 transition-opacity data-visible:opacity-100 [&>img]:size-full [&>img]:object-cover"
           :src="result"
-          alt="封面"
         />
       </DcAwait>
 
       <media-controls
-        v-if="isFullscreen"
-        class="pointer-events-none absolute inset-0 z-10 flex h-full w-full flex-col bg-linear-to-t from-black/10 to-transparent text-white opacity-0 transition-opacity data-visible:opacity-100"
+        class="pointer-events-none absolute inset-0 z-10 flex size-full flex-col text-white opacity-0 transition-opacity data-visible:opacity-100"
       >
         <media-controls-group
-          class="pointer-events-auto relative flex size-full h-14! items-center bg-linear-to-b from-black/40 from-50% to-transparent"
+          class="pointer-events-auto flex h-14 items-center bg-linear-to-b from-black/60 to-transparent px-3"
         >
-          <NIcon color="white" size="1.5rem" class="mr-2 ml-3" @click="$router.back()">
-            <ArrowBackIosRound />
-          </NIcon>
-          <media-title class="van-ellipsis w-6/10 text-[15px] text-nowrap"></media-title>
-          <div
-            class="absolute right-0 flex h-full items-center justify-around gap-6 pr-3 *:p-0! **:text-white!"
-          >
-            <slot name="topBar" :="{ player, page, isFullscreen }"></slot>
-            <Inject key="layout::view::video.top-bar" :args="{ player, page, isFullscreen }" />
-
+          <NButton v-if="fullscreen.isFullscreen.value" circle quaternary @click="router.back()">
+            <template #icon
+              ><NIcon color="white"><ArrowBackIosRound /></NIcon
+            ></template>
+          </NButton>
+          <media-title class="min-w-0 flex-1 dc-ellipsis text-[15px]" />
+          <div class="flex items-center gap-4">
+            <slot name="topBar" v-bind="barArgs" />
+            <DcEnvironment :args="barArgs" name="layout::view::video.top-bar" />
             <DcToggleIcon
-              size="23px"
-              v-model="union.isLiked"
-              @click="likeItem(union)"
               v-if="union"
               :icon="LikeOutlined"
+              :model-value="union.isLiked"
+              size="23px"
+              @click="likeItem(union)"
             />
-
-            <FavouriteSelect :item="union" v-if="union" plain />
-
-            <media-pip-button>
+            <FavouriteSelect v-if="union" :item="union" plain />
+            <media-pip-button class="group">
+              <media-icon class="block size-7 group-data-active:hidden" type="picture-in-picture" />
               <media-icon
-                type="picture-in-picture"
-                class="block size-7 group-data-active:hidden"
-              ></media-icon>
-              <media-icon
+                class="hidden size-7 group-data-active:block"
                 type="picture-in-picture-exit"
-                class="hidden size-6 group-data-active:block"
-              ></media-icon>
+              />
             </media-pip-button>
+          </div>
+        </media-controls-group>
 
-            <media-icon type="menu-vertical" class="z-100 mr-2 block size-7"></media-icon>
-          </div>
-        </media-controls-group>
         <media-controls-group
-          class="pointer-events-none! relative flex w-full flex-1 items-center px-2"
+          class="pointer-events-auto relative flex min-h-0 flex-1 items-center justify-center"
         >
-          <slot name="centerBar" :="{ player, page, isFullscreen }"></slot>
-          <Inject key="layout::view::video.center-bar" :args="{ player, page, isFullscreen }" />
-          <div class="absolute bottom-3 left-6 flex items-center text-sm font-medium text-white/80">
-            <media-time class="time" type="current"></media-time>
-            <div class="mx-1">/</div>
-            <media-time class="time" type="duration"></media-time>
-          </div>
+          <slot name="centerBar" v-bind="barArgs" />
+          <DcEnvironment :args="barArgs" name="layout::view::video.center-bar" />
+          <media-play-button
+            class="group flex size-16 items-center justify-center rounded-full bg-black/30"
+          >
+            <PauseRound class="size-12 group-data-paused:hidden" />
+            <PlayArrowRound class="hidden size-12 group-data-paused:block" />
+          </media-play-button>
         </media-controls-group>
+
         <media-controls-group
-          class="pointer-events-auto flex h-14! w-full flex-col items-center justify-around bg-linear-to-t from-black/20 from-40% to-transparent"
+          class="pointer-events-auto flex min-h-18 flex-col justify-center gap-1 bg-linear-to-t from-black/60 to-transparent px-4"
         >
           <media-time-slider
-            class="group relative inline-flex h-4 w-[calc(100%-60px)] cursor-pointer touch-none items-center outline-none select-none aria-hidden:hidden"
+            class="group relative inline-flex h-5 w-full cursor-pointer touch-none items-center"
           >
-            <!-- Track -->
-            <div class="relative z-0 h-0.75 w-full rounded-sm bg-white/30">
-              <!-- Track Fill -->
+            <div class="relative h-1 w-full rounded bg-white/30">
+              <div class="absolute h-full w-(--slider-progress) rounded bg-white/50" />
+              <div class="absolute z-1 h-full w-(--slider-fill) rounded bg-(--dc-color-primary)" />
               <div
-                class="absolute z-10 h-full w-(--slider-fill) rounded-sm bg-(--p-color) will-change-[width]"
-              ></div>
-              <!-- Progress -->
-              <div
-                class="absolute h-full w-(--slider-progress) rounded-sm bg-white/50 will-change-[width]"
-              ></div>
+                class="absolute top-1/2 left-(--slider-fill) z-2 size-3 -translate-1/2 rounded-full bg-white"
+              />
             </div>
-            <!-- Thumb -->
-            <div
-              class="absolute top-1/2 left-(--slider-fill) z-20 h-3 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-white transition-opacity will-change-[left]"
-            ></div>
           </media-time-slider>
-          <div class="flex h-14 w-full items-center pl-3">
-            <media-play-button
-              class="group relative mr-1 flex size-10 cursor-pointer items-center justify-center rounded-md text-white outline-none"
-            >
-              <PauseRound class="size-10 group-data-paused:hidden" type="play" />
-              <PlayArrowRound class="hidden size-10 group-data-paused:block" type="play" />
-            </media-play-button>
-          </div>
-
-          <div class="absolute right-6 flex h-7.5 items-end gap-4">
-            <slot name="bottomBar" :="{ player, page, isFullscreen }"></slot>
-            <Inject key="layout::view::video.bottom-bar" :args="{ player, page, isFullscreen }" />
-
+          <div class="flex items-center gap-3">
+            <media-time type="current" />
+            <span>/</span>
+            <media-time type="duration" />
+            <div class="flex-1" />
+            <slot name="bottomBar" v-bind="barArgs" />
+            <DcEnvironment :args="barArgs" name="layout::view::video.bottom-bar" />
             <ButtonPopup
-              class="flex h-screen w-[30vmax] flex-col bg-black/50! backdrop-blur"
-              position="right"
-              :round="false"
-              theme="dark"
+              body-class="bg-black/85 text-white backdrop-blur"
+              placement="right"
+              width="min(80vw, 28rem)"
             >
               <template #button>
-                <NButton text color="#fff">设置</NButton>
+                <NButton text
+                  ><span class="text-white">{{
+                    translate('layout.actions.settings')
+                  }}</span></NButton
+                >
               </template>
               <Settings />
             </ButtonPopup>
             <ButtonPopup
-              class="flex h-screen w-[30vmax] flex-col bg-black/50! backdrop-blur"
-              position="right"
-              :round="false"
-              theme="dark"
+              v-if="(videos?.length ?? 0) > 1"
+              body-class="flex flex-col gap-2 bg-black/85 p-4 text-white backdrop-blur"
+              placement="right"
+              width="min(80vw, 28rem)"
             >
               <template #button>
-                <NButton color="#fff" size="large" text
-                  >线路:
-                  {{ videos.findIndex(v => v == src) + 1 }}
-                </NButton>
+                <NButton text
+                  ><span class="text-white">{{
+                    sourceLabel(videos?.findIndex(value => value === source) ?? 0)
+                  }}</span></NButton
+                >
               </template>
               <NButton
                 v-for="(line, index) of videos"
-                :color="src == line ? 'var(--p-color)' : '#fff'"
-                @click="() => (src = line)"
-                size="large"
-                text
-                >线路:
-                {{ index + 1 }}
+                :key="index"
+                :type="source === line ? 'primary' : 'default'"
+                @click="source = line"
+              >
+                {{ sourceLabel(index) }}
               </NButton>
             </ButtonPopup>
+            <NButton text @click="setFullscreen(!fullscreen.isFullscreen.value)">
+              <template #icon>
+                <NIcon color="white" size="1.5rem">
+                  <FullscreenExitRound v-if="fullscreen.isFullscreen.value" />
+                  <FullscreenRound v-else />
+                </NIcon>
+              </template>
+            </NButton>
           </div>
         </media-controls-group>
       </media-controls>
 
-      <media-controls
-        v-else
-        class="pointer-events-none absolute inset-0 z-10 flex size-full flex-col bg-linear-to-t from-black/10 to-transparent opacity-0 transition-opacity data-visible:opacity-100"
-      >
-        <media-controls-group
-          class="pt-safe pointer-events-auto flex h-[calc(56px+var(--safe-area-inset-top))] w-full items-center justify-end gap-3 bg-linear-to-b from-black to-transparent px-2"
-        >
-          <slot name="topBar" :="{ player, page, isFullscreen }"></slot>
-          <Inject key="layout::view::video.top-bar" :args="{ player, page, isFullscreen }" />
-
-          <media-pip-button>
-            <media-icon
-              type="picture-in-picture"
-              class="block size-7 group-data-active:hidden"
-            ></media-icon>
-            <media-icon
-              type="picture-in-picture-exit"
-              class="hidden size-7 group-data-active:block"
-            ></media-icon>
-          </media-pip-button>
-
-          <media-icon type="menu-vertical" class="z-100 mr-2 block size-7"></media-icon>
-        </media-controls-group>
-        <div class="flex-1"></div>
-        <media-controls-group class="pointer-events-auto flex w-full items-center px-2">
-          <slot name="centerBar" :="{ player, page, isFullscreen }"></slot>
-          <Inject key="layout::view::video.center-bar" :args="{ player, page, isFullscreen }" />
-        </media-controls-group>
-        <div class="flex-1"></div>
-        <media-controls-group class="pointer-events-auto flex w-full items-center justify-around">
-          <media-play-button
-            class="group relative mr-1 flex size-10 cursor-pointer items-center justify-center rounded-md text-white outline-none"
-          >
-            <PauseRound class="size-10 group-data-paused:hidden" type="play" />
-            <PlayArrowRound class="hidden size-10 group-data-paused:block" type="play" />
-          </media-play-button>
-
-          <slot name="bottomBar" :="{ player, page, isFullscreen }"></slot>
-          <Inject key="layout::view::video.bottom-bar" :args="{ player, page, isFullscreen }" />
-
-          <media-time-slider
-            class="group relative mx-[7.5px] inline-flex h-10 w-full cursor-pointer touch-none items-center outline-none select-none aria-hidden:hidden"
-          >
-            <!-- Track -->
-            <div class="relative z-0 h-1.25 w-full rounded-sm bg-white/30">
-              <!-- Track Fill -->
-              <div
-                class="absolute z-10 h-full w-(--slider-fill) rounded-sm bg-(--p-color) will-change-[width]"
-              ></div>
-              <!-- Progress -->
-              <div
-                class="absolute h-full w-(--slider-progress) rounded-sm bg-white/50 will-change-[width]"
-              ></div>
-            </div>
-            <!-- Thumb -->
-            <div
-              class="absolute top-1/2 left-(--slider-fill) z-20 h-3.75 w-4.25 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-white transition-opacity will-change-[left]"
-            ></div>
-          </media-time-slider>
-          <div class="w-18"></div>
-        </media-controls-group>
-      </media-controls>
       <media-captions
-        class="media-captions:opacity-100 media-controls:bottom-21.25 media-preview:opacity-0 absolute inset-0 bottom-2 z-10 wrap-break-word opacity-0 transition-[opacity,bottom] duration-300 select-none"
-      ></media-captions>
+        class="vds-captions absolute inset-0 bottom-2 z-10 wrap-break-word opacity-0 transition-opacity [media-player[data-captions]_&]:opacity-100 [media-player[data-preview]_&]:opacity-0"
+      />
+      <media-gesture action="toggle:controls" event="pointerup" />
+      <media-gesture action="toggle:paused" class="absolute inset-0" event="dblclick" />
+      <media-spinner
+        class="pointer-events-none absolute top-1/2 left-1/2 z-20 -translate-1/2 animate-spin text-white opacity-0 [media-player[data-buffering]_&]:opacity-100"
+        size="23"
+        track-width="8"
+      />
 
-      <media-gesture action="toggle:controls" event="pointerup"></media-gesture>
-      <media-gesture
-        action="toggle:paused"
-        class="absolute top-0 left-0 size-full"
-        event="dblclick"
-      ></media-gesture>
-      <div
-        class="pointer-events-none absolute inset-0 z-50 flex h-full w-full items-center justify-center"
-      >
-        <media-spinner
-          class="media-buffering:animate-spin media-buffering:opacity-100 text-white opacity-0 transition-opacity duration-200 ease-linear *:data-[part='track']:opacity-25"
-          size="23"
-          track-width="8"
-        ></media-spinner>
-      </div>
-
-      <slot name="content" :="{ player, page, isFullscreen }"></slot>
-      <Inject key="layout::view::video.content" :args="{ player, page, isFullscreen }" />
+      <slot name="content" v-bind="barArgs" />
+      <DcEnvironment :args="barArgs" name="layout::view::video.content" />
     </media-player>
   </NSpin>
 </template>
-<style scoped lang="css">
-:deep(*) {
-  --van-popover-dark-background: rgba(0, 0, 0, 0.5) !important;
-
-  &.van-popover__content {
-    backdrop-filter: blur(10px);
-  }
-}
-
-:deep(video) {
-  height: 100%;
-  width: 100%;
-  aspect-ratio: unset;
-}
-</style>

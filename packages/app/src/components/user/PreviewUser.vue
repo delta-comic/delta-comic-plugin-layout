@@ -1,29 +1,35 @@
 <script setup lang="ts">
-import type { uni } from '@delta-comic/model'
+import type { UniUser } from '@delta-comic/model'
 import { usePluginStore } from '@delta-comic/plugin'
-import { DcPopup } from '@delta-comic/ui'
 import { computed, shallowRef } from 'vue'
 
-const show = shallowRef(false)
-const user = shallowRef<uni.user.User>()
+import { translate } from '@/i18n'
+
+const showDrawer = shallowRef(false)
+const user = shallowRef<UniUser>()
+const pluginStore = usePluginStore()
+const card = computed(() =>
+  user.value ? pluginStore.plugins.get(user.value.$$plugin)?.user?.card : undefined,
+)
 
 defineExpose({
-  show(u: uni.user.User) {
-    show.value = true
-    user.value = u
-  }
+  show(value: UniUser) {
+    user.value = value
+    showDrawer.value = true
+  },
 })
-const pluginStore = usePluginStore()
-const Card = computed(() =>
-  user.value ? pluginStore.plugins.get(user.value.$$plugin)?.user?.card : undefined
-)
 </script>
 
 <template>
-  <DcPopup v-model:show="show" overlay position="bottom" round>
-    <component :is="Card" :user v-if="user" />
-    <div v-else class="w-full h-20 flex items-center justify-center italic">
-      没有提供的用户显示卡片
-    </div>
-  </DcPopup>
+  <NDrawer v-model:show="showDrawer" height="70vh" placement="bottom">
+    <NDrawerContent :native-scrollbar="false">
+      <component :is="card" v-if="card && user" :user />
+      <div
+        v-else
+        class="flex h-20 w-full items-center justify-center text-(--dc-color-text-secondary) italic"
+      >
+        {{ translate('layout.user.previewUnavailable') }}
+      </div>
+    </NDrawerContent>
+  </NDrawer>
 </template>

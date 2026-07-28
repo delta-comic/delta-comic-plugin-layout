@@ -1,156 +1,142 @@
 <script setup lang="ts">
 import { SubscribeDB } from '@delta-comic/db'
-import type { uni } from '@delta-comic/model'
-import { Global } from '@delta-comic/plugin'
-import { createLoadingMessage } from '@delta-comic/ui'
+import type { UniContentPage, UniItemAuthor } from '@delta-comic/model'
+import { Global, translatePluginText } from '@delta-comic/plugin'
+import { createLoadingMessage, DcAuthorIcon, DcEnvironment } from '@delta-comic/ui'
+import { PlusRound } from '@vicons/material'
 import { createReusableTemplate } from '@vueuse/core'
-import type { PopoverAction } from 'vant'
+import { NButton, NDropdown, NIcon, type DropdownOption } from 'naive-ui'
+import { computed, h } from 'vue'
 
-const $props = defineProps<{
-  page: uni.content.ContentPage
-  author: uni.item.Author
-  isSmall?: boolean
+import { translate } from '@/i18n'
+
+const props = defineProps<{ author: UniItemAuthor; isSmall?: boolean; page: UniContentPage }>()
+defineSlots<{
+  subscribeRow(args: {
+    author: UniItemAuthor
+    isSubscribe: boolean
+    page: UniContentPage
+    type: 'common' | 'small'
+  }): unknown
 }>()
 
-const [DefineAvatar, Avatar] = createReusableTemplate<{ author: uni.item.Author }>()
+const authorKey = computed(() =>
+  SubscribeDB.key.toString([props.author.$$plugin, props.author.label]),
+)
+const subscription = SubscribeDB.useQuery(
+  query => query.where('key', '=', authorKey.value).selectAll().execute(),
+  ['layout:subscribe-row', authorKey.value],
+  () => [],
+)
+const isSubscribe = computed(() => (subscription.data.value?.length ?? 0) > 0)
+const subscribeProvider = computed(() => {
+  const type = props.author.subscribe
+  return type ? Global.subscribes.get([props.author.$$plugin, type]) : undefined
+})
 
-const getIsSubscribe = (author: uni.item.Author) =>
-  SubscribeDB.useQuery(db =>
-    db
-      .where('key', '=', `${author.$$plugin}:${author.label}`)
-      .selectAll()
-      .execute()
-      .then(v => v.length != 0)
+const { isLoading: isAdding, upsert } = SubscribeDB.useUpsert()
+const addSubscribe = () => {
+  const provider = subscribeProvider.value
+  if (!provider) return
+  return createLoadingMessage(translate('layout.author.following')).bind(
+    (async () => {
+      await provider.onAdd?.(props.author)
+      await upsert({
+        items: [
+          {
+            author: props.author,
+            itemKey: null,
+            key: authorKey.value,
+            plugin: props.author.$$plugin,
+            type: 'author',
+          },
+        ],
+      })
+    })(),
   )
+}
 
-const { upsert } = SubscribeDB.useUpsert()
-const addSubscribe = (author: uni.item.Author) =>
-  createLoadingMessage('关注中').bind(
-    upsert({
-      items: [
-        {
-          type: 'author',
-          author,
-          plugin: author.$$plugin,
-          key: SubscribeDB.key.toString([author.$$plugin, author.label]),
-          itemKey: null
-        }
-      ]
-    })
+const { isLoading: isRemoving, remove } = SubscribeDB.useRemove()
+const removeSubscribe = () => {
+  const provider = subscribeProvider.value
+  if (!provider) return
+  return createLoadingMessage(translate('layout.author.unfollowing')).bind(
+    (async () => {
+      await provider.onRemove?.(props.author)
+      await remove({ keys: [authorKey.value] })
+    })(),
   )
+}
 
-const { remove } = SubscribeDB.useRemove()
-const removeSubscribe = (author: uni.item.Author) =>
-  createLoadingMessage('取消中').bind(
-    remove({
-      keys: [SubscribeDB.key.toString([author.$$plugin, author.label])]
-    })
-  )
+const toggleSubscribe = () => (isSubscribe.value ? removeSubscribe() : addSubscribe())
+const actionOptions = computed<DropdownOption[]>(() =>
+  (props.author.actions ?? []).flatMap(key => {
+    const action = Global.userActions.get([props.author.$$plugin, key])
+    if (!action) return []
+    const icon = action.icon
+    return [
+      { ...(icon ? { icon: () => h(icon) } : {}), key, label: translatePluginText(action.name) },
+    ]
+  }),
+)
+const selectAction = (key: string) =>
+  Global.userActions.get([props.author.$$plugin, key])?.call(props.author)
 
-const getActionInfo = (key: string) => Global.userActions.get([$props.page.plugin, key])!
+const environmentArgs = computed(() => ({
+  author: props.author,
+  isSubscribe: isSubscribe.value,
+  page: props.page,
+  type: props.isSmall ? ('small' as const) : ('common' as const),
+}))
+const [DefineIdentity, Identity] = createReusableTemplate()
 </script>
 
 <template>
-  <div class="relative w-full" v-if="isSmall">
-    <Avatar :author />
-    <DcVar
-      :value="getIsSubscribe(author)"
-      v-slot="{
-        value: {
-          data: { value: isSubscribe }
-        }
-      }"
+  <div class="relative min-w-fit" :class="isSmall ? 'flex flex-col items-center' : 'w-full'">
+    <Identity />
+    <slot name="subscribeRow" v-bind="environmentArgs" />
+    <DcEnvironment :args="environmentArgs" name="layout::layout::default.subscribe-row" />
+    <NButton
+      v-if="subscribeProvider"
+      :circle="isSmall"
+      :class="isSmall ? 'mt-1' : 'absolute! top-1/2 right-3 -translate-y-1/2'"
+      :loading="isAdding || isRemoving"
+      round
+      size="small"
+      type="primary"
+      @click.stop="toggleSubscribe"
     >
-      <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'small' }" />
-      <Inject
-        key="layout::layout::default.subscribe-row"
-        :args="{ page, author, isSubscribe, type: 'small' }"
-      />
-
-      <NButton
-        round
-        type="primary"
-        :color="isSubscribe ? '#6a7282' : undefined"
-        class="aspect-square px-0!"
-        size="small"
-        @click.stop="isSubscribe ? removeSubscribe(author) : addSubscribe(author)"
-      >
-        <template #icon>
-          <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
-            <PlusRound />
-          </NIcon>
-        </template>
-      </NButton>
-    </DcVar>
+      <template #icon>
+        <NIcon class="transition-transform" :class="isSubscribe && 'rotate-45'">
+          <PlusRound />
+        </NIcon>
+      </template>
+      <template v-if="!isSmall" #default>
+        {{ translate(isSubscribe ? 'layout.author.unfollow' : 'layout.author.follow') }}
+      </template>
+    </NButton>
   </div>
-  <div class="relative w-full" v-else>
-    <Avatar :author />
-    <DcVar
-      :value="getIsSubscribe(author)"
-      v-slot="{
-        value: {
-          data: { value: isSubscribe }
-        }
-      }"
-    >
-      <slot name="subscribeRow" :="{ page, author, isSubscribe, type: 'common' }" />
-      <Inject
-        key="layout::layout::default.subscribe-row"
-        :args="{ page, author, isSubscribe, type: 'common' }"
-      />
 
-      <NButton
-        round
-        type="primary"
-        :color="isSubscribe ? '#6a7282' : undefined"
-        class="absolute! top-1/2 right-3 -translate-y-1/2"
-        size="small"
-        @click.stop="isSubscribe ? removeSubscribe(author) : addSubscribe(author)"
-      >
-        <template #icon>
-          <NIcon :class="isSubscribe ? 'rotate-45' : 'rotate-0'" class="transition-transform">
-            <PlusRound />
-          </NIcon>
-        </template>
-        <template #default>
-          {{ isSubscribe ? '取关' : '关注' }}
-        </template>
-      </NButton>
-    </DcVar>
-  </div>
-  <DefineAvatar v-slot="{ author }">
-    <VanPopover
-      :actions="
-        (author.actions ?? []).map(k => ({
-          text: getActionInfo(k).name,
-          icons: getActionInfo(k).icon,
-          key: k
-        }))
-      "
-      @select="q => getActionInfo(q.key).call(author)"
+  <DefineIdentity>
+    <NDropdown
+      :disabled="actionOptions.length === 0"
+      :options="actionOptions"
       placement="bottom-start"
+      trigger="click"
+      @select="selectAction"
     >
-      <template #reference>
-        <div class="van-ellipsis flex w-fit items-center pl-2 text-[16px] text-(--p-color)">
-          <DcAuthorIcon :size-spacing="8.5" :author class="mx-2" />
-          <div class="flex w-full flex-col text-nowrap">
-            <div class="flex items-center text-(--nui-primary-color)">
-              {{ author.label }}
-            </div>
-            <div class="-mt-0.5 flex max-w-2/3 items-center text-[11px] text-(--van-text-color-2)">
-              {{ author.description }}
-            </div>
-          </div>
-        </div>
-      </template>
-      <template #action="{ action: { text, icons } }: { action: PopoverAction; index: number }">
-        <div class="relative flex w-full items-center justify-center gap-1 text-nowrap">
-          <NIcon color="var(--van-text-color)" class="flex! items-center!" size="18px">
-            <component :is="icons" />
-          </NIcon>
-          <div>{{ text }}</div>
-        </div>
-      </template>
-    </VanPopover>
-  </DefineAvatar>
+      <button
+        class="flex max-w-64 items-center dc-ellipsis border-0 bg-transparent pl-2 text-left"
+        type="button"
+      >
+        <DcAuthorIcon :author class="mx-2" :size-spacing="8.5" />
+        <span class="flex min-w-0 flex-col text-nowrap">
+          <span class="dc-ellipsis text-[16px] text-(--dc-color-primary)">{{ author.label }}</span>
+          <span class="dc-ellipsis text-[11px] text-(--dc-color-text-secondary)">
+            {{ author.description }}
+          </span>
+        </span>
+      </button>
+    </NDropdown>
+  </DefineIdentity>
 </template>

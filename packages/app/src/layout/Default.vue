@@ -1,184 +1,164 @@
 <script setup lang="ts">
-import type { uni } from '@delta-comic/model'
+import type { UniContentPage, UniItem } from '@delta-comic/model'
+import { DcEnvironment, DcTab } from '@delta-comic/ui'
 import { useQuery } from '@pinia/colada'
-import { KeyboardArrowDownRound } from '@vicons/material'
-import { createReusableTemplate, useCssVar } from '@vueuse/core'
-import { motion } from 'motion-v'
+import { KeyboardArrowDownRound, VisibilityOutlined } from '@vicons/material'
+import { NCollapseTransition, NIcon, NScrollbar } from 'naive-ui'
 import { computed, shallowRef, useTemplateRef } from 'vue'
 
 import Comment from '@/components/comment/Comment.vue'
+import { translate } from '@/i18n'
 import { createDateString } from '@/utils/date'
 
-import * as LayoutInject from './default'
+import type * as LayoutExtension from './default'
+import { createPageQueryKey, QueryKey } from './default'
 import Actions from './default/Actions.vue'
 import Description from './default/Description.vue'
 import EpController from './default/EpController.vue'
+import Recommends from './default/Recommends.vue'
 import SubscribeList from './default/SubscribeList.vue'
 import Tags from './default/Tags.vue'
 import ViewBox from './default/ViewBox.vue'
 
+const props = defineProps<{ isR18g?: boolean; page: UniContentPage }>()
 defineSlots<{
-  subscribeRow(args: LayoutInject.SubscribeRowProps): any
-  action(args: LayoutInject.ContentProps): any
-  description(args: LayoutInject.ContentProps): any
-  recommend(args: LayoutInject.ContentProps): any
-  tab(args: LayoutInject.TabProps): any
-  view(args: { item?: uni.item.Item }): any
+  action(args: LayoutExtension.ContentProps): unknown
+  description(args: LayoutExtension.ContentProps): unknown
+  recommend(args: LayoutExtension.ContentProps): unknown
+  subscribeRow(args: LayoutExtension.SubscribeRowProps): unknown
+  tab(args: LayoutExtension.TabProps): unknown
+  view(args: { item?: UniItem }): unknown
 }>()
 
-const $props = defineProps<{ page: uni.content.ContentPage; isR18g?: boolean }>()
-
-const { data: detail } = useQuery({
-  query: ({ signal }) => $props.page.fetchDetail(signal),
-  key: () => [LayoutInject.QueryKey.Detail, LayoutInject.createPageQueryKey($props.page)]
+const detailQuery = useQuery({
+  key: () => [QueryKey.Detail, createPageQueryKey(props.page)],
+  query: ({ signal }) => props.page.fetchDetail(signal),
 })
-const union = computed(() => detail.value ?? $props.page.preload)
+const union = computed(() => detailQuery.data.value ?? props.page.preload)
+const shortIdQuery = useQuery({
+  key: () => [QueryKey.ShortId, createPageQueryKey(props.page)],
+  query: ({ signal }) => props.page.fetchShortId(signal),
+})
 
 const showTitleFull = shallowRef(false)
-const [TitleDefine, Title] = createReusableTemplate()
-
-const safeHeightTopCss = useCssVar('--safe-area-inset-top')
-const safeHeightTop = computed(() => Number(safeHeightTopCss.value?.match(/\d+/)?.[0]))
+const activeTab = shallowRef('info')
+const scrollbar = useTemplateRef<InstanceType<typeof NScrollbar>>('scrollbar')
 const isScrolled = shallowRef(false)
-const scrollbar = useTemplateRef('scrollbar')
+const tabs = computed(() => [
+  { name: 'info', title: translate('layout.content.info') },
+  {
+    name: 'comments',
+    title: `${translate('layout.content.comments')}${union.value?.commentNumber ? ` ${union.value.commentNumber}` : ''}`,
+  },
+])
+const dateLabels = computed(() => ({
+  differentYearFormat: translate('layout.date.differentYearFormat'),
+  sameYearFormat: translate('layout.date.sameYearFormat'),
+  todayFormat: translate('layout.date.todayFormat'),
+  yesterdayFormat: translate('layout.date.yesterdayFormat'),
+}))
+const updateTime = computed(() =>
+  union.value?.updateTime ? createDateString(union.value.updateTime, dateLabels.value) : undefined,
+)
 
-const { data: shortId } = useQuery({
-  query: ({ signal }) => $props.page.fetchShortId(signal),
-  key: () => [LayoutInject.QueryKey.ShortId, LayoutInject.createPageQueryKey($props.page)]
-})
+const handleScroll = (event: Event) => {
+  isScrolled.value = (event.currentTarget as HTMLElement).scrollTop > 56
+}
 </script>
 
 <template>
-  <TitleDefine>
-    <div
-      class="mt-1 flex gap-1 text-xs font-normal text-(--van-text-color-2) *:flex *:items-center"
-    >
-      <div class="flex items-center gap-1 text-xs text-(--van-text-color-2)">
-        <span>
-          <VanIcon class="mr-0.5" name="eye-o" size="14px" />
-          <span>{{ union?.viewNumber }}</span>
-        </span>
-        <span>
-          <span>{{ createDateString(union?.$updateTime) }}</span>
-        </span>
-      </div>
-    </div>
-  </TitleDefine>
-
   <NScrollbar
     ref="scrollbar"
-    class="h-full! bg-(--van-background-2) *:w-full"
+    class="h-full! bg-(--dc-color-surface)"
     :style="{
-      '--van-background-2': isR18g
-        ? 'color-mix(in oklab, var(--nui-error-color-hover) 5%, transparent)'
-        : 'var(--nui-body-color)'
+      backgroundColor: isR18g
+        ? 'color-mix(in oklab, var(--nui-error-color-hover) 5%, var(--dc-color-surface))'
+        : 'var(--dc-color-surface)',
     }"
+    @scroll="handleScroll"
   >
-    <ViewBox :isScrolled :scrollbar>
-      <template #view>
-        <slot :item="union" name="view" />
-      </template>
+    <ViewBox :is-scrolled="isScrolled" :scrollbar>
+      <template #view><slot name="view" :item="union" /></template>
     </ViewBox>
-    <VanTabs
-      shrink
-      swipeable
-      sticky
-      :offset-top="56 + safeHeightTop"
-      background="var(--nui-card-color)"
-      @scroll="({ isFixed }) => (isScrolled = isFixed)"
-      class="not-full min-h-[70vh]!"
-    >
-      <VanTab
-        class="van-hairline--top relative min-h-full bg-(--nui-card-color)"
-        title="简介"
-        name="info"
-      >
-        <div class="min-h-[60vh] w-full">
-          <SubscribeList :page :union />
-          <div class="mx-auto mt-2 w-[95%]">
-            <div class="relative flex h-fit">
-              <div class="relative w-[89%] text-[17px] font-medium">
-                <AnimatePresence>
-                  <motion.div
-                    :initial="{ opacity: 0 }"
-                    :exit="{ opacity: 0 }"
-                    key="info"
-                    :animate="{ opacity: 1 }"
-                    v-if="!showTitleFull"
-                    class="van-ellipsis absolute top-0 flex w-full flex-col"
-                  >
-                    <span @click="showTitleFull = !showTitleFull">
-                      {{ union?.title }}
-                    </span>
-                    <Title />
-                  </motion.div>
-                </AnimatePresence>
-                <NCollapseTransition :show="showTitleFull" class="w-[calc(100%+2rem)]!">
-                  <span @click="showTitleFull = !showTitleFull" class="w-[calc(100%-2rem)]">
-                    {{ union?.title }}
-                  </span>
-                  <Title />
 
-                  <div
-                    v-if="shortId"
-                    class="mt-0.5 flex justify-start text-xs font-light text-(--van-text-color-2)"
-                  >
-                    <div class="mr-2">
-                      {{ shortId }}
-                    </div>
-                  </div>
+    <div class="sticky top-0 z-2 bg-(--dc-color-surface)">
+      <DcTab v-model="activeTab" :items="tabs" :router="false" swipeable />
+    </div>
 
-                  <Description :page :union />
-
-                  <Tags :union />
-                </NCollapseTransition>
-              </div>
-              <NIcon
-                size="2rem"
-                color="var(--van-text-color-3)"
-                class="absolute -top-0.5 -right-1 transition-transform"
-                :class="[showTitleFull && 'rotate-180!']"
-                @click="showTitleFull = !showTitleFull"
+    <section v-show="activeTab === 'info'" class="dc-hairline-top min-h-[70vh]">
+      <SubscribeList :page :union>
+        <template #subscribe-row="args"><slot name="subscribeRow" v-bind="args" /></template>
+      </SubscribeList>
+      <div class="mx-auto mt-2 w-[95%]">
+        <div class="relative flex h-fit">
+          <div class="relative w-[calc(100%-2rem)] text-[17px] font-medium">
+            <button
+              v-if="!showTitleFull"
+              class="flex w-full flex-col border-0 bg-transparent p-0 text-left text-(--dc-color-text)"
+              type="button"
+              @click="showTitleFull = true"
+            >
+              <span class="w-full dc-ellipsis">{{ union?.title }}</span>
+              <span class="mt-1 flex gap-2 text-xs font-normal text-(--dc-color-text-secondary)">
+                <span v-if="union?.viewNumber" class="flex items-center gap-1">
+                  <NIcon><VisibilityOutlined /></NIcon>
+                  {{ translate('layout.content.viewCount', { count: union.viewNumber }) }}
+                </span>
+                <span v-if="updateTime">{{ updateTime }}</span>
+              </span>
+            </button>
+            <NCollapseTransition :show="showTitleFull">
+              <button
+                class="w-full border-0 bg-transparent p-0 text-left text-(--dc-color-text)"
+                type="button"
+                @click="showTitleFull = false"
               >
-                <KeyboardArrowDownRound />
-              </NIcon>
-            </div>
-            <Actions :page :union>
-              <template #action="{ item, page }">
-                <slot name="action" :item :page />
-              </template>
-            </Actions>
-            <EpController :page :union :scrollbar />
+                {{ union?.title }}
+              </button>
+              <div class="mt-1 flex gap-2 text-xs text-(--dc-color-text-secondary)">
+                <span v-if="union?.viewNumber" class="flex items-center gap-1">
+                  <NIcon><VisibilityOutlined /></NIcon>
+                  {{ translate('layout.content.viewCount', { count: union.viewNumber }) }}
+                </span>
+                <span v-if="updateTime">{{ updateTime }}</span>
+              </div>
+              <p
+                v-if="shortIdQuery.data.value"
+                class="my-1 text-xs text-(--dc-color-text-secondary)"
+              >
+                {{ shortIdQuery.data.value }}
+              </p>
+              <Description :page :union>
+                <template #description="args"><slot name="description" v-bind="args" /></template>
+              </Description>
+              <Tags :union />
+            </NCollapseTransition>
           </div>
-          <Recommends />
+          <NIcon
+            class="absolute -top-0.5 right-0 transition-transform"
+            :class="showTitleFull && 'rotate-180'"
+            color="var(--dc-color-text-tertiary)"
+            size="2rem"
+            @click="showTitleFull = !showTitleFull"
+          >
+            <KeyboardArrowDownRound />
+          </NIcon>
         </div>
-      </VanTab>
+        <Actions :page :union>
+          <template #action="args"><slot name="action" v-bind="args" /></template>
+        </Actions>
+        <EpController :is-r18g :page :scrollbar :union />
+      </div>
+      <Recommends :page :union>
+        <template #recommend="args"><slot name="recommend" v-bind="args" /></template>
+      </Recommends>
+    </section>
 
-      <VanTab class="van-hairline--top h-full!" title="评论" name="comment" v-if="union">
-        <template #title>
-          <span>评论</span>
-          <span class="ml-0.5 text-xs! font-light">{{ union?.commentNumber ?? '' }}</span>
-        </template>
-        <Comment :fetchComments="page.fetchComments" :item="union" class="h-[calc(70vh-38px)]" />
-      </VanTab>
+    <section v-if="union" v-show="activeTab === 'comments'" class="dc-hairline-top h-[70vh]">
+      <Comment class="h-full" :fetch-comments="page.fetchComments" :item="union" />
+    </section>
 
-      <slot name="tab" :="{ page }" />
-      <Inject key="layout::layout::default.tab" :args="{ page }" />
-    </VanTabs>
+    <slot name="tab" :page />
+    <DcEnvironment :args="{ page }" name="layout::layout::default.tab" />
   </NScrollbar>
 </template>
-<style scoped lang="css">
-.scroll::-webkit-scrollbar {
-  display: none;
-}
-
-:deep(.van-tabs__wrap) {
-  --van-tabs-line-height: 38px;
-  height: var(--van-tabs-line-height) !important;
-}
-</style>
-<style>
-:root {
-  --van-tabs-line-height: 38px !important;
-}
-</style>
