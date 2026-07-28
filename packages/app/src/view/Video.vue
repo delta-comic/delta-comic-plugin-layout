@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import 'hls.js'
-import 'vidstack/bundle'
 import 'vidstack/icons'
+import 'vidstack/player'
+import 'vidstack/player/ui'
+import 'vidstack/player/styles/base.css'
 import 'vidstack/player/styles/default/captions.css'
 import type { UniItem } from '@delta-comic/model'
 import { DcEnvironment, DcToggleIcon } from '@delta-comic/ui'
