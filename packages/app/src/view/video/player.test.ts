@@ -1,9 +1,11 @@
 import type Artplayer from 'artplayer'
-import { describe, expect, it } from 'vitest'
+import type { Option } from 'artplayer'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import type { VideoConfig } from '@/model'
 
 import {
+  ArtplayerRuntime,
   configureArtplayer,
   createPlayerOptions,
   getArtplayerType,
@@ -21,6 +23,36 @@ const labels: PlayerLabels = {
 }
 
 const videoConfig = (...sources: VideoConfig[number][]) => sources as VideoConfig
+
+class FakeArtplayer {
+  public static FAST_FORWARD_VALUE = 2
+  public static MOBILE_DBCLICK_PLAY = false
+  public readonly handlers = new Map<string, (...args: unknown[]) => unknown>()
+  public hls?: unknown
+  public isDestroy = false
+  public notice = { show: '' as string | Error | false }
+  public option: Option
+  public subtitle = { show: true, switch: vi.fn() }
+
+  public constructor(option: Option) {
+    this.option = option
+  }
+
+  public once(name: string, handler: (...args: unknown[]) => unknown) {
+    this.handlers.set(name, handler)
+    return this
+  }
+
+  public destroy() {
+    this.isDestroy = true
+    this.handlers.get('destroy')?.()
+  }
+}
+
+afterEach(() => {
+  Reflect.deleteProperty(window, 'Artplayer')
+  document.querySelector('#artplayer-style')?.remove()
+})
 
 describe('Artplayer video adapter', () => {
   it('detects HLS by MIME type or file extension and keeps native video formats', () => {
@@ -92,5 +124,93 @@ describe('Artplayer video adapter', () => {
         labels,
       ),
     ).toThrow('Unsupported: application/dash+xml')
+  })
+
+  it('switches URL subtitles on and off from Artplayer settings', () => {
+    const config = videoConfig({ src: 'video.mp4' })
+    config.textTrack = [
+      { default: true, label: 'English', src: 'en.vtt', type: 'vtt' },
+      { encoding: 'gbk', label: '中文', src: 'zh.srt', type: 'srt' },
+    ]
+    const option = createPlayerOptions(document.createElement('div'), config, labels)
+    const setting = option.settings?.[0]
+    const fake = { subtitle: { show: true, switch: vi.fn() } }
+
+    setting?.onSelect?.call(
+      fake as unknown as Artplayer,
+      { html: 'Off', url: '' } as never,
+      {} as never,
+      new Event('click'),
+    )
+    expect(fake.subtitle.show).toBe(false)
+
+    setting?.onSelect?.call(
+      fake as unknown as Artplayer,
+      { encoding: 'gbk', html: '中文', type: 'srt', url: 'zh.srt' } as never,
+      {} as never,
+      new Event('click'),
+    )
+    expect(fake.subtitle.show).toBe(true)
+    expect(fake.subtitle.switch).toHaveBeenCalledWith('zh.srt', {
+      encoding: 'gbk',
+      name: '中文',
+      type: 'srt',
+    })
+  })
+
+  it('owns Artplayer instances and restores module globals on unload', async () => {
+    const loader = vi.fn(async () => {
+      ;(window as Window & { Artplayer?: unknown }).Artplayer = FakeArtplayer
+      const style = document.createElement('style')
+      style.id = 'artplayer-style'
+      document.head.append(style)
+      return { default: FakeArtplayer as unknown as typeof Artplayer }
+    })
+    const runtime = new ArtplayerRuntime(loader)
+    const option = createPlayerOptions(
+      document.createElement('div'),
+      videoConfig({ src: 'video.mp4' }),
+      labels,
+    )
+
+    const art = await runtime.create(option, labels)
+    expect(loader).toHaveBeenCalledOnce()
+    expect(FakeArtplayer.FAST_FORWARD_VALUE).toBe(3)
+    expect(FakeArtplayer.MOBILE_DBCLICK_PLAY).toBe(true)
+
+    const video = document.createElement('video')
+    await art.option.customType?.native?.call(art, video, 'next.mp4', art)
+    expect(video.src.endsWith('/next.mp4')).toBe(true)
+    vi.spyOn(video, 'canPlayType').mockReturnValue('maybe')
+    await art.option.customType?.m3u8?.call(art, video, 'stream.m3u8', art)
+    expect(video.src.endsWith('/stream.m3u8')).toBe(true)
+
+    runtime.disposeAll()
+    expect(art.isDestroy).toBe(true)
+    expect(window).not.toHaveProperty('Artplayer')
+    expect(document.querySelector('#artplayer-style')).toBeNull()
+  })
+
+  it('preserves globals and styles that existed before Artplayer loaded', async () => {
+    const previous = { version: 'host' }
+    ;(window as Window & { Artplayer?: unknown }).Artplayer = previous
+    const style = document.createElement('style')
+    style.id = 'artplayer-style'
+    document.head.append(style)
+    const runtime = new ArtplayerRuntime(async () => ({
+      default: FakeArtplayer as unknown as typeof Artplayer,
+    }))
+
+    const art = await runtime.create(
+      createPlayerOptions(document.createElement('div'), videoConfig({ src: 'video.mp4' }), labels),
+      labels,
+    )
+    runtime.destroy(null)
+    runtime.destroy(art)
+    runtime.destroy(art)
+    runtime.disposeAll()
+
+    expect((window as Window & { Artplayer?: unknown }).Artplayer).toBe(previous)
+    expect(document.querySelector('#artplayer-style')).toBe(style)
   })
 })
