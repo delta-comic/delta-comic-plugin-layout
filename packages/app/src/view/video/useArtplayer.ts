@@ -27,7 +27,6 @@ interface UseArtplayerOptions {
   labels: PlayerLabels
   poster?: MaybeRefOrGetter<string | undefined>
   runtime?: ArtplayerRuntime
-  title?: MaybeRefOrGetter<string | undefined>
 }
 
 const unlockScreenOrientation = async () => {
@@ -58,14 +57,8 @@ export const useArtplayer = (options: UseArtplayerOptions) => {
   }
 
   watch(
-    [
-      options.container,
-      () => toValue(options.config),
-      () => (options.poster === undefined ? undefined : toValue(options.poster)),
-      () => (options.title === undefined ? undefined : toValue(options.title)),
-      reloadToken,
-    ],
-    async ([container, config, poster, title], _previous, onCleanup) => {
+    [options.container, () => toValue(options.config), reloadToken],
+    async ([container, config], _previous, onCleanup) => {
       const currentGeneration = ++generation
       error.value = undefined
       runtime.destroy(player.value)
@@ -76,7 +69,9 @@ export const useArtplayer = (options: UseArtplayerOptions) => {
       onCleanup(() => runtime.destroy(created))
       try {
         created = await runtime.create(
-          createPlayerOptions(container, config, options.labels, { poster, title }),
+          createPlayerOptions(container, config, options.labels, {
+            poster: options.poster === undefined ? undefined : toValue(options.poster),
+          }),
           options.labels,
         )
         if (currentGeneration !== generation) {
@@ -94,6 +89,15 @@ export const useArtplayer = (options: UseArtplayerOptions) => {
       } catch (value) {
         error.value = value instanceof Error ? value : new Error(String(value))
       }
+    },
+    { immediate: true },
+  )
+
+  watch(
+    [player, () => (options.poster === undefined ? undefined : toValue(options.poster))],
+    ([art, poster]) => {
+      if (!art || art.isDestroy) return
+      art.poster = poster ?? ''
     },
     { immediate: true },
   )

@@ -14,6 +14,7 @@ const HLS_MIME_TYPES = new Set([
 ])
 
 const NATIVE_VIDEO_TYPES = new Set(['', 'video/mp4', 'video/ogg', 'video/webm', 'video/x-m4v'])
+type CanPlayNativeVideo = (type: string) => CanPlayTypeResult
 
 export interface PlayerLabels {
   line(index: number): string
@@ -46,10 +47,19 @@ export const configureArtplayer = (ArtplayerClass: ArtplayerConstructor) => {
 
 const normalizeMimeType = (type?: string) => type?.split(';', 1)[0]?.trim().toLowerCase() ?? ''
 
-export const getArtplayerType = (source: VideoSource): 'm3u8' | 'native' => {
+const canPlayNativeVideo: CanPlayNativeVideo = type => {
+  if (typeof document === 'undefined') return ''
+  return document.createElement('video').canPlayType(type)
+}
+
+export const getArtplayerType = (
+  source: VideoSource,
+  canPlayType: CanPlayNativeVideo = canPlayNativeVideo,
+): 'm3u8' | 'native' => {
   const type = normalizeMimeType(source.type)
   if (HLS_MIME_TYPES.has(type) || /\.m3u8(?:$|[?#])/i.test(source.src)) return 'm3u8'
-  if (NATIVE_VIDEO_TYPES.has(type) || type.startsWith('video/')) return 'native'
+  if (NATIVE_VIDEO_TYPES.has(type)) return 'native'
+  if (type.startsWith('video/') && canPlayType(type)) return 'native'
   throw new Error(type || source.type || 'unknown')
 }
 
@@ -128,7 +138,7 @@ export const createPlayerOptions = (
   container: HTMLDivElement,
   config: VideoConfig,
   labels: PlayerLabels,
-  presentation: { poster?: string; title?: string } = {},
+  presentation: { poster?: string } = {},
 ): Option => {
   const normalized = normalizeVideoConfig(config, labels)
   const { settings, subtitle } = createSubtitleOptions(normalized.textTracks, labels)

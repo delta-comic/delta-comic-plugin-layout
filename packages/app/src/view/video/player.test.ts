@@ -63,6 +63,18 @@ describe('Artplayer video adapter', () => {
     expect(getArtplayerType({ src: 'https://example.com/video.mp4', type: 'video/mp4' })).toBe(
       'native',
     )
+    expect(
+      getArtplayerType(
+        { src: 'https://example.com/video.custom', type: 'video/x-custom' },
+        () => 'probably',
+      ),
+    ).toBe('native')
+    expect(() =>
+      getArtplayerType(
+        { src: 'https://example.com/video.custom', type: 'video/x-custom' },
+        () => '',
+      ),
+    ).toThrow('video/x-custom')
     expect(() =>
       getArtplayerType({ src: 'https://example.com/video.mpd', type: 'application/dash+xml' }),
     ).toThrow('application/dash+xml')

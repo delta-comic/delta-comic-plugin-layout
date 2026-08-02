@@ -38,13 +38,7 @@ const labels = {
   unsupportedType: (type: string) => translate('layout.reader.unsupportedVideoType', { type }),
   videoLoadFailed: translate('layout.reader.videoLoadFailed'),
 }
-const art = useArtplayer({
-  config: videos,
-  container,
-  labels,
-  poster,
-  title: () => props.union?.title,
-})
+const art = useArtplayer({ config: videos, container, labels, poster })
 
 let coverGeneration = 0
 watch(

@@ -1,48 +1,32 @@
 <script setup lang="ts">
-import {
-  type PageKey,
-  UniItem,
-  type UniContentPage,
-  type UniEp,
-  type UniItem as UniItemType,
-} from '@delta-comic/model'
+import type { UniContentPage, UniEp, UniItem } from '@delta-comic/model'
 import { useConfig } from '@delta-comic/plugin'
 import { DcCell, DcList } from '@delta-comic/ui'
-import { SharedFunction } from '@delta-comic/utils'
-import { useInfiniteQuery } from '@pinia/colada'
 import { ArrowForwardIosOutlined } from '@vicons/material'
 import { NDrawer, NDrawerContent, NIcon, type NScrollbar } from 'naive-ui'
-import { computed, nextTick, shallowRef, useTemplateRef } from 'vue'
+import { nextTick, shallowRef, useTemplateRef } from 'vue'
 import type { ComponentExposed } from 'vue-component-type-helpers'
 
+import { useEpisodes } from '@/composables/useEpisodes'
 import { translate } from '@/i18n'
-import type { StreamPage } from '@/utils/query'
-
-import { createPageQueryKey, QueryKey } from '../default'
 
 const props = defineProps<{
   isR18g?: boolean
   page: UniContentPage
   scrollbar: InstanceType<typeof NScrollbar> | null
-  union?: UniItemType
+  union?: UniItem
 }>()
 
 const appConfig = useConfig()
-const query = useInfiniteQuery<StreamPage<UniEp>, Error, PageKey>({
-  getNextPageParam: page => page.nextPage,
-  getPreviousPageParam: page => page.lastPage,
-  initialPageParam: () => props.page.fetchEps.initPage,
-  key: () => [QueryKey.Ep, createPageQueryKey(props.page)],
-  query: async ({ pageParam, signal }) => await props.page.fetchEps.query({}, pageParam, signal),
-})
-const episodes = computed(
-  () => query.data.value?.pages.flatMap(page => page.data) ?? new Array<UniEp>(),
-)
-const currentEpisodeId = computed(() => props.page.ep)
-const currentEpisodeIndex = computed(() =>
-  episodes.value.findIndex(episode => episode.id === currentEpisodeId.value),
-)
-const currentEpisode = computed(() => episodes.value[currentEpisodeIndex.value])
+const {
+  currentEpisode,
+  currentEpisodeId,
+  currentEpisodeIndex,
+  episodes,
+  episodeTitle,
+  query,
+  routeToEpisode,
+} = useEpisodes({ page: () => props.page, union: () => props.union })
 const show = shallowRef(false)
 const episodeList = useTemplateRef<ComponentExposed<typeof DcList>>('episodeList')
 
@@ -56,21 +40,8 @@ const open = async () => {
 }
 
 const selectEpisode = (episode: UniEp) => {
-  const union = props.union
-  if (!union) return
-  show.value = false
-  const preload = UniItem.create({ ...union.toJSON(), thisEp: episode.toJSON() })
-  void SharedFunction.call(
-    'routeToContent',
-    preload.contentType,
-    preload.id,
-    preload.thisEp.id,
-    preload,
-  )
+  if (routeToEpisode(episode)) show.value = false
 }
-
-const episodeTitle = (episode: UniEp | undefined, index: number) =>
-  episode?.name || translate('layout.content.episodeFallback', { number: index + 1 })
 </script>
 
 <template>

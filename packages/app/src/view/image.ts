@@ -3,6 +3,13 @@ import type { Swiper as SwiperClass } from 'swiper'
 
 import * as model from '../model'
 
+export interface ImageReaderSettings {
+  doubleImage: boolean
+  isFollowView: boolean
+  preloadImages: number
+  vertical: boolean
+}
+
 export interface BarProps {
   page: model.ContentImagePage
   images: UniImage[]

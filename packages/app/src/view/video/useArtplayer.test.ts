@@ -27,6 +27,7 @@ class FakePlayer {
   public fullscreenWeb = false
   public isDestroy = false
   public notice = { show: '' as string | Error | false }
+  public poster = ''
   readonly #events = new Map<string, (...args: never[]) => unknown>()
 
   public on(name: string, handler: (...args: never[]) => unknown) {
@@ -69,17 +70,18 @@ const mountComposable = (runtime: ArtplayerRuntime, config?: VideoConfig) => {
   serviceMocks.useRouter.mockReturnValue({ beforeEach })
 
   const container = shallowRef(document.createElement('div'))
+  const poster = shallowRef<string>()
   const videoConfig = shallowRef(config)
   let result!: ReturnType<typeof useArtplayer>
   const app = createApp({
     setup() {
-      result = useArtplayer({ config: videoConfig, container, labels, runtime })
+      result = useArtplayer({ config: videoConfig, container, labels, poster, runtime })
       return () => h('div')
     },
   })
   app.mount(document.createElement('div'))
   mountedApps.push(app)
-  return { app, beforeEach, fullscreen, isFullscreen, removeGuard, result, videoConfig }
+  return { app, beforeEach, fullscreen, isFullscreen, poster, removeGuard, result, videoConfig }
 }
 
 describe('useArtplayer', () => {
@@ -129,6 +131,38 @@ describe('useArtplayer', () => {
     await flush()
     expect(player.fullscreen).toBe(false)
     expect(player.fullscreenWeb).toBe(false)
+  })
+
+  it('updates the poster in place without rebuilding the player', async () => {
+    const player = new FakePlayer()
+    const runtime = {
+      create: vi.fn(async () => player as unknown as Artplayer),
+      destroy: vi.fn(),
+    } as unknown as ArtplayerRuntime
+    const mounted = mountComposable(runtime, [{ src: 'video.mp4' }] as VideoConfig)
+    await flush()
+
+    mounted.poster.value = 'cover.webp'
+    await flush()
+
+    expect(player.poster).toBe('cover.webp')
+    expect(runtime.create).toHaveBeenCalledOnce()
+  })
+
+  it('rebuilds the player when the video configuration changes', async () => {
+    const players = [new FakePlayer(), new FakePlayer()]
+    const runtime = {
+      create: vi.fn(async () => players.shift() as unknown as Artplayer),
+      destroy: vi.fn(),
+    } as unknown as ArtplayerRuntime
+    const mounted = mountComposable(runtime, [{ src: 'video.mp4' }] as VideoConfig)
+    await flush()
+
+    mounted.videoConfig.value = [{ src: 'next.webm', type: 'video/webm' }] as VideoConfig
+    await flush()
+
+    expect(runtime.create).toHaveBeenCalledTimes(2)
+    expect(runtime.destroy).toHaveBeenCalled()
   })
 
   it('surfaces construction failures and skips absent video configurations', async () => {

@@ -4,9 +4,11 @@ const zhCN = {
   layout: {
     actions: {
       addToRecent: '加入稍后再看？',
+      back: '返回',
       backToTop: '返回顶部',
       cancel: '取消',
       confirm: '确定',
+      exitFullscreen: '退出全屏',
       favourite: '收藏',
       like: '喜欢',
       newFolder: '新建收藏夹',
@@ -76,8 +78,12 @@ const zhCN = {
     },
     reader: {
       coverAlt: '封面',
+      imageEmpty: '没有可显示的图片',
+      imageLoadFailed: '图片加载失败',
       line: '线路 {number}',
+      nextPage: '下一页',
       pageProgress: '{current} / {total}',
+      previousPage: '上一页',
       source: '播放线路',
       subtitle: '字幕',
       subtitleOff: '关闭字幕',
@@ -93,9 +99,11 @@ const zhTW = {
   layout: {
     actions: {
       addToRecent: '加入稍後再看？',
+      back: '返回',
       backToTop: '返回頂端',
       cancel: '取消',
       confirm: '確定',
+      exitFullscreen: '退出全螢幕',
       favourite: '收藏',
       like: '喜歡',
       newFolder: '新增收藏夾',
@@ -165,8 +173,12 @@ const zhTW = {
     },
     reader: {
       coverAlt: '封面',
+      imageEmpty: '沒有可顯示的圖片',
+      imageLoadFailed: '圖片載入失敗',
       line: '線路 {number}',
+      nextPage: '下一頁',
       pageProgress: '{current} / {total}',
+      previousPage: '上一頁',
       source: '播放線路',
       subtitle: '字幕',
       subtitleOff: '關閉字幕',
@@ -182,9 +194,11 @@ const enUS = {
   layout: {
     actions: {
       addToRecent: 'Add to Watch Later?',
+      back: 'Back',
       backToTop: 'Back to top',
       cancel: 'Cancel',
       confirm: 'Confirm',
+      exitFullscreen: 'Exit fullscreen',
       favourite: 'Favourite',
       like: 'Like',
       newFolder: 'New folder',
@@ -254,8 +268,12 @@ const enUS = {
     },
     reader: {
       coverAlt: 'Cover',
+      imageEmpty: 'No images to display',
+      imageLoadFailed: 'Failed to load images',
       line: 'Source {number}',
+      nextPage: 'Next page',
       pageProgress: '{current} / {total}',
+      previousPage: 'Previous page',
       source: 'Video source',
       subtitle: 'Subtitles',
       subtitleOff: 'Subtitles off',
