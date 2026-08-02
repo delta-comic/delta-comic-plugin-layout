@@ -1,5 +1,5 @@
 import '@/index.css'
-import { definePlugin } from '@delta-comic/plugin'
+import { defineDeltaComicPlugin } from '@delta-comic/plugin'
 import type { Component } from 'vue'
 
 import type * as CommentInject from './components/comment'
@@ -69,7 +69,7 @@ export interface LayoutLib {
   readonly view: { readonly Image: typeof Image; readonly Video: typeof Video }
 }
 
-const onBooted = (): LayoutLib => ({
+export const layoutLibrary: LayoutLib = {
   view: { Image, Video },
   layout: { Default },
   model,
@@ -82,13 +82,11 @@ const onBooted = (): LayoutLib => ({
     previewUser: PreviewUser,
   },
   helper: { createDateString },
-})
+}
 
-const plugin = definePlugin({
-  name: pluginName,
-  config: [imageViewConfig],
+export default defineDeltaComicPlugin(() => ({
+  config: imageViewConfig,
   i18n: layoutMessages,
-  onBooted,
-})
-
-export default plugin
+  model: { expose: layoutLibrary },
+  name: pluginName,
+}))

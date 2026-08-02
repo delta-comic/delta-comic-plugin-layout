@@ -17,12 +17,13 @@ import {
 async function createPluginDist(version: string) {
   const pluginDist = await mkdtemp(join(tmpdir(), 'layout-plugin-dist-'))
   const manifest = {
+    apiVersion: 1,
     author: 'delta-comic',
     description: 'Layout plugin',
     entry: { cssPath: 'index.css', jsPath: 'index.js' },
     name: { display: 'Layout', id: 'layout' },
     require: [{ id: 'core' }],
-    version: { plugin: version, supportCore: '>=3.0.0-next.6 <4.0.0' },
+    version: { plugin: version, supportCore: '>=3.0.0-next.9 <4.0.0' },
   }
   const archive = new JSZip()
   archive.file('manifest.json', JSON.stringify(manifest))

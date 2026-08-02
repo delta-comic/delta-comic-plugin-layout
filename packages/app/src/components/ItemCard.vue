@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RecentDB } from '@delta-comic/db'
 import { UniImage, UniItem, type UniItemRaw } from '@delta-comic/model'
-import { useConfig } from '@delta-comic/plugin'
+import { useConfig, usePluginStore } from '@delta-comic/plugin'
 import { DcImage } from '@delta-comic/ui'
 import { SharedFunction } from '@delta-comic/utils'
 import { EyeInvisibleOutlined } from '@vicons/antd'
@@ -42,9 +42,14 @@ const addToRecent = () => {
   if (UniItem.is(props.item)) return upsert({ item: props.item })
 }
 
-const appConfig = useConfig().$loadApp()
+const configStore = useConfig()
+const pluginStore = usePluginStore()
+const appConfig = computed(() => {
+  const pointer = pluginStore.plugins.get('core')?.config
+  return pointer ? configStore.load(pointer).data.value : undefined
+})
 const processedTitle = computed(() =>
-  appConfig.data.value.easilyTitle
+  appConfig.value?.easilyTitle === true
     ? props.item.title.replace(/(（[^）]+）|\[[^\]]+\]|\([^)]+\)|【[^】]+】)+?/gi, '').trim()
     : props.item.title,
 )

@@ -38,7 +38,7 @@ defineSlots<{
 }>()
 
 const router = useRouter()
-const readerConfig = useConfig().$load(imageViewConfig).data
+const readerConfig = useConfig().load(imageViewConfig).data
 const swiper = shallowRef<SwiperClass>()
 const continuousReader = useTemplateRef<HTMLElement>('continuousReader')
 const { exit: exitFullscreen, isFullscreen } = useFullscreen()
