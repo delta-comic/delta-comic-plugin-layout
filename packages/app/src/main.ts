@@ -23,6 +23,7 @@ import type * as ImageViewInject from './view/image'
 import Image from './view/Image.vue'
 import type * as VideoViewInject from './view/video'
 import Video from './view/Video.vue'
+import { artplayerRuntime } from './view/video/player'
 
 declare module '@delta-comic/ui' {
   export interface GlobalEnvironments {
@@ -86,6 +87,7 @@ export const layoutLibrary: LayoutLib = {
 
 export default defineDeltaComicPlugin(() => ({
   config: imageViewConfig,
+  hooks: { onUnload: () => artplayerRuntime.disposeAll() },
   i18n: layoutMessages,
   model: { expose: layoutLibrary },
   name: pluginName,

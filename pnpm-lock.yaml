@@ -45,6 +45,9 @@ catalogs:
     '@vueuse/core':
       specifier: ^14.4.0
       version: 14.4.0
+    artplayer:
+      specifier: ^5.4.0
+      version: 5.4.0
     browserslist:
       specifier: ^4.28.7
       version: 4.28.7
@@ -75,9 +78,6 @@ catalogs:
     lightningcss:
       specifier: ^1.33.0
       version: 1.33.0
-    media-icons:
-      specifier: ^1.1.5
-      version: 1.1.5
     motion-v:
       specifier: 2.3.0
       version: 2.3.0
@@ -105,9 +105,6 @@ catalogs:
     unplugin-vue-components:
       specifier: 32.1.0
       version: 32.1.0
-    vidstack:
-      specifier: ^1.15.6
-      version: 1.15.6
     vite-plus:
       specifier: ^0.2.7
       version: 0.2.7
@@ -217,6 +214,9 @@ importers:
       '@vueuse/core':
         specifier: 'catalog:'
         version: 14.4.0(vue@3.6.0-rc.2(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2))
+      artplayer:
+        specifier: 'catalog:'
+        version: 5.4.0
       dayjs:
         specifier: 'catalog:'
         version: 1.11.21
@@ -229,9 +229,6 @@ importers:
       hls.js:
         specifier: 'catalog:'
         version: 1.6.16
-      media-icons:
-        specifier: 'catalog:'
-        version: 1.1.5
       motion-v:
         specifier: 'catalog:'
         version: 2.3.0(@vueuse/core@14.4.0(vue@3.6.0-rc.2(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2)))(vue@3.6.0-rc.2(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2))
@@ -241,9 +238,6 @@ importers:
       swiper:
         specifier: 'catalog:'
         version: 14.0.7
-      vidstack:
-        specifier: 'catalog:'
-        version: 1.15.6
       vue:
         specifier: 'catalog:'
         version: 3.6.0-rc.2(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2)
@@ -906,15 +900,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@floating-ui/core@1.8.0':
-    resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
-
-  '@floating-ui/dom@1.8.0':
-    resolution: {integrity: sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==}
-
-  '@floating-ui/utils@0.2.12':
-    resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -2175,6 +2160,9 @@ packages:
   array-timsort@1.0.3:
     resolution: {integrity: sha512-/+3GRL7dDAGEfM6TseQk/U+mi18TU2Ms9I3UlLdUMhz2hbvGNTKdj9xniwXfUqgYhHxRx0+8UnKkvlNwVU+cWQ==}
 
+  artplayer@5.4.0:
+    resolution: {integrity: sha512-2B+plbx8N2yNsjK4nJU3+EOG8TULm1LRZk/QPkWRAMEX2Ee/MSnZG/WJYz8kcoZxZuLKcQ3uXifqLuPxZOH29A==}
+
   assertion-error@2.0.1:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
@@ -2707,9 +2695,6 @@ packages:
     resolution: {integrity: sha512-w8ZNZr2mKIc7qeNaQ9AVPT1+iFaI+Avd4xudVOvdDJ8VytREi1Ft5Ih7hd9jjehod8vAM5GMsfQ/TpPf4EyoEA==}
     engines: {node: '>=14.14'}
 
-  fscreen@1.2.0:
-    resolution: {integrity: sha512-hlq4+BU0hlPmwsFjwGGzZ+OZ9N/wq9Ljg/sq3pX+2CD7hrJsX9tJgWWK/wiNTFM212CLHWhicOoqwXyZGGetJg==}
-
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -2985,6 +2970,10 @@ packages:
   jszip@3.10.1:
     resolution: {integrity: sha512-xXDvecyTpGLrqFrvkrUSoxxfJI5AH7U8zxxtVclpsUtMCq4JQ290LY8AW5c7Ggnr/Y/oK+bQMbqK2qmtk3pN4g==}
 
+  kind-of@6.0.3:
+    resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
+    engines: {node: '>=0.10.0'}
+
   ky@2.0.2:
     resolution: {integrity: sha512-/GmXpo9F9W+f8n4Ivr2iH+7h7wL7jLbLKWkMlpflcCRb6kGjBfTlASEXaZ9qUgNTn4VgS0P2pwxxzQ4EM6Ulgg==}
     engines: {node: '>=22'}
@@ -3172,9 +3161,6 @@ packages:
   linkify-it@6.1.0:
     resolution: {integrity: sha512-wJ/TwpSDTLepCrQoYWYIExIKg5Zchex2Nn5yk2mFnB+6PtdkHtyLx742md9csRjjOnGkKIS/RrbY7l8D6gT9Vw==}
 
-  lit-html@2.8.0:
-    resolution: {integrity: sha512-o9t+MQM3P4y7M7yNzqAyjp7z+mQGa4NS4CxiyLqFPyFWyc4O+nodLrkrxSaCTrla6M5YOLaT3RpbbqjszB5g3Q==}
-
   load-json-file@4.0.0:
     resolution: {integrity: sha512-Kx8hMakjX03tiGTLAIdJ+lL0htKnXjEZN6hk/tozf/WOuYGdZBJrZ+rCJRbVCugsjB3jMLn9746NsQIf5VjBMw==}
     engines: {node: '>=4'}
@@ -3261,14 +3247,6 @@ packages:
 
   mdurl@2.1.0:
     resolution: {integrity: sha512-1+HBaOx0zi/dQWht8rNv9MYf9qqpqL/kxI0hXImU6Y547zM6Sni8BQibt7ifgMcYtQg41ao3Ivd6cnSM86inpg==}
-
-  media-captions@1.0.4:
-    resolution: {integrity: sha512-cyDNmuZvvO4H27rcBq2Eudxo9IZRDCOX/I7VEyqbxsEiD2Ei7UYUhG/Sc5fvMZjmathgz3fEK7iAKqvpY+Ux1w==}
-    engines: {node: '>=16'}
-
-  media-icons@1.1.5:
-    resolution: {integrity: sha512-zu3CjKRs63ybLLWPomRRgTDyYiSrk2bRRgw97ZmN3FGXuo9qUUhBSfYwnjmvSdLG2JOJfAwzDz99bPATSY81DQ==}
-    engines: {node: '>=16'}
 
   meow@13.2.0:
     resolution: {integrity: sha512-pxQJQzB6djGPXh08dacEloMFopsOqGVRKFPYvPOt9XDZ1HasbgDZA74CJGreSU4G3Ak7EFJGoiH2auq+yXISgA==}
@@ -3466,6 +3444,9 @@ packages:
   open@11.0.0:
     resolution: {integrity: sha512-smsWv2LzFjP03xmvFoJ331ss6h+jixfA4UUV/Bsiyuu4YJPfN+FIQGOIiv4w9/+MoHkfkJ22UIaQWRVFRfH6Vw==}
     engines: {node: '>=20'}
+
+  option-validator@2.0.6:
+    resolution: {integrity: sha512-tmZDan2LRIRQyhUGvkff68/O0R8UmF+Btmiiz0SmSw2ng3CfPZB9wJlIjHpe/MKUZqyIZkVIXCrwr1tIN+0Dzg==}
 
   oxfmt@0.60.0:
     resolution: {integrity: sha512-fViX6i+gJuZWY+jI/fnR6WRbRj70GZ9RlCd30MygJrHTUNc4DxvKHWw8vBjMjffv3PgU5qWDR0AzmojQByqaZA==}
@@ -4072,10 +4053,6 @@ packages:
       '@nuxt/kit':
         optional: true
 
-  unplugin@1.16.1:
-    resolution: {integrity: sha512-4/u/j4FrCKdi17jaxuJA0jClGxB1AvU2hw/IuayPc4ay1XGaJs/rbb4v5WKwAjNifjmXK9PIFyuPiaK8azyR9w==}
-    engines: {node: '>=14.0.0'}
-
   unplugin@3.0.0:
     resolution: {integrity: sha512-0Mqk3AT2TZCXWKdcoaufeXNukv2mTrEZExeXlHIOZXdqYoHHr4n51pymnwV8x2BOVxwXbK2HLlI7usrqMpycdg==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -4133,10 +4110,6 @@ packages:
     resolution: {integrity: sha512-H9V1zGRLQZg9b+GdMk8MXDN2Lva0zx72MPahDKc30v+DtwKjfyOSXWRIX4t2mhDubM1H09gPhWeth/BJWPHGUw==}
     peerDependencies:
       vue: ^3.0.11
-
-  vidstack@1.15.6:
-    resolution: {integrity: sha512-bdPbguNooX7Og6xqhqlRoowciTL7DibntuUwFrW6Y7K2t1jcYX7yTd05k/hfEOJrTGaY2VpU5hLQpFJDNFzK4A==}
-    engines: {node: '>=18'}
 
   vite-plugin-monkey@8.1.0:
     resolution: {integrity: sha512-/fsxr3qV/GdKyyG1v6uK55RGDm0z95Ym+VkoEWZ7YKZ26eT7XelwBIqzo30Nc37bxuHxlr8TyVkxrb7p8KEHjg==}
@@ -4946,17 +4919,6 @@ snapshots:
   '@esbuild/win32-x64@0.28.1':
     optional: true
 
-  '@floating-ui/core@1.8.0':
-    dependencies:
-      '@floating-ui/utils': 0.2.12
-
-  '@floating-ui/dom@1.8.0':
-    dependencies:
-      '@floating-ui/core': 1.8.0
-      '@floating-ui/utils': 0.2.12
-
-  '@floating-ui/utils@0.2.12': {}
-
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -5516,7 +5478,8 @@ snapshots:
 
   '@types/normalize-package-data@2.4.4': {}
 
-  '@types/trusted-types@2.0.7': {}
+  '@types/trusted-types@2.0.7':
+    optional: true
 
   '@types/web-bluetooth@0.0.21': {}
 
@@ -5972,6 +5935,10 @@ snapshots:
   array-ify@1.0.0: {}
 
   array-timsort@1.0.3: {}
+
+  artplayer@5.4.0:
+    dependencies:
+      option-validator: 2.0.6
 
   assertion-error@2.0.1: {}
 
@@ -6542,8 +6509,6 @@ snapshots:
       jsonfile: 6.2.1
       universalify: 2.0.1
 
-  fscreen@1.2.0: {}
-
   fsevents@2.3.3:
     optional: true
 
@@ -6780,6 +6745,8 @@ snapshots:
       readable-stream: 2.3.8
       setimmediate: 1.0.5
 
+  kind-of@6.0.3: {}
+
   ky@2.0.2: {}
 
   kysely-dialect-tauri@2.0.1(@tauri-apps/plugin-sql@2.4.0)(kysely@0.30.0-beta.1):
@@ -6912,10 +6879,6 @@ snapshots:
     dependencies:
       uc.micro: 3.0.0
 
-  lit-html@2.8.0:
-    dependencies:
-      '@types/trusted-types': 2.0.7
-
   load-json-file@4.0.0:
     dependencies:
       graceful-fs: 4.2.11
@@ -7009,10 +6972,6 @@ snapshots:
   marked@15.0.12: {}
 
   mdurl@2.1.0: {}
-
-  media-captions@1.0.4: {}
-
-  media-icons@1.1.5: {}
 
   meow@13.2.0: {}
 
@@ -7155,6 +7114,10 @@ snapshots:
       is-inside-container: 1.0.0
       powershell-utils: 0.1.0
       wsl-utils: 0.3.1
+
+  option-validator@2.0.6:
+    dependencies:
+      kind-of: 6.0.3
 
   oxfmt@0.60.0(vite-plus@0.2.7(@types/node@25.9.0)(@vitest/coverage-v8@4.1.10)(@voidzero-dev/vite-plus-core@0.2.7(@types/node@25.9.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2)(yaml@2.9.0))(esbuild@0.28.1)(happy-dom@20.11.1)(jiti@2.7.0)(terser@5.49.0)(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2)(yaml@2.9.0)):
     dependencies:
@@ -7773,11 +7736,6 @@ snapshots:
       unplugin-utils: 0.3.1
       vue: 3.6.0-rc.2(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2)
 
-  unplugin@1.16.1:
-    dependencies:
-      acorn: 8.18.0
-      webpack-virtual-modules: 0.6.2
-
   unplugin@3.0.0:
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -7813,14 +7771,6 @@ snapshots:
     dependencies:
       evtd: 0.2.4
       vue: 3.6.0-rc.2(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2)
-
-  vidstack@1.15.6:
-    dependencies:
-      '@floating-ui/dom': 1.8.0
-      fscreen: 1.2.0
-      lit-html: 2.8.0
-      media-captions: 1.0.4
-      unplugin: 1.16.1
 
   vite-plugin-monkey@8.1.0(@voidzero-dev/vite-plus-core@0.2.7(@types/node@25.9.0)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2)(yaml@2.9.0))(postcss@8.5.19):
     dependencies:

@@ -26,6 +26,7 @@ catalog:
   '@vitejs/plugin-vue': ^6.0.8
   '@vueuse/core': ^14.4.0
   '@vitest/coverage-v8': 4.1.10
+  artplayer: ^5.4.0
   browserslist: ^4.28.7
   commitlint-plugin-cspell: ^0.9.4
   cspell: ^10.0.1
@@ -36,7 +37,6 @@ catalog:
   hls.js: ^1.6.16
   jszip: ^3.10.1
   lightningcss: ^1.33.0
-  media-icons: ^1.1.5
   motion-v: 2.3.0
   naive-ui: ^2.44.1
   oxlint-tsgolint: ^7.0.2001
@@ -46,7 +46,6 @@ catalog:
   tailwindcss-safe-area-capacitor: ^0.5.1
   typescript: npm:typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2
   unplugin-vue-components: 32.1.0
-  vidstack: ^1.15.6
   vite: npm:@voidzero-dev/vite-plus-core@0.2.7
   vite-plus: ^0.2.7
   vitest: 4.1.10
