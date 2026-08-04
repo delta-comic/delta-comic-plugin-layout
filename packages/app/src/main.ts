@@ -1,5 +1,5 @@
 import '@/index.css'
-import { definePlugin } from '@delta-comic/plugin'
+import { defineDeltaComicPlugin } from '@delta-comic/plugin'
 import type { Component } from 'vue'
 
 import type * as CommentInject from './components/comment'
@@ -23,6 +23,7 @@ import type * as ImageViewInject from './view/image'
 import Image from './view/Image.vue'
 import type * as VideoViewInject from './view/video'
 import Video from './view/Video.vue'
+import { artplayerRuntime } from './view/video/player'
 
 declare module '@delta-comic/ui' {
   export interface GlobalEnvironments {
@@ -69,7 +70,7 @@ export interface LayoutLib {
   readonly view: { readonly Image: typeof Image; readonly Video: typeof Video }
 }
 
-const onBooted = (): LayoutLib => ({
+export const layoutLibrary: LayoutLib = {
   view: { Image, Video },
   layout: { Default },
   model,
@@ -82,13 +83,12 @@ const onBooted = (): LayoutLib => ({
     previewUser: PreviewUser,
   },
   helper: { createDateString },
-})
+}
 
-const plugin = definePlugin({
-  name: pluginName,
-  config: [imageViewConfig],
+export default defineDeltaComicPlugin(() => ({
+  config: imageViewConfig,
+  hooks: { onUnload: () => artplayerRuntime.disposeAll() },
   i18n: layoutMessages,
-  onBooted,
-})
-
-export default plugin
+  model: { expose: layoutLibrary },
+  name: pluginName,
+}))

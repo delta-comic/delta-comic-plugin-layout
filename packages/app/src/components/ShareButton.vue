@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UniContentPage } from '@delta-comic/model'
-import { Global, type Share, translatePluginText } from '@delta-comic/plugin'
+import { type Social, translatePluginText, usePluginStore } from '@delta-comic/plugin'
 import { DcImagedIcon, DcToggleIcon } from '@delta-comic/ui'
 import { ShareSharp } from '@vicons/material'
 import { NButton, NDrawer, NDrawerContent } from 'naive-ui'
@@ -10,11 +10,18 @@ import { translate } from '@/i18n'
 
 const props = defineProps<{ page: UniContentPage }>()
 const show = shallowRef(false)
+const pluginStore = usePluginStore()
 const methods = computed(() =>
-  [...Global.share.entries()].filter(([, method]) => method.filter(props.page)),
+  pluginStore
+    .modelEntries('social')
+    .flatMap(([plugin, social]) =>
+      (social.share?.initiative ?? [])
+        .filter(method => method.filter(props.page))
+        .map(method => ({ id: `${plugin}:${method.key}`, method })),
+    ),
 )
 
-const selectMethod = async (method: Share.InitiativeItem) => {
+const selectMethod = async (method: Social.InitiativeItem) => {
   show.value = false
   await method.call(props.page)
 }
@@ -28,19 +35,19 @@ const selectMethod = async (method: Share.InitiativeItem) => {
     <NDrawerContent :native-scrollbar="false" :title="translate('layout.share.title')">
       <div class="dc-scrollbar-hidden flex gap-3 overflow-x-auto px-1 py-4">
         <button
-          v-for="[key, method] of methods"
-          :key="key.toString()"
+          v-for="entry of methods"
+          :key="entry.id"
           class="flex min-w-20 dc-haptics-feedback flex-col items-center gap-1 border-0 bg-transparent"
           type="button"
-          @click="selectMethod(method)"
+          @click="selectMethod(entry.method)"
         >
           <DcImagedIcon
-            :bg-color="method.bgColor ?? 'var(--dc-gray-1)'"
-            :icon="method.icon"
+            :bg-color="entry.method.bgColor ?? 'var(--dc-gray-1)'"
+            :icon="entry.method.icon"
             :size-spacing="12"
           />
           <span class="dc-clamp-2 w-20 text-center text-xs text-(--dc-color-text-secondary)">
-            {{ translatePluginText(method.name) }}
+            {{ translatePluginText(entry.method.name) }}
           </span>
         </button>
       </div>

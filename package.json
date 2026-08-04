@@ -33,7 +33,7 @@
     "release:stable:dry-run": "node ./script/release-branches.mts stable --dry-run",
     "test": "vp test",
     "test:coverage": "vp test run --coverage",
-    "typecheck": "tsgo -p tsconfig.json --noEmit && vp run --filter @delta-comic/plugin-layout typecheck",
+    "typecheck": "tsc -p tsconfig.json --noEmit && vp run --filter @delta-comic/plugin-layout typecheck",
     "vp:install": "vp install"
   },
   "devDependencies": {
@@ -43,7 +43,6 @@
     "@semantic-release/github": "catalog:",
     "@semantic-release/release-notes-generator": "catalog:",
     "@types/node": "catalog:",
-    "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "commitlint-plugin-cspell": "catalog:",
     "cspell": "catalog:",
@@ -55,7 +54,7 @@
     "vite": "catalog:",
     "vite-plus": "catalog:",
     "vitest": "catalog:",
-    "vue-tsgo": "catalog:"
+    "vue-tsc": "catalog:"
   },
   "badges": [
     {
@@ -74,6 +73,6 @@
       "url": "https://img.shields.io/github/downloads/delta-comic/delta-comic-plugin-layout/total"
     }
   ],
-  "packageManager": "pnpm@11.13.0",
+  "packageManager": "pnpm@11.18.0",
   "readme": "./README.md"
 }

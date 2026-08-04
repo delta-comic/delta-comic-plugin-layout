@@ -8,12 +8,13 @@ import { describe, expect, it } from 'vitest'
 import { parsePluginManifest, validatePluginArtifacts } from './artifacts.mts'
 
 const manifest = {
+  apiVersion: 1 as const,
   author: 'delta-comic',
   description: 'Layout plugin',
   entry: { cssPath: 'index.css', jsPath: 'index.js' },
   name: { display: 'Layout', id: 'layout' },
   require: [{ id: 'core' }],
-  version: { plugin: '1.0.0-next.1', supportCore: '>=3.0.0-next.6 <4.0.0' },
+  version: { plugin: '1.0.0-next.1', supportCore: '>=3.0.0-next.9 <4.0.0' },
 }
 
 async function createFixture(archiveManifest = manifest, includeCss = true) {
@@ -62,5 +63,6 @@ describe('plugin artifacts', () => {
     expect(() =>
       parsePluginManifest({ ...manifest, entry: { cssPath: '', jsPath: 'index.js' } }),
     ).toThrow('entry.cssPath')
+    expect(() => parsePluginManifest({ ...manifest, apiVersion: 0 })).toThrow('apiVersion')
   })
 })

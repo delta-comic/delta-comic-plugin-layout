@@ -9,7 +9,7 @@ const showDrawer = shallowRef(false)
 const user = shallowRef<UniUser>()
 const pluginStore = usePluginStore()
 const card = computed(() =>
-  user.value ? pluginStore.plugins.get(user.value.$$plugin)?.user?.card : undefined,
+  user.value ? pluginStore.plugins.get(user.value.$$plugin)?.model?.user?.card : undefined,
 )
 
 defineExpose({

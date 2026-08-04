@@ -1,7 +1,9 @@
 import { ConfigPointer } from '@delta-comic/plugin'
 
+import { pluginName } from './symbol'
+
 export const imageViewConfig = new ConfigPointer(
-  'layout.view.image',
+  pluginName,
   {
     doubleImage: { type: 'switch', defaultValue: false, info: 'layout.config.image.doubleImage' },
     preloadImages: {

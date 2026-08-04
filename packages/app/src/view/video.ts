@@ -1,9 +1,9 @@
-import type { MediaPlayerElement } from 'vidstack/elements'
+import type Artplayer from 'artplayer'
 
 import * as model from '../model'
 
 export interface BarProps {
-  player: MediaPlayerElement | null
+  player: Artplayer | null
   page: model.ContentVideoPage
   isFullscreen: boolean
 }

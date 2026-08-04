@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SubscribeDB } from '@delta-comic/db'
 import type { UniContentPage, UniItemAuthor } from '@delta-comic/model'
-import { Global, translatePluginText } from '@delta-comic/plugin'
+import { translatePluginText, usePluginStore } from '@delta-comic/plugin'
 import { createLoadingMessage, DcAuthorIcon, DcEnvironment } from '@delta-comic/ui'
 import { PlusRound } from '@vicons/material'
 import { createReusableTemplate } from '@vueuse/core'
@@ -19,6 +19,7 @@ defineSlots<{
     type: 'common' | 'small'
   }): unknown
 }>()
+const pluginStore = usePluginStore()
 
 const authorKey = computed(() =>
   SubscribeDB.key.toString([props.author.$$plugin, props.author.label]),
@@ -30,8 +31,8 @@ const subscription = SubscribeDB.useQuery(
 )
 const isSubscribe = computed(() => (subscription.data.value?.length ?? 0) > 0)
 const subscribeProvider = computed(() => {
-  const type = props.author.subscribe
-  return type ? Global.subscribes.get([props.author.$$plugin, type]) : undefined
+  if (!props.author.subscribe) return undefined
+  return pluginStore.plugins.get(props.author.$$plugin)?.model?.social?.subscribe
 })
 
 const { isLoading: isAdding, upsert } = SubscribeDB.useUpsert()
@@ -40,7 +41,6 @@ const addSubscribe = () => {
   if (!provider) return
   return createLoadingMessage(translate('layout.author.following')).bind(
     (async () => {
-      await provider.onAdd?.(props.author)
       await upsert({
         items: [
           {
@@ -62,7 +62,6 @@ const removeSubscribe = () => {
   if (!provider) return
   return createLoadingMessage(translate('layout.author.unfollowing')).bind(
     (async () => {
-      await provider.onRemove?.(props.author)
       await remove({ keys: [authorKey.value] })
     })(),
   )
@@ -71,7 +70,9 @@ const removeSubscribe = () => {
 const toggleSubscribe = () => (isSubscribe.value ? removeSubscribe() : addSubscribe())
 const actionOptions = computed<DropdownOption[]>(() =>
   (props.author.actions ?? []).flatMap(key => {
-    const action = Global.userActions.get([props.author.$$plugin, key])
+    const action = pluginStore.plugins
+      .get(props.author.$$plugin)
+      ?.model?.user?.userActions?.find(action => action.id === key)
     if (!action) return []
     const icon = action.icon
     return [
@@ -80,7 +81,10 @@ const actionOptions = computed<DropdownOption[]>(() =>
   }),
 )
 const selectAction = (key: string) =>
-  Global.userActions.get([props.author.$$plugin, key])?.call(props.author)
+  pluginStore.plugins
+    .get(props.author.$$plugin)
+    ?.model?.user?.userActions?.find(action => action.id === key)
+    ?.call(props.author)
 
 const environmentArgs = computed(() => ({
   author: props.author,

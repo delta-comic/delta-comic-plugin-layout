@@ -5,6 +5,7 @@ import { browserslistToTargets } from 'lightningcss'
 import { defineConfig, lazyPlugins, type PluginOption, type UserConfig } from 'vite-plus'
 
 import packageJson from './package.json' with { type: 'json' }
+import { createPluginManifest } from './src/manifest.js'
 
 export default defineConfig(
   ({ command, mode }) =>
@@ -43,24 +44,12 @@ export default defineConfig(
         const pluginHelpers = (mode === 'test'
           ? []
           : deltaComic(
-              {
-                author: packageJson.author.name,
-                description: packageJson.description,
-                entry: { cssPath: 'index.css', jsPath: 'index.js' },
-                name: { display: '基础布局组件', id: 'layout' },
-                require: [{ id: 'core' }],
-                version: {
-                  plugin: process.env.DELTA_PLUGIN_VERSION ?? packageJson.version,
-                  supportCore: '>=3.0.0-next.6 <4.0.0',
-                },
-              },
+              createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version),
               command,
             )) as unknown as PluginOption[]
 
         const frameworkPlugins = [
-          vue({
-            template: { compilerOptions: { isCustomElement: tag => tag.startsWith('media-') } },
-          }) as unknown as PluginOption,
+          vue() as unknown as PluginOption,
           Components({
             dts: true,
             dtsTsx: false,

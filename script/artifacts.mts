@@ -7,6 +7,7 @@ import JSZip from 'jszip'
 export const rootDir = join(import.meta.dirname, '..')
 
 export interface PluginManifest {
+  apiVersion: 1
   author: string
   description: string
   entry: { cssPath: string; jsPath: string }
@@ -30,6 +31,7 @@ export const parsePluginManifest = (value: unknown): PluginManifest => {
   if (!value || typeof value !== 'object') throw new Error('Plugin manifest must be an object')
   const manifest = value as Partial<PluginManifest>
 
+  if (manifest.apiVersion !== 1) throw new Error('Plugin manifest field apiVersion must be 1')
   requiredString(manifest.author, 'author')
   requiredString(manifest.description, 'description')
   requiredString(manifest.name?.display, 'name.display')
