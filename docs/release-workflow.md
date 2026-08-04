@@ -1,12 +1,12 @@
 # 发布流程
 
-项目使用 Conventional Commits 与 semantic-release 计算版本，只发布 GitHub Release，不发布 npm workspace 包。
+项目使用 Conventional Commits 与 semantic-release 计算版本。每次发布由同一个 semantic-release 生命周期同时创建 GitHub Package 和 GitHub Release，二者使用完全相同的版本号。
 
 | 分支 | 用途 | 发布结果 |
 | --- | --- | --- |
 | `develop` | 日常开发与集成 | 不发布 |
-| `next` | 预发布验证 | `x.y.z-next.N` prerelease |
-| `main` | 稳定版本 | `x.y.z` release |
+| `next` | 预发布验证 | `x.y.z-next.N` GitHub Package 与 prerelease |
+| `main` | 稳定版本 | `x.y.z` GitHub Package 与 release |
 
 `fix:` 触发补丁版本，`feat:` 触发次版本，`!` 或 `BREAKING CHANGE` 触发主版本。推送到 `next` 或 `main` 后，发布工作流会重新安装锁定依赖，执行检查和覆盖率测试，再把 semantic-release 计算的版本通过 `DELTA_PLUGIN_VERSION` 注入构建。
 
@@ -15,7 +15,9 @@
 - `manifest.json`：供市场或安装器直接读取的元数据；
 - `plugin.zip`：包含 `manifest.json`、`index.js` 与 `index.css` 的可安装插件包。
 
-发布脚本会在上传前检查版本一致性、入口文件存在性及压缩包内容；任何一项不匹配都会终止发布。源码中的 `packages/app/package.json` 只提供本地开发构建的基准版本，发布版本以 semantic-release 及产物 manifest 为准，不生成发布提交。
+GitHub Package 名称为 `@delta-comic/delta-comic-plugin-layout`，只包含上述插件产物；发布时使用 `next` 或 `latest` dist-tag。
+
+发布脚本会在上传前检查版本一致性、入口文件存在性及压缩包内容，并用 semantic-release 计算的版本生成 GitHub Package；任何一项不匹配都会终止发布。源码中的 `packages/app/package.json` 只提供本地开发构建的基准版本，发布版本以 semantic-release 及产物 manifest 为准，不生成发布提交。
 
 ## 分支晋级
 

@@ -9,7 +9,10 @@ import { createReleaseNameTemplate, prereleaseWarning } from './release-notes.mt
 import {
   assertVersion,
   generateNotes,
+  packageName,
+  preparePackageArtifact,
   prepareReleaseArtifacts,
+  publishPackage,
   releaseAssetNames,
   verifyRelease,
 } from './semantic-release-plugin.mts'
@@ -63,6 +66,42 @@ describe('semantic release plugin', () => {
     expect(result.manifest.version.plugin).toBe(version)
     await expect(readFile(join(destination, 'manifest.json'), 'utf8')).resolves.toContain(version)
     await expect(readFile(join(destination, 'plugin.zip'))).resolves.not.toHaveLength(0)
+  })
+
+  it('stages a GitHub Package with the semantic-release version', async () => {
+    const version = '1.2.3-next.4'
+    const pluginDist = await createPluginDist(version)
+    const release = await mkdtemp(join(tmpdir(), 'layout-release-'))
+    const destination = await mkdtemp(join(tmpdir(), 'layout-package-'))
+    await prepareReleaseArtifacts(version, { destination: release, pluginDist, runBuild: vi.fn() })
+
+    await preparePackageArtifact(version, { destination, release, pluginDist })
+
+    const packageManifest = JSON.parse(await readFile(join(destination, 'package.json'), 'utf8'))
+    expect(packageManifest).toMatchObject({
+      name: packageName,
+      version,
+      files: ['dist'],
+      publishConfig: { registry: 'https://npm.pkg.github.com' },
+    })
+    await expect(readFile(join(destination, 'dist', 'plugin.zip'))).resolves.not.toHaveLength(0)
+  })
+
+  it('publishes the generated package to GitHub Packages with the channel tag', async () => {
+    const runCommand = vi.fn().mockResolvedValue(undefined)
+
+    await publishPackage('next', runCommand)
+
+    expect(runCommand).toHaveBeenCalledWith('vp', [
+      'pm',
+      'publish',
+      expect.stringMatching(/dist\/package$/),
+      '--no-git-checks',
+      '--tag',
+      'next',
+      '--',
+      '--registry=https://npm.pkg.github.com',
+    ])
   })
 
   it('refuses to stage artifacts built for another version', async () => {
