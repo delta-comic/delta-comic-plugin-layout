@@ -15,7 +15,7 @@ import { computed, reactive, shallowRef, useTemplateRef } from 'vue'
 
 import { translate } from '@/i18n'
 
-interface FavouriteFormData {
+export interface FavouriteFormData {
   description: string
   isPrivate: boolean
   title: string

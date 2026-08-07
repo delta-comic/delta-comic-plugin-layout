@@ -28,16 +28,16 @@ catalog:
   '@vicons/material': ^0.13.0
   '@vitejs/plugin-vue': ^6.0.8
   '@vueuse/core': ^14.4.0
-  '@vitest/coverage-v8': 4.1.10
+  '@vitest/coverage-v8': 5.0.0-beta.7
   artplayer: ^5.4.0
   browserslist: ^4.28.7
   commitlint-plugin-cspell: ^0.9.4
   cspell: ^10.0.1
-  dayjs: ^1.11.21
-  dompurify: ^3.4.12
+  dayjs: ^2.0.0-alpha.4
+  dompurify: ^3.4.13
   es-toolkit: ^1.50.0
   happy-dom: ^20.11.1
-  hls.js: ^1.6.16
+  hls.js: ^1.7.0-rc.3
   jszip: ^3.10.1
   lightningcss: ^1.33.0
   naive-ui: ^2.44.1
@@ -49,12 +49,14 @@ catalog:
   unplugin-vue-components: 32.1.0
   vite: npm:@voidzero-dev/vite-plus-core@0.2.7
   vite-plus: ^0.2.7
-  vitest: 4.1.10
+  vitest: 5.0.0-beta.7
   vue: ^3.6.0-rc.2
   vue-component-type-helpers: ^3.3.9
   vue-router: ^5.2.0
   vue-tsc: ^3.3.9
+  rolldown-plugin-dts: ^0.28.0
 overrides:
+  typescript: npm:typescript-native-bridge@6.0.3-bridge.8.tsgo.7.0.2
   '@c4312/blake3-internal': ^3.0.0
   brace-expansion@1.1.15: 1.1.18
   fast-uri@3.1.3: 3.1.5
@@ -77,3 +79,4 @@ minimumReleaseAgeExclude:
   - '@delta-comic/plugin@3.0.0-next.9'
   - '@delta-comic/ui@3.0.0-next.9'
   - '@delta-comic/utils@3.0.0-next.9'
+  - hls.js@1.7.0-rc.3

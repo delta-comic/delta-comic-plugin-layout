@@ -1,4 +1,15 @@
 import { UniContentPage, type UniItem, type UniItemAuthor } from '@delta-comic/model'
+import type { Component } from 'vue'
+
+declare module '@delta-comic/ui' {
+  export interface GlobalEnvironments {
+    'layout::layout::default.subscribe-row': Component<SubscribeRowProps>
+    'layout::layout::default.action': Component<ContentProps>
+    'layout::layout::default.description': Component<ContentProps>
+    'layout::layout::default.recommend': Component<ContentProps>
+    'layout::layout::default.tab': Component<TabProps>
+  }
+}
 
 export interface SubscribeRowProps {
   page: UniContentPage

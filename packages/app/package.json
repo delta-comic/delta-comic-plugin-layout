@@ -23,6 +23,9 @@
     "dev": "vp dev",
     "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit"
   },
+  "files": [
+    "./dist"
+  ],
   "dependencies": {
     "@pinia/colada": "catalog:",
     "@vicons/antd": "catalog:",
@@ -48,6 +51,7 @@
     "@vitejs/plugin-vue": "catalog:",
     "browserslist": "catalog:",
     "lightningcss": "catalog:",
+    "rolldown-plugin-dts": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "unplugin-vue-components": "catalog:",
