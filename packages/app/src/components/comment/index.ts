@@ -1,4 +1,15 @@
 import type { UniComment, UniItem } from '@delta-comic/model'
+import type { Component } from 'vue'
+
+declare module '@delta-comic/ui' {
+  export interface GlobalEnvironments {
+    'layout::components::comment::comment-row.userExtra': Component<CommentProps>
+    'layout::components::comment::comment-row.action': Component<CommentProps>
+    'layout::components::comment::comment-row.description': Component<CommentProps>
+    'layout::components::comment::comment-row.reply': Component<CommentProps>
+    'layout::components::comment::comment-row.avatar': Component<CommentProps>
+  }
+}
 
 export interface CommentProps {
   comment: UniComment

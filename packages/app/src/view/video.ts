@@ -1,6 +1,16 @@
 import type Artplayer from 'artplayer'
 
 import * as model from '../model'
+import type { Component } from 'vue'
+
+declare module '@delta-comic/ui' {
+  export interface GlobalEnvironments {
+    'layout::view::video.top-bar': Component<BarProps>
+    'layout::view::video.center-bar': Component<BarProps>
+    'layout::view::video.bottom-bar': Component<BarProps>
+    'layout::view::video.content': Component<BarProps>
+  }
+}
 
 export interface BarProps {
   player: Artplayer | null
