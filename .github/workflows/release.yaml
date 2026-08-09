@@ -35,6 +35,9 @@ jobs:
           cache: true
           run-install: false
 
+      - name: Configure GitHub Packages authentication
+        run: vp pm config set '//npm.pkg.github.com/:_authToken' "$GITHUB_TOKEN"
+
       - name: Install dependencies
         run: vp install --frozen-lockfile
 
@@ -45,11 +48,6 @@ jobs:
 
       - name: Test with coverage
         run: vp test run --coverage
-
-      - name: Configure GitHub Packages authentication
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: vp pm config set '//npm.pkg.github.com/:_authToken' "$GITHUB_TOKEN"
 
       - name: Publish release
         run: vp run release

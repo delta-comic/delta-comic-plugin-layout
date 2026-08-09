@@ -1,7 +1,7 @@
 import type Artplayer from 'artplayer'
+import type { Component } from 'vue'
 
 import * as model from '../model'
-import type { Component } from 'vue'
 
 declare module '@delta-comic/ui' {
   export interface GlobalEnvironments {

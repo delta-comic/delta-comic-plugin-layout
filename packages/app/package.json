@@ -17,15 +17,15 @@
     "type": "git",
     "url": "https://github.com/delta-comic/delta-comic-plugin-layout.git"
   },
+  "files": [
+    "./dist"
+  ],
   "type": "module",
   "scripts": {
     "build": "vp build",
     "dev": "vp dev",
     "typecheck": "vue-tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit"
   },
-  "files": [
-    "./dist"
-  ],
   "dependencies": {
     "@pinia/colada": "catalog:",
     "@vicons/antd": "catalog:",
