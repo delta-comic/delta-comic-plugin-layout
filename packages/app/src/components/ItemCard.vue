@@ -4,7 +4,6 @@ import { UniImage, UniItem, type UniItemRaw } from '@delta-comic/model'
 import { useConfig, usePluginStore } from '@delta-comic/plugin'
 import { DcImage } from '@delta-comic/ui'
 import { SharedFunction } from '@delta-comic/utils'
-import { EyeInvisibleOutlined } from '@vicons/antd'
 import { MoreVertRound } from '@vicons/material'
 import { createReusableTemplate } from '@vueuse/core'
 import { NButton, NIcon, NPopconfirm } from 'naive-ui'
@@ -53,8 +52,7 @@ const processedTitle = computed(() =>
     ? props.item.title.replace(/(（[^）]+）|\[[^\]]+\]|\([^)]+\)|【[^】]+】)+?/gi, '').trim()
     : props.item.title,
 )
-const isSafe = computed(() => !window.$$safe$$ || props.item.customIsSafe === true)
-const isUnavailable = computed(() => props.disabled || !isSafe.value)
+const isUnavailable = computed(() => props.disabled)
 
 const handleClick = () => {
   if (isUnavailable.value) return
@@ -115,18 +113,6 @@ const heightStyle = computed(() => (props.freeHeight ? 'auto' : '140px'))
       <div class="absolute bottom-2 text-sm text-(--dc-color-text-secondary)"><slot /></div>
     </div>
     <Actions />
-    <div
-      v-if="!isSafe"
-      class="absolute inset-0.5 z-100 rounded-lg bg-(--dc-color-surface)/85 backdrop-blur-md"
-      @click.stop
-    >
-      <div
-        class="absolute top-1/2 left-3 flex -translate-y-1/2 items-center gap-2 text-xl font-semibold"
-      >
-        <NIcon size="40px"><EyeInvisibleOutlined /></NIcon>
-        {{ translate('layout.content.unsafe') }}
-      </div>
-    </div>
   </article>
 
   <article
@@ -160,17 +146,5 @@ const heightStyle = computed(() => (props.freeHeight ? 'auto' : '140px'))
       <div class="my-1 flex h-auto w-full flex-nowrap items-center"><slot /></div>
     </div>
     <Actions />
-    <div
-      v-if="!isSafe"
-      class="absolute inset-0.5 z-100 rounded-lg bg-(--dc-color-surface)/85 backdrop-blur-md"
-      @click.stop
-    >
-      <div
-        class="absolute top-1/2 left-3 flex -translate-y-1/2 flex-col items-center gap-2 text-center text-lg font-semibold"
-      >
-        <NIcon size="40px"><EyeInvisibleOutlined /></NIcon>
-        {{ translate('layout.content.unsafe') }}
-      </div>
-    </div>
   </article>
 </template>

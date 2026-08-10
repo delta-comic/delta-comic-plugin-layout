@@ -17,5 +17,5 @@ export const createPluginManifest = (version: string): PluginManifest => ({
   entry: { ...pluginManifestBase.entry },
   name: { ...pluginManifestBase.name },
   require: pluginManifestBase.require.map(dependency => ({ ...dependency })),
-  version: { plugin: version, supportCore: '>=3.0.0-next.9 <4.0.0' },
+  version: { plugin: version, supportCore: '>=3.0.0-next.10 <4.0.0' },
 })

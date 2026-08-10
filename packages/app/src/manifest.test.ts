@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { createPluginManifest } from './manifest'
 
 describe('plugin manifest', () => {
-  it('targets the next.9 API v1 host contract', () => {
+  it('targets the next.10 API v1 host contract', () => {
     const manifest = createPluginManifest('1.2.3')
 
     expect(manifest).toMatchObject({
@@ -13,7 +13,7 @@ describe('plugin manifest', () => {
       kind: 'normal',
       name: { id: 'layout' },
       require: [{ id: 'core' }],
-      version: { plugin: '1.2.3', supportCore: '>=3.0.0-next.9 <4.0.0' },
+      version: { plugin: '1.2.3', supportCore: '>=3.0.0-next.10 <4.0.0' },
     })
   })
 
