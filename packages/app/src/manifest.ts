@@ -1,4 +1,4 @@
-import { DELTA_COMIC_PLUGIN_API_VERSION, type PluginManifest } from '@delta-comic/plugin'
+import { DELTA_COMIC_PLUGIN_API_VERSION, type PluginManifest } from '@delta-comic/model'
 
 import { pluginName } from './symbol.js'
 
