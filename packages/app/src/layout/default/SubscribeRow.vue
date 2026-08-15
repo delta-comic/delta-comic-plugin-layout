@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { SubscribeDB } from '@delta-comic/db'
 import type { UniContentPage, UniItemAuthor } from '@delta-comic/model'
-import { translatePluginText, usePluginStore } from '@delta-comic/plugin'
+import { usePluginStore } from '@delta-comic/plugin'
 import { createLoadingMessage, DcAuthorIcon, DcEnvironment } from '@delta-comic/ui'
 import { PlusRound } from '@vicons/material'
 import { createReusableTemplate } from '@vueuse/core'
 import { NButton, NDropdown, NIcon, type DropdownOption } from 'naive-ui'
 import { computed, h } from 'vue'
 
-import { translate } from '@/i18n'
+import { translate, translateText } from '@/i18n'
 
 const props = defineProps<{ author: UniItemAuthor; isSmall?: boolean; page: UniContentPage }>()
 defineSlots<{
@@ -24,9 +24,16 @@ const pluginStore = usePluginStore()
 const authorKey = computed(() =>
   SubscribeDB.key.toString([props.author.$$plugin, props.author.label]),
 )
-const subscription = SubscribeDB.useQuery(
+type SubscribeRow = {
+  author: UniItemAuthor | null
+  itemKey: string | null
+  key: string
+  plugin: string
+  type: 'author' | 'ep'
+}
+const subscription = SubscribeDB.useQuery<SubscribeRow[]>(
   query => query.where('key', '=', authorKey.value).selectAll().execute(),
-  ['layout:subscribe-row', authorKey.value],
+  [['layout:subscribe-row', authorKey.value]],
   () => [],
 )
 const isSubscribe = computed(() => (subscription.data.value?.length ?? 0) > 0)
@@ -75,9 +82,7 @@ const actionOptions = computed<DropdownOption[]>(() =>
       ?.model?.user?.userActions?.find(action => action.id === key)
     if (!action) return []
     const icon = action.icon
-    return [
-      { ...(icon ? { icon: () => h(icon) } : {}), key, label: translatePluginText(action.name) },
-    ]
+    return [{ ...(icon ? { icon: () => h(icon) } : {}), key, label: translateText(action.name) }]
   }),
 )
 const selectAction = (key: string) =>

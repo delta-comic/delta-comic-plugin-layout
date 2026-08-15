@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { UniContentPage } from '@delta-comic/model'
-import { type Social, translatePluginText, usePluginStore } from '@delta-comic/plugin'
+import { type Social, usePluginStore } from '@delta-comic/plugin'
 import { DcImagedIcon, DcToggleIcon } from '@delta-comic/ui'
 import { ShareSharp } from '@vicons/material'
 import { NButton, NDrawer, NDrawerContent } from 'naive-ui'
 import { computed, shallowRef } from 'vue'
 
-import { translate } from '@/i18n'
+import { translate, translateText } from '@/i18n'
 
 const props = defineProps<{ page: UniContentPage }>()
 const show = shallowRef(false)
@@ -47,7 +47,7 @@ const selectMethod = async (method: Social.InitiativeItem) => {
             :size-spacing="12"
           />
           <span class="dc-clamp-2 w-20 text-center text-xs text-(--dc-color-text-secondary)">
-            {{ translatePluginText(entry.method.name) }}
+            {{ translateText(entry.method.name) }}
           </span>
         </button>
       </div>

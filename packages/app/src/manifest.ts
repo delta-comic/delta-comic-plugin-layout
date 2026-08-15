@@ -1,4 +1,4 @@
-import { DELTA_COMIC_PLUGIN_API_VERSION, type PluginManifest } from '@delta-comic/model'
+import { DELTA_COMIC_PLUGIN_API_VERSION, type PluginManifest } from '@delta-comic/plugin'
 
 import { pluginName } from './symbol.js'
 
@@ -7,7 +7,6 @@ export const pluginManifestBase = {
   author: 'wenxig',
   description: 'Delta Comic 的基础内容布局插件',
   entry: { cssPath: 'index.css', jsPath: 'index.js' },
-  kind: 'normal',
   name: { display: '基础布局组件', id: pluginName },
   require: [{ id: 'core' }],
 } satisfies Omit<PluginManifest, 'version'>
@@ -17,5 +16,5 @@ export const createPluginManifest = (version: string): PluginManifest => ({
   entry: { ...pluginManifestBase.entry },
   name: { ...pluginManifestBase.name },
   require: pluginManifestBase.require.map(dependency => ({ ...dependency })),
-  version: { plugin: version, supportCore: '>=3.0.0-next.10 <4.0.0' },
+  version: { plugin: version, supportCore: '>=3.0.0-next.11 <4.0.0' },
 })
