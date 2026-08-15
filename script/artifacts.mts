@@ -11,8 +11,10 @@ export interface PluginManifest {
   author: string
   description: string
   entry: { cssPath: string; jsPath: string }
+  icon?: string
+  integrity?: string
   name: { display: string; id: string }
-  require: { id: string }[]
+  require: { id: string; download?: string }[]
   version: { plugin: string; supportCore: string }
 }
 
@@ -27,6 +29,12 @@ const requiredString = (value: unknown, label: string) => {
   }
 }
 
+const optionalString = (value: unknown, label: string) => {
+  if (value !== undefined && typeof value !== 'string') {
+    throw new Error(`Plugin manifest field ${label} must be a string when present`)
+  }
+}
+
 export const parsePluginManifest = (value: unknown): PluginManifest => {
   if (!value || typeof value !== 'object') throw new Error('Plugin manifest must be an object')
   const manifest = value as Partial<PluginManifest>
@@ -34,6 +42,8 @@ export const parsePluginManifest = (value: unknown): PluginManifest => {
   if (manifest.apiVersion !== 1) throw new Error('Plugin manifest field apiVersion must be 1')
   requiredString(manifest.author, 'author')
   requiredString(manifest.description, 'description')
+  optionalString(manifest.icon, 'icon')
+  optionalString(manifest.integrity, 'integrity')
   requiredString(manifest.name?.display, 'name.display')
   requiredString(manifest.name?.id, 'name.id')
   requiredString(manifest.entry?.cssPath, 'entry.cssPath')
@@ -42,6 +52,10 @@ export const parsePluginManifest = (value: unknown): PluginManifest => {
   requiredString(manifest.version?.supportCore, 'version.supportCore')
   if (!Array.isArray(manifest.require))
     throw new Error('Plugin manifest field require must be an array')
+  for (const dependency of manifest.require) {
+    requiredString(dependency?.id, 'require[].id')
+    optionalString(dependency?.download, 'require[].download')
+  }
 
   return manifest as PluginManifest
 }
