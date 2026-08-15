@@ -19,31 +19,32 @@
 
 ## 1. 类型错误修复（核心）
 
-- [ ] 1.1 移除 `PluginManifest.kind` 字段：`packages/app/src/manifest.ts` 删除 `kind: 'normal'`，同步删除 `manifest.test.ts` 中对应断言
-- [ ] 1.2 替换 `translatePluginText` → `pluginI18n.translateText`：`src/i18n/index.ts` 新增 `translateText` 包装导出；`ShareButton.vue`、`SubscribeRow.vue` 的导入与调用点改用该包装
-- [ ] 1.3 修复 DB 查询 hook 泛型与 `EntryKey`（`FavouriteSelect.vue`、`SubscribeRow.vue`）：
-  - 显式提供结果类型参数（`useQueryCard<FavouriteDB.Card[]>`、`useQueryItem<Pick<FavouriteDB.Item, 'belongTo'>[]>`、`SubscribeDB.useQuery<SubscribeDB.Item[]>`；`countDb` 那处仅修 key）
+- [x] 1.1 移除 `PluginManifest.kind` 字段：`packages/app/src/manifest.ts` 删除 `kind: 'normal'`，同步删除 `manifest.test.ts` 中对应断言
+- [x] 1.2 替换 `translatePluginText` → `pluginI18n.translateText`：`src/i18n/index.ts` 新增 `translateText` 包装导出；`ShareButton.vue`、`SubscribeRow.vue` 的导入与调用点改用该包装
+- [x] 1.3 修复 DB 查询 hook 泛型与 `EntryKey`（`FavouriteSelect.vue`、`SubscribeRow.vue`）：
+  - 显式提供结果类型参数（`useQueryCard<FavouriteDB.Card[]>`、`useQueryItem<Pick<FavouriteDB.Item, 'belongTo'>[]>`、`SubscribeDB.useQuery<SubscribeRow[]>`；`countDb` 那处仅修 key）
   - `otherKeys` 由扁平 `['a','b']` 包装为 `[['a','b']]`，满足 `readonly EntryKey[]`（接受缓存 key 形状变化）
+  - 注：`SubscribeDB.Item` 是联合类型，与 `selectAll()` 的扁平映射类型不兼容，改用内联 `SubscribeRow` 结构类型（组件仅用 `.length`）
 
 ## 2. 版本号对齐 next.11
 
-- [ ] 2.1 `manifest.ts` 的 `supportCore` → `>=3.0.0-next.11 <4.0.0`
-- [ ] 2.2 `manifest.test.ts` 断言与用例名同步（`next.10` → `next.11`）
-- [ ] 2.3 `README.md` 中 `>=3.0.0-next.10 <4.0.0` 描述同步
-- [ ] 2.4 `packages/app/package.json` peerDependencies → `>=3.0.0-next.11 <4.0.0`
-- [ ] 2.5 `script/artifacts.test.ts`、`script/semantic-release-plugin.test.ts` 测试夹具的 `supportCore` 同步
+- [x] 2.1 `manifest.ts` 的 `supportCore` → `>=3.0.0-next.11 <4.0.0`
+- [x] 2.2 `manifest.test.ts` 断言与用例名同步（`next.10` → `next.11`）
+- [x] 2.3 `README.md` 中 `>=3.0.0-next.10 <4.0.0` 描述同步
+- [x] 2.4 `packages/app/package.json` peerDependencies → `>=3.0.0-next.11 <4.0.0`
+- [x] 2.5 `script/artifacts.test.ts`、`script/semantic-release-plugin.test.ts` 测试夹具的 `supportCore` 同步
 
 ## 3. 一致性清理
 
-- [ ] 3.1 `manifest.ts` 的 `DELTA_COMIC_PLUGIN_API_VERSION` / `PluginManifest` 改从 `@delta-comic/plugin` 导入（对齐文档 §2.4）
-- [ ] 3.2 `script/artifacts.mts` 本地 `PluginManifest` 接口与校验补齐 `icon` / `integrity` / `require[].download` 可选字段（前瞻，不阻断）
+- [ ] 3.1 ~~`manifest.ts` 的 `DELTA_COMIC_PLUGIN_API_VERSION` / `PluginManifest` 改从 `@delta-comic/plugin` 导入（对齐文档 §2.4）~~ 已回退：`@delta-comic/plugin` 的 ESM 在 Node 下无法解析 `lz-string` 命名导出，导致 `vite.config.mts` 加载失败（`lib-build` 报错），保持 `@delta-comic/model` 导入（revert 7b89303）
+- [x] 3.2 `script/artifacts.mts` 本地 `PluginManifest` 接口与校验补齐 `icon` / `integrity` / `require[].download` 可选字段（前瞻，不阻断）
 
 ## 4. 验证
 
-- [ ] 4.1 `vp install`
-- [ ] 4.2 `vp run lib-build`
-- [ ] 4.3 `vp check`
-- [ ] 4.4 `vp run -r typecheck`（期望 0 错误）
-- [ ] 4.5 `vp test run`（全绿；必要时补 `translateText` 单测）
-- [ ] 4.6 `vp run build` → `vp run artifacts`（校验 `plugin.zip` / `manifest.json` 与 entry 产物一致）
-- [ ] 4.7 可选冒烟：`vp dev` 验证配置读取、i18n 翻译、收藏/订阅 DB 查询、分享按钮文本翻译、`core` 依赖
+- [x] 4.1 `vp install`
+- [x] 4.2 `vp run lib-build`
+- [x] 4.3 `vp check`
+- [x] 4.4 `vp run -r typecheck`（0 错误）
+- [x] 4.5 `vp test run`（17 文件 74 用例全绿）+ `vp test run --coverage`（行 84.21 / 函数 71.83 / 语句 83.33 / 分支 86.06，未配置强制阈值）
+- [x] 4.6 `vp run build` → `vp run artifacts`（校验通过：`layout@0.9.2`，`index.js`/`index.css`/`manifest.json`/`plugin.zip` 齐全，manifest 无 `kind`、`supportCore` 为 next.11）
+- [ ] 4.7 冒烟（需宿主 Delta Comic 环境，本仓库无法执行）：`vp dev` 验证配置读取、i18n 翻译、收藏/订阅 DB 查询、分享按钮文本翻译、`core` 依赖
