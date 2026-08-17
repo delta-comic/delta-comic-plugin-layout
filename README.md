@@ -34,4 +34,4 @@ vp run artifacts
 
 构建产物位于 `packages/app/dist/`。`vp run artifacts` 会验证外置 manifest、压缩包内 manifest 与实际入口文件完全一致。
 
-发布分支和产物规则见 [发布流程](docs/release-workflow.md)。
+发布分支和产物规则见 [发布流程](docs/release-workflow.md)。其他插件希望复用布局、阅读器或组件时，见 [布局插件接入指南](docs/plugin-integration.md)。
