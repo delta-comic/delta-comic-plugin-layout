@@ -184,6 +184,66 @@
 
 ---
 
+## Session 5: 2026-08-17 Phase 5、6、7 执行
+
+### 10:00 - Phase 5（VideoConfig 重构）完成
+
+**执行的操作:**
+1. 搜索所有 `ContentVideoPage` / `VideoConfig` 引用，确认影响范围（model、player.ts、useArtplayer.ts、Video.vue、2 个测试文件）
+2. 将 `VideoConfig` 从 `VideoSource[] & { textTrack?: VideoTextTrack[] }` 交叉类型重构为清晰接口：
+   ```ts
+   export interface VideoConfig {
+     sources: VideoSource[]
+     textTrack?: VideoTextTrack[]
+   }
+   ```
+3. `player.ts`：`config.length` → `config.sources.length`、`config.map` → `config.sources.map`，`config.textTrack ?? []` 保持不变
+4. 测试适配：`player.test.ts` 的 `videoConfig` helper 改为 `(...sources) => ({ sources })`（移除 `as` 断言）；`useArtplayer.test.ts` 7 处 `[...] as VideoConfig` 改为 `{ sources: [...] }`（全部移除断言）
+5. `Video.vue` 无需改动（仅调用 `fetchVideo()`，签名自动跟随）
+6. 确认本仓库无其他 `fetchVideo()` 实现（外部内容插件由宿主仓库同步适配）
+7. 同步更新 README.md 中 `fetchVideo()` 返回形态的契约描述
+
+**验证:**
+- ✅ `vp run lib-build` + `vp run -r typecheck` 通过（0 错误）
+- ✅ video 相关测试通过（player 8 tests + useArtplayer 6 tests）
+- ✅ `vp test run` 通过（17 files, 74 tests）
+- ✅ `vp check --fix` 通过
+
+**提交:**
+- `feat(type): 将 VideoConfig 重构为 sources 接口定义`
+
+### 10:15 - Phase 6（Vue 组件审查）完成
+
+**执行的操作:**
+1. 全部 25 个 `.vue` 文件均为 `<script setup lang="ts">`，无 Options API
+2. props/emits/slots 全部使用类型化声明（`defineProps<T>` / `defineEmits<T>` / `defineSlots<T>`）
+3. 检查 3 处 `defineExpose` 均正确：
+   - `Children.vue` 暴露 `loadChild` → `Comment.vue` 经 `useTemplateRef<InstanceType<typeof Children>>` 调用 ✓
+   - `PreviewUser.vue` 暴露 `show` → `Comment.vue` 调用 ✓
+   - `CreateFavouriteCard.vue` 暴露 `create` → `FavouriteSelect.vue` 调用 ✓
+4. 模板引用全部使用 `useTemplateRef`（8 处）
+5. 验证 `<slot>` 与 `defineSlots` 一一对应（无遗漏/无多余）
+6. v-model 使用规范（仅用于 NDrawer/NSwitch/NInput 等真实双向契约）
+
+**结论:** 全部符合 Vue 3 + Composition API 最佳实践，无需代码改动。
+
+### 10:20 - Phase 7（i18n 审查）完成
+
+**执行的操作:**
+1. 模板纯文本检查：无硬编码用户可见字符串（`>text<` 模式 0 命中）
+2. 脚本中文字符串检查：仅 manifest.ts 元数据（宿主经 translateText 软翻译）与 date.ts dayjs 兜底格式（所有调用方均显式传入 i18n labels）
+3. 用脚本比对三语消息树：72 个 key × zh-CN/zh-TW/en-US 完全一致
+4. 验证所有 `translate()` 调用 key 均存在于消息树（62 个使用中 key，0 missing）
+5. `translateText()` 使用模式统一（对插件动态值软翻译）
+
+**发现:**
+- 3 个无引用的死 key：`layout.comment.closed`、`layout.comment.sending`、`layout.content.unsafe`（保留，无害且可能供未来使用）
+- 静态 key 用 `translate()`、动态插件值用 `translateText()` 的模式已统一
+
+**结论:** i18n 使用 100% 符合规范，无需代码改动。
+
+---
+
 ## 遇到的问题与解决
 
 _（待记录执行过程中的问题）_
