@@ -16,6 +16,7 @@ const HLS_MIME_TYPES = new Set([
 const NATIVE_VIDEO_TYPES = new Set(['', 'video/mp4', 'video/ogg', 'video/webm', 'video/x-m4v'])
 type CanPlayNativeVideo = (type: string) => CanPlayTypeResult
 
+/** 播放器界面文案（由调用方传入已翻译文本）。 */
 export interface PlayerLabels {
   line(index: number): string
   source: string
@@ -25,11 +26,15 @@ export interface PlayerLabels {
   videoLoadFailed: string
 }
 
+/** 归一化后的视频源：补充播放类型与展示名。 */
 export interface NormalizedVideoSource extends VideoSource {
+  /** 播放方式：HLS 流媒体或浏览器原生播放。 */
   artType: 'm3u8' | 'native'
+  /** 解析后的展示名（源未提供 `label` 时回退为线路名）。 */
   label: string
 }
 
+/** 归一化后的播放配置，供 `createPlayerOptions` 直接消费。 */
 export interface NormalizedVideoConfig {
   defaultSource: NormalizedVideoSource
   sources: NormalizedVideoSource[]
@@ -40,6 +45,7 @@ type ArtplayerConstructor = typeof Artplayer
 type ArtplayerModule = { default: ArtplayerConstructor }
 type ArtplayerLoader = () => Promise<ArtplayerModule>
 
+/** 对 Artplayer 类进行插件级全局配置（快进倍率、移动端双击播放）。 */
 export const configureArtplayer = (ArtplayerClass: ArtplayerConstructor) => {
   ArtplayerClass.FAST_FORWARD_VALUE = 3
   ArtplayerClass.MOBILE_DBCLICK_PLAY = true
@@ -52,6 +58,10 @@ const canPlayNativeVideo: CanPlayNativeVideo = type => {
   return document.createElement('video').canPlayType(type)
 }
 
+/**
+ * 解析视频源的播放方式：MIME 或 URL 命中 HLS 规则返回 `m3u8`，
+ * 可被浏览器原生播放返回 `native`，其余抛错。
+ */
 export const getArtplayerType = (
   source: VideoSource,
   canPlayType: CanPlayNativeVideo = canPlayNativeVideo,
@@ -63,6 +73,10 @@ export const getArtplayerType = (
   throw new Error(type || source.type || 'unknown')
 }
 
+/**
+ * 归一化播放配置：校验并解析每个视频源，确定默认源与字幕轨。
+ * `sources` 为空或全部源不可解析时抛错。
+ */
 export const normalizeVideoConfig = (
   config: VideoConfig,
   labels: PlayerLabels,
@@ -86,6 +100,7 @@ export const normalizeVideoConfig = (
   return { defaultSource, sources, textTracks: config.textTrack ?? [] }
 }
 
+/** 由字幕轨构建 Artplayer 字幕设置项与默认字幕。无字幕时返回空设置。 */
 export const createSubtitleOptions = (
   tracks: VideoTextTrack[],
   labels: PlayerLabels,
@@ -134,6 +149,7 @@ export const createSubtitleOptions = (
   }
 }
 
+/** 组装 Artplayer 初始化选项：源/字幕设置、播放器外观与交互开关。 */
 export const createPlayerOptions = (
   container: HTMLDivElement,
   config: VideoConfig,
@@ -185,6 +201,14 @@ export const createPlayerOptions = (
   }
 }
 
+/**
+ * Artplayer 播放器运行时：懒加载模块、托管 HLS 实例并记录全局副作用。
+ *
+ * `create` 返回的实例由内部追踪，销毁时同步清理 HLS 与
+ * `window.Artplayer`/样式等全局副作用，避免多次懒加载互相污染。
+ *
+ * @since 0.9.0
+ */
 export class ArtplayerRuntime {
   readonly #active = new Set<Artplayer>()
   readonly #hls = new Map<Artplayer, Hls>()
@@ -195,6 +219,10 @@ export class ArtplayerRuntime {
     this.#loader = loader
   }
 
+  /**
+   * 异步创建播放器实例。重复调用前会先 `destroy` 旧实例（幂等）。
+   * HLS 源经 `customType.m3u8` 由内部 Hls.js 实例接管。
+   */
   public async create(option: Option, labels: PlayerLabels) {
     this.#captureGlobalSnapshot()
     const { default: ArtplayerClass } = await this.#loader()
@@ -219,11 +247,13 @@ export class ArtplayerRuntime {
     return art
   }
 
+  /** 销毁播放器实例（已销毁/空值幂等）。 */
   public destroy(art: Artplayer | null | undefined) {
     if (!art || art.isDestroy) return
     art.destroy(true)
   }
 
+  /** 销毁全部活跃实例并恢复被捕获的全局状态。 */
   public disposeAll() {
     for (const art of this.#active) this.destroy(art)
     this.#active.clear()
@@ -289,4 +319,5 @@ export class ArtplayerRuntime {
   }
 }
 
+/** 默认的播放器运行时单例（真实 Artplayer）。 */
 export const artplayerRuntime = new ArtplayerRuntime()

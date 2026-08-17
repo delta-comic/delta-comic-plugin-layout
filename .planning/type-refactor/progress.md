@@ -244,6 +244,29 @@
 
 ---
 
+## Session 6: 2026-08-17 Phase 8 执行
+
+### 10:25 - Phase 8（文档与类型定义补充）完成
+
+**执行的操作:**
+1. `model/index.ts`：为 `ContentImagePage`、`VideoSource`、`VideoTextTrack`、`VideoConfig`、`ContentVideoPage` 添加 JSDoc（含 `@since 0.9.0` 与 `{@link}` 交叉引用）
+2. `expose.ts`：为 `LayoutPluginExpose` 添加契约说明（消费方如何经 `pluginModelChannels.expose` 读取）；为 `expose` 与 `LibLayout` 补充说明
+3. `useEpisodes.ts`：`UseEpisodesOptions`/`UseEpisodesReturn` 逐成员注释 + 函数 JSDoc
+4. `useImageReader.ts`：`UseImageReaderOptions`/`UseImageReaderReturn` 逐成员注释 + 函数 JSDoc（说明双模式定位与 IntersectionObserver 回退）
+5. `useArtplayer.ts`：`UseArtplayerOptions`/`UseArtplayerReturn` 逐成员注释 + 函数 JSDoc（说明代际重建与宿主全屏双向同步）
+6. `content.ts`：`useLike` 乐观更新行为说明 + `toggledLikeSnapshot` JSDoc
+7. `player.ts`（关联视频组合式函数）：`PlayerLabels`/`NormalizedVideoSource`/`NormalizedVideoConfig`/`configureArtplayer`/`getArtplayerType`/`normalizeVideoConfig`/`createSubtitleOptions`/`createPlayerOptions`/`ArtplayerRuntime`/`artplayerRuntime` 补充 JSDoc
+
+**验证:**
+- ✅ `vp check --fix` 通过（格式 + lint 无警告）
+- ✅ `vp run lib-build` + `vp run -r typecheck` 通过（0 错误）
+- ✅ `vp test run` 通过（17 files, 74 tests）
+
+**提交:**
+- `docs(type): 为公开类型与组合式函数补充 JSDoc 文档`
+
+---
+
 ## 遇到的问题与解决
 
 _（待记录执行过程中的问题）_

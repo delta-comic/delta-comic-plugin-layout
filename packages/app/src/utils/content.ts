@@ -16,6 +16,11 @@ type UseLikeReturn = Omit<
   'mutateAsync'
 > & { likeItem: (item: UniItem) => Promise<unknown> }
 
+/**
+ * 计算点赞切换后的快照：`isLiked` 取反，`likeNumber` 相应 ±1（不低于 0）。
+ *
+ * @since 0.9.0
+ */
 export const toggledLikeSnapshot = ({ isLiked, likeNumber }: LikeSnapshot): LikeSnapshot => ({
   isLiked: !isLiked,
   likeNumber: Math.max(0, (likeNumber ?? 0) + (isLiked ? -1 : 1)),
@@ -26,6 +31,15 @@ const applyLikeSnapshot = (item: UniItem, snapshot: LikeSnapshot) => {
   item.likeNumber = snapshot.likeNumber
 }
 
+/**
+ * 内容条目点赞组合式函数。
+ *
+ * 以乐观更新方式调用 `item.like()`：发起时立即翻转本地点赞状态，
+ * 失败时回滚并弹出错误提示；成功后失效相关详情缓存以重新拉取。
+ * `likeItem(item)` 为对外入口，其余成员透传 `useMutation` 状态。
+ *
+ * @since 0.9.0
+ */
 export const useLike = defineMutation((): UseLikeReturn => {
   const queryCache = useQueryCache()
   const message = useMessage()

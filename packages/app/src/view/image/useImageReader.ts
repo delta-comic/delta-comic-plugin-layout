@@ -13,25 +13,43 @@ import {
   type ShallowRef,
 } from 'vue'
 
+/** `useImageReader` 的入参。 */
 interface UseImageReaderOptions {
+  /** 全部图片列表，长度变化时会自动校正当前下标。 */
   images: MaybeRefOrGetter<UniImage[]>
+  /** 是否为连续滚动阅读模式；`false` 时走 Swiper 分页。 */
   isContinuous: MaybeRefOrGetter<boolean>
+  /** 内容页标识，变化时重置阅读位置。 */
   pageKey: MaybeRefOrGetter<string>
 }
 
+/** `useImageReader` 的返回值。 */
 interface UseImageReaderReturn {
+  /** 是否还有下一张图片。 */
   canGoNext: ComputedRef<boolean>
+  /** 是否还有上一张图片。 */
   canGoPrevious: ComputedRef<boolean>
+  /** 当前阅读下标（已校正到合法范围）。 */
   currentIndex: Readonly<ShallowRef<number>>
+  /** 按偏移量（-1 上一张 / 1 下一张）切换图片。 */
   goToSlide: (offset: -1 | 1) => void
+  /** 阅读进度百分比（0-100），仅一张图时为 0。 */
   progress: ComputedRef<number>
+  /** 用户当前选中的下标（与 `currentIndex` 同步）。 */
   selectedIndex: Readonly<ShallowRef<number>>
+  /** 跳转到指定页。 */
   selectPage: (value: number) => void
+  /** 注册连续滚动阅读容器，用于滚动定位与可见性追踪。 */
   setContinuousReader: (value: HTMLElement | null) => void
+  /** 直接设置当前下标（自动钳制范围）。 */
   setCurrentIndex: (value: number) => void
+  /** 注册 Swiper 实例；分页模式下接管切换。 */
   setSwiper: (value?: SwiperClass) => void
+  /** 是否显示阅读菜单。 */
   showMenu: Readonly<ShallowRef<boolean>>
+  /** 当前 Swiper 实例。 */
   swiper: Readonly<ShallowRef<SwiperClass | undefined>>
+  /** 切换菜单显隐。 */
   toggleMenu: () => void
 }
 
@@ -42,6 +60,15 @@ const imageIndex = (element: Element) => {
   return Number.isInteger(value) ? value : undefined
 }
 
+/**
+ * 图片阅读器组合式函数。
+ *
+ * 统一管理分页（Swiper）与连续滚动两种阅读模式的当前页定位、
+ * 进度计算与菜单显隐。连续模式下通过 IntersectionObserver（缺失时
+ * 回退滚动监听）追踪当前可见图片。
+ *
+ * @since 0.9.0
+ */
 export const useImageReader = (options: UseImageReaderOptions): UseImageReaderReturn => {
   const swiper = shallowRef<SwiperClass>()
   const continuousReader = shallowRef<HTMLElement | null>(null)
