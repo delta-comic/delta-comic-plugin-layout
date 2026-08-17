@@ -67,9 +67,9 @@ export const normalizeVideoConfig = (
   config: VideoConfig,
   labels: PlayerLabels,
 ): NormalizedVideoConfig => {
-  if (config.length === 0) throw new Error(labels.videoLoadFailed)
+  if (config.sources.length === 0) throw new Error(labels.videoLoadFailed)
 
-  const sources = config.map((source, index) => {
+  const sources = config.sources.map((source, index) => {
     try {
       return {
         ...source,

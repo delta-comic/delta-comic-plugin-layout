@@ -93,7 +93,7 @@ describe('useArtplayer', () => {
         if (value) value.isDestroy = true
       }),
     } as unknown as ArtplayerRuntime
-    const mounted = mountComposable(runtime, [{ src: 'video.mp4' }] as VideoConfig)
+    const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
     expect(runtime.create).toHaveBeenCalledOnce()
@@ -118,7 +118,7 @@ describe('useArtplayer', () => {
       create: vi.fn(async () => player as unknown as Artplayer),
       destroy: vi.fn(),
     } as unknown as ArtplayerRuntime
-    const mounted = mountComposable(runtime, [{ src: 'video.mp4' }] as VideoConfig)
+    const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
     player.emit('fullscreen', true as never)
@@ -139,7 +139,7 @@ describe('useArtplayer', () => {
       create: vi.fn(async () => player as unknown as Artplayer),
       destroy: vi.fn(),
     } as unknown as ArtplayerRuntime
-    const mounted = mountComposable(runtime, [{ src: 'video.mp4' }] as VideoConfig)
+    const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
     mounted.poster.value = 'cover.webp'
@@ -155,10 +155,10 @@ describe('useArtplayer', () => {
       create: vi.fn(async () => players.shift() as unknown as Artplayer),
       destroy: vi.fn(),
     } as unknown as ArtplayerRuntime
-    const mounted = mountComposable(runtime, [{ src: 'video.mp4' }] as VideoConfig)
+    const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
-    mounted.videoConfig.value = [{ src: 'next.webm', type: 'video/webm' }] as VideoConfig
+    mounted.videoConfig.value = { sources: [{ src: 'next.webm', type: 'video/webm' }] }
     await flush()
 
     expect(runtime.create).toHaveBeenCalledTimes(2)
@@ -175,7 +175,7 @@ describe('useArtplayer', () => {
     await flush()
     expect(runtime.create).not.toHaveBeenCalled()
 
-    mounted.videoConfig.value = [{ src: 'video.mp4' }] as VideoConfig
+    mounted.videoConfig.value = { sources: [{ src: 'video.mp4' }] }
     await flush()
     expect(mounted.result.error.value).toBe(failure)
   })
@@ -186,7 +186,7 @@ describe('useArtplayer', () => {
       create: vi.fn(async () => player as unknown as Artplayer),
       destroy: vi.fn(),
     } as unknown as ArtplayerRuntime
-    const mounted = mountComposable(runtime, [{ src: 'video.mp4' }] as VideoConfig)
+    const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
     mounted.app.unmount()

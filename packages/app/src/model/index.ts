@@ -21,7 +21,11 @@ export interface VideoTextTrack {
   type?: 'ass' | 'srt' | 'vtt'
 }
 
-export type VideoConfig = VideoSource[] & { textTrack?: VideoTextTrack[] }
+export interface VideoConfig {
+  sources: VideoSource[]
+  textTrack?: VideoTextTrack[]
+}
+
 export abstract class ContentVideoPage extends UniContentPage {
   public abstract fetchVideo: (signal?: AbortSignal) => Promise<VideoConfig>
 }
