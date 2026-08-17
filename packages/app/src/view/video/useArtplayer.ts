@@ -78,14 +78,16 @@ export const useArtplayer = (options: UseArtplayerOptions) => {
           runtime.destroy(created)
           return
         }
-        created.on('control', state => (controlsVisible.value = state))
-        created.on('fullscreen', state => void setHostFullscreen(state))
-        created.on('fullscreenWeb', state => void setHostFullscreen(state))
-        created.on('video:error', value => {
+        if (!created) return
+        const instance = created
+        instance.on('control', state => (controlsVisible.value = state))
+        instance.on('fullscreen', state => void setHostFullscreen(state))
+        instance.on('fullscreenWeb', state => void setHostFullscreen(state))
+        instance.on('video:error', value => {
           error.value = value
-          created!.notice.show = options.labels.videoLoadFailed
+          instance.notice.show = options.labels.videoLoadFailed
         })
-        player.value = created
+        player.value = instance
       } catch (value) {
         error.value = value instanceof Error ? value : new Error(String(value))
       }

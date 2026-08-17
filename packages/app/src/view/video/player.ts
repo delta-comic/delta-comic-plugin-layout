@@ -81,11 +81,9 @@ export const normalizeVideoConfig = (
       throw new Error(labels.unsupportedType(type), { cause: error })
     }
   })
-  return {
-    defaultSource: sources.find(source => source.default) ?? sources[0]!,
-    sources,
-    textTracks: config.textTrack ?? [],
-  }
+  const defaultSource = sources.find(source => source.default) ?? sources[0]
+  if (!defaultSource) throw new Error(labels.videoLoadFailed)
+  return { defaultSource, sources, textTracks: config.textTrack ?? [] }
 }
 
 export const createSubtitleOptions = (
@@ -94,7 +92,9 @@ export const createSubtitleOptions = (
 ): { settings: Setting[]; subtitle?: Subtitle } => {
   if (tracks.length === 0) return { settings: [] }
 
-  const defaultTrack = tracks.find(track => track.default) ?? tracks[0]!
+  const firstTrack = tracks[0]
+  if (!firstTrack) return { settings: [] }
+  const defaultTrack = tracks.find(track => track.default) ?? firstTrack
   const selector: Setting[] = [
     { default: false, html: labels.subtitleOff, url: '' },
     ...tracks.map(track => ({

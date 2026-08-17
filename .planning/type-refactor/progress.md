@@ -95,9 +95,31 @@
 
 ---
 
-## 提交记录
+## Session 2: 2026-08-17 Phase 1 执行
 
-_（待记录每个阶段的提交信息）_
+### 07:55 - Phase 1（边界检查）完成
+
+**执行的操作:**
+1. 搜索所有非空断言 `!`，发现 3 处真实断言：
+   - `player.ts:85` `sources[0]!`
+   - `player.ts:97` `tracks[0]!`
+   - `useArtplayer.ts:86` `created!.notice.show`
+   - （其余为 Tailwind `!` 重要标记和测试文件 mock，非断言）
+2. 修复 `player.ts:85`：`sources[0]!` → 显式检查 `if (!defaultSource) throw new Error(labels.videoLoadFailed)`
+3. 修复 `player.ts:97`：`tracks[0]!` → 显式检查 `const firstTrack = tracks[0]; if (!firstTrack) return { settings: [] }`
+4. 修复 `useArtplayer.ts:86`：`created!` → `if (!created) return` + `const instance = created`（const 引用使闭包正确窄化）
+
+**额外修复:**
+- `SubscribeRow.vue:34` 存在 pre-existing 类型错误（`Promise<...{type: string}[]>` 不可赋给 `Promise<SubscribeRow[]>`，来自 next.11 适配时 type 字段扩大）。移除了手写的 `SubscribeRow` 类型，改用类型推断，消除错误。
+
+**验证:**
+- ✅ `vp run -r typecheck` 通过（0 错误）
+- ✅ `vp check --fix` 通过（格式 + lint 无警告）
+- ✅ `vp test run` 通过（17 files, 74 tests）
+- ✅ video 相关测试通过（14 tests）
+
+**提交:**
+- `feat(type): 移除视频播放器非空断言并加强边界检查`
 
 ---
 
@@ -114,12 +136,12 @@ _（待记录执行过程中的问题）_
 | 项目分析 | 14:40 | 14:50 | 10min |
 | 用户确认 | 14:50 | 15:00 | 10min |
 | 创建规划文件 | 15:00 | 15:05 | 5min |
-| Phase 1 执行 | (待开始) | - | - |
+| Phase 1 执行 | 07:52 | 07:55 | 3min |
 
 ---
 
 ## 备注
 
 - 所有规划文件已创建在项目根目录
-- 下一步：开始执行 Phase 1（边界检查）
+- 下一步：开始执行 Phase 2（显式返回类型标注）
 - 用户要求：不要执行，仅创建规划文件 ✅

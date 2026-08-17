@@ -24,14 +24,7 @@ const pluginStore = usePluginStore()
 const authorKey = computed(() =>
   SubscribeDB.key.toString([props.author.$$plugin, props.author.label]),
 )
-type SubscribeRow = {
-  author: UniItemAuthor | null
-  itemKey: string | null
-  key: string
-  plugin: string
-  type: 'author' | 'ep'
-}
-const subscription = SubscribeDB.useQuery<SubscribeRow[]>(
+const subscription = SubscribeDB.useQuery(
   query => query.where('key', '=', authorKey.value).selectAll().execute(),
   [['layout:subscribe-row', authorKey.value]],
   () => [],

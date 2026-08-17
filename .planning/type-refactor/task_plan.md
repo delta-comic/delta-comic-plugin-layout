@@ -13,11 +13,11 @@
 
 ## Current Phase
 
-**Status:** pending
+**Status:** completed
 
 ## Next Step
 
-执行阶段 1.1：修复边界检查和错误处理（最低风险，独立模块）
+执行阶段 1.2：Phase 2（显式返回类型标注）
 
 ---
 
@@ -25,7 +25,7 @@
 
 ### Phase 1: 类型系统加固 - 边界检查
 
-**Status:** pending
+**Status:** ✅ completed
 **Priority:** HIGH
 **Estimated Time:** 30 分钟
 
@@ -282,7 +282,7 @@
 
 | Error | Attempt | Resolution | Phase |
 |-------|---------|------------|-------|
-| (待记录) | - | - | - |
+| `SubscribeRow.vue:34` `Promise<...{type: string}[]>` 不可赋给 `Promise<SubscribeRow[]>`（next.11 适配 pre-existing） | 移除手写 `SubscribeRow` 类型，改用推断 | typecheck 通过 | 1 |
 
 ---
 
@@ -301,7 +301,7 @@
 
 ## Progress Tracking
 
-- **Phase 1 (边界检查):** pending
+- **Phase 1 (边界检查):** ✅ completed
 - **Phase 2 (显式返回类型):** pending
 - **Phase 3 (优化泛型):** pending
 - **Phase 4 (Settings.vue):** pending
@@ -312,6 +312,6 @@
 - **Phase 9 (完整验证):** pending
 
 **Total Phases:** 9
-**Completed:** 0
+**Completed:** 1
 **In Progress:** 0
-**Remaining:** 9
+**Remaining:** 8
