@@ -13,11 +13,11 @@
 
 ## Current Phase
 
-**Status:** completed
+**Status:** Phase 9 待执行
 
 ## Next Step
 
-执行阶段 1.2：Phase 2（显式返回类型标注）
+执行阶段 4：Settings.vue 类型守卫
 
 ---
 
@@ -51,7 +51,7 @@
 
 ### Phase 2: 类型系统加固 - 显式返回类型
 
-**Status:** pending
+**Status:** ✅ completed
 **Priority:** HIGH
 **Estimated Time:** 45-60 分钟
 
@@ -81,7 +81,7 @@
 
 ### Phase 3: 类型系统加固 - 优化泛型
 
-**Status:** pending
+**Status:** ✅ completed
 **Priority:** MEDIUM
 **Estimated Time:** 30 分钟
 
@@ -90,6 +90,8 @@
 2. 识别无用的泛型参数
 3. 简化类型签名，移除不必要的复杂度
 4. 保留有实际类型传递需求的泛型
+
+**结果:** 搜索后仅发现 `StreamPage<T extends object>`（合法：`data: T[]` 使用 T）与 `localizeConfig<T>`（其 `as T` 断言移交 Phase 4 处理）。utils/composables 无过度泛型化函数，无需改动。
 
 **Files to Modify:**
 - `packages/app/src/utils/` 目录下的工具函数
@@ -302,8 +304,8 @@
 ## Progress Tracking
 
 - **Phase 1 (边界检查):** ✅ completed
-- **Phase 2 (显式返回类型):** pending
-- **Phase 3 (优化泛型):** pending
+- **Phase 2 (显式返回类型):** ✅ completed
+- **Phase 3 (优化泛型):** ✅ completed
 - **Phase 4 (Settings.vue):** pending
 - **Phase 5 (VideoConfig 重构):** pending
 - **Phase 6 (Vue 组件审查):** pending
@@ -312,6 +314,6 @@
 - **Phase 9 (完整验证):** pending
 
 **Total Phases:** 9
-**Completed:** 1
+**Completed:** 3
 **In Progress:** 0
-**Remaining:** 8
+**Remaining:** 6

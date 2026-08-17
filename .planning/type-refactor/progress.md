@@ -123,6 +123,45 @@
 
 ---
 
+## Session 3: 2026-08-17 Phase 2 & 3 执行
+
+### 08:20 - Phase 2（显式返回类型）完成
+
+**执行的操作:**
+1. 为 `useLike`（content.ts）定义 `UseLikeReturn` 类型：
+   - `Omit<UseMutationReturn<unknown, UniItem, Error, LikeMutationContext>, 'mutateAsync'> & { likeItem: (item: UniItem) => Promise<unknown> }`
+   - 在 `defineMutation((): UseLikeReturn => {...})` 处显式标注
+2. 为 `useEpisodes`（useEpisodes.ts）定义 `UseEpisodesReturn` 接口：7 个成员的完整返回类型标注
+3. 为 `useImageReader`（useImageReader.ts）定义 `UseImageReaderReturn` 接口：13 个成员
+4. 为 `useArtplayer`（useArtplayer.ts）定义 `UseArtplayerReturn` 接口：5 个成员
+5. 函数签名处均添加 `: UseXxxReturn` 显式返回类型
+
+**验证:**
+- ✅ `vp run lib-build` 通过
+- ✅ `vp run -r typecheck` 通过（0 错误）
+- ✅ `vp test run` 通过（17 files, 74 tests）
+- ✅ `vp check --fix` 通过（格式 + lint 无警告）
+
+**提交:**
+- `feat(type): 为组合式函数添加显式返回类型接口`
+
+### 08:30 - Phase 3（优化泛型）完成
+
+**执行的操作:**
+1. 搜索所有 `<T extends` 泛型函数，仅发现 2 处：
+   - `StreamPage<T extends object>`（query.ts）→ 合法泛型，`data: T[]` 使用 T，保留
+   - `localizeConfig<T extends FormSingleConfigure>`（Settings.vue）→ 其 `as T` 断言移交 Phase 4 处理
+2. 检查 date.ts、ui.ts 等工具函数，无过度泛型化
+3. 结论：utils/composables 无需要简化的过度泛型，Phase 3 无需代码改动
+
+**验证:**
+- ✅ 无需代码修改，仅做泛型使用审计
+
+**提交:**
+- 无代码改动（仅更新规划文档）
+
+---
+
 ## 遇到的问题与解决
 
 _（待记录执行过程中的问题）_
@@ -137,11 +176,13 @@ _（待记录执行过程中的问题）_
 | 用户确认 | 14:50 | 15:00 | 10min |
 | 创建规划文件 | 15:00 | 15:05 | 5min |
 | Phase 1 执行 | 07:52 | 07:55 | 3min |
+| Phase 2 执行 | 08:20 | 08:39 | 19min |
+| Phase 3 执行 | 08:30 | 08:35 | 5min |
 
 ---
 
 ## 备注
 
-- 所有规划文件已创建在项目根目录
-- 下一步：开始执行 Phase 2（显式返回类型标注）
-- 用户要求：不要执行，仅创建规划文件 ✅
+- 所有规划文件已创建在 `.planning/` 目录
+- 下一步：开始执行 Phase 4（Settings.vue 类型守卫）
+- 用户要求：不要执行，仅创建规划文件 ✅（后续按用户指令执行）
