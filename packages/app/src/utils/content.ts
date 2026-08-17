@@ -1,5 +1,5 @@
 import type { UniItem } from '@delta-comic/model'
-import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
+import { defineMutation, useMutation, useQueryCache, type UseMutationReturn } from '@pinia/colada'
 import { useMessage } from 'naive-ui'
 
 import { createPageQueryKey, QueryKey } from '@/layout/default'
@@ -8,6 +8,13 @@ interface LikeSnapshot {
   isLiked: boolean
   likeNumber: number | undefined
 }
+
+type LikeMutationContext = { previous: LikeSnapshot }
+
+type UseLikeReturn = Omit<
+  UseMutationReturn<unknown, UniItem, Error, LikeMutationContext>,
+  'mutateAsync'
+> & { likeItem: (item: UniItem) => Promise<unknown> }
 
 export const toggledLikeSnapshot = ({ isLiked, likeNumber }: LikeSnapshot): LikeSnapshot => ({
   isLiked: !isLiked,
@@ -19,7 +26,7 @@ const applyLikeSnapshot = (item: UniItem, snapshot: LikeSnapshot) => {
   item.likeNumber = snapshot.likeNumber
 }
 
-export const useLike = defineMutation(() => {
+export const useLike = defineMutation((): UseLikeReturn => {
   const queryCache = useQueryCache()
   const message = useMessage()
   const createQueryKey = (item: UniItem) => [QueryKey.Detail, createPageQueryKey(item)]

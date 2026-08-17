@@ -1,7 +1,7 @@
 import { type PageKey, UniItem, type UniContentPage, type UniEp } from '@delta-comic/model'
 import { SharedFunction } from '@delta-comic/utils'
-import { useInfiniteQuery } from '@pinia/colada'
-import { computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { useInfiniteQuery, type UseInfiniteQueryReturn } from '@pinia/colada'
+import { computed, toValue, type ComputedRef, type MaybeRefOrGetter } from 'vue'
 
 import { translate } from '@/i18n'
 import { createPageQueryKey, QueryKey } from '@/layout/default'
@@ -12,7 +12,17 @@ interface UseEpisodesOptions {
   union?: MaybeRefOrGetter<UniItem | undefined>
 }
 
-export const useEpisodes = (options: UseEpisodesOptions) => {
+interface UseEpisodesReturn {
+  currentEpisode: ComputedRef<UniEp | undefined>
+  currentEpisodeId: ComputedRef<string>
+  currentEpisodeIndex: ComputedRef<number>
+  episodes: ComputedRef<UniEp[]>
+  episodeTitle: (episode: UniEp | undefined, index: number) => string
+  query: UseInfiniteQueryReturn<StreamPage<UniEp>, Error, PageKey>
+  routeToEpisode: (episode: UniEp) => boolean
+}
+
+export const useEpisodes = (options: UseEpisodesOptions): UseEpisodesReturn => {
   const query = useInfiniteQuery<StreamPage<UniEp>, Error, PageKey>({
     getNextPageParam: page => page.nextPage,
     getPreviousPageParam: page => page.lastPage,

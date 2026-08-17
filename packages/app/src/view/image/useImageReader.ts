@@ -8,13 +8,31 @@ import {
   shallowRef,
   toValue,
   watch,
+  type ComputedRef,
   type MaybeRefOrGetter,
+  type ShallowRef,
 } from 'vue'
 
 interface UseImageReaderOptions {
   images: MaybeRefOrGetter<UniImage[]>
   isContinuous: MaybeRefOrGetter<boolean>
   pageKey: MaybeRefOrGetter<string>
+}
+
+interface UseImageReaderReturn {
+  canGoNext: ComputedRef<boolean>
+  canGoPrevious: ComputedRef<boolean>
+  currentIndex: Readonly<ShallowRef<number>>
+  goToSlide: (offset: -1 | 1) => void
+  progress: ComputedRef<number>
+  selectedIndex: Readonly<ShallowRef<number>>
+  selectPage: (value: number) => void
+  setContinuousReader: (value: HTMLElement | null) => void
+  setCurrentIndex: (value: number) => void
+  setSwiper: (value?: SwiperClass) => void
+  showMenu: Readonly<ShallowRef<boolean>>
+  swiper: Readonly<ShallowRef<SwiperClass | undefined>>
+  toggleMenu: () => void
 }
 
 const continuousImageSelector = '[data-continuous-image]'
@@ -24,7 +42,7 @@ const imageIndex = (element: Element) => {
   return Number.isInteger(value) ? value : undefined
 }
 
-export const useImageReader = (options: UseImageReaderOptions) => {
+export const useImageReader = (options: UseImageReaderOptions): UseImageReaderReturn => {
   const swiper = shallowRef<SwiperClass>()
   const continuousReader = shallowRef<HTMLElement | null>(null)
   const currentIndex = shallowRef(0)

@@ -7,6 +7,7 @@ import {
   shallowRef,
   toValue,
   watch,
+  type ComputedRef,
   type MaybeRefOrGetter,
   type ShallowRef,
 } from 'vue'
@@ -29,6 +30,14 @@ interface UseArtplayerOptions {
   runtime?: ArtplayerRuntime
 }
 
+interface UseArtplayerReturn {
+  controlsVisible: Readonly<ShallowRef<boolean>>
+  error: Readonly<ShallowRef<Error | undefined>>
+  isFullscreen: ComputedRef<boolean>
+  player: Readonly<ShallowRef<Artplayer | null>>
+  reload: () => void
+}
+
 const unlockScreenOrientation = async () => {
   try {
     screen.orientation.unlock()
@@ -37,7 +46,7 @@ const unlockScreenOrientation = async () => {
   }
 }
 
-export const useArtplayer = (options: UseArtplayerOptions) => {
+export const useArtplayer = (options: UseArtplayerOptions): UseArtplayerReturn => {
   const runtime = options.runtime ?? artplayerRuntime
   const fullscreen = useFullscreen()
   const router = useRouter()
