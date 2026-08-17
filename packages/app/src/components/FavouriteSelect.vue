@@ -29,15 +29,15 @@ const itemKey = computed(() =>
 )
 const favouriteQueryKey = 'layout:favourite-select'
 
-const { state: allFavouriteCards } = FavouriteDB.useQueryCard(
+const { state: allFavouriteCards } = FavouriteDB.useQueryCard<FavouriteDB.Card[]>(
   query => query.selectAll().execute(),
-  [`${favouriteQueryKey}:cards`],
+  [[`${favouriteQueryKey}:cards`]],
   () => [],
 )
 
-const { data: favouriteItems } = FavouriteDB.useQueryItem(
+const { data: favouriteItems } = FavouriteDB.useQueryItem<Pick<FavouriteDB.Item, 'belongTo'>[]>(
   query => query.select('belongTo').execute(),
-  [`${favouriteQueryKey}:card-counts`],
+  [[`${favouriteQueryKey}:card-counts`]],
   () => [],
 )
 const cardCounts = computed(() => {
@@ -110,7 +110,7 @@ const toggleFavourite = () => favouriteThis(thisFavouriteCount.value > 0 ? [] : 
 
 const { data: thisFavouriteCount } = FavouriteDB.useQueryItem(
   query => DBUtils.countDb(query.where('itemKey', '=', itemKey.value)),
-  [`${favouriteQueryKey}:item-count`, itemKey.value],
+  [[`${favouriteQueryKey}:item-count`, itemKey.value]],
   () => 0,
 )
 </script>

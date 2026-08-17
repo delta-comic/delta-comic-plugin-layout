@@ -293,3 +293,5 @@ export const layoutMessages = {
 
 export const translate = (key: string, params?: Record<string, number | string>) =>
   pluginI18n.translate(key, params)
+
+export const translateText = (value: string) => pluginI18n.translateText(value)

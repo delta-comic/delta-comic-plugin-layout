@@ -22,7 +22,7 @@ const labels: PlayerLabels = {
   videoLoadFailed: 'Failed',
 }
 
-const videoConfig = (...sources: VideoConfig[number][]) => sources as VideoConfig
+const videoConfig = (...sources: VideoConfig['sources']): VideoConfig => ({ sources })
 
 class FakeArtplayer {
   public static FAST_FORWARD_VALUE = 2

@@ -7,6 +7,7 @@ import {
   shallowRef,
   toValue,
   watch,
+  type ComputedRef,
   type MaybeRefOrGetter,
   type ShallowRef,
 } from 'vue'
@@ -21,12 +22,32 @@ import {
   type PlayerLabels,
 } from './player'
 
+/** `useArtplayer` 的入参。 */
 interface UseArtplayerOptions {
+  /** 视频播放配置；变为 `undefined` 或新值时重建播放器。 */
   config: MaybeRefOrGetter<VideoConfig | undefined>
+  /** 播放器挂载容器（模板 ref）。 */
   container: Readonly<ShallowRef<HTMLDivElement | null>>
+  /** 播放器界面文案（已 i18n）。 */
   labels: PlayerLabels
+  /** 封面图地址，可动态更新。 */
   poster?: MaybeRefOrGetter<string | undefined>
+  /** 播放器工厂，测试时注入 mock；默认使用真实 Artplayer。 */
   runtime?: ArtplayerRuntime
+}
+
+/** `useArtplayer` 的返回值。 */
+interface UseArtplayerReturn {
+  /** 控制栏是否可见。 */
+  controlsVisible: Readonly<ShallowRef<boolean>>
+  /** 最近的播放错误（含 `video:error` 与创建失败）。 */
+  error: Readonly<ShallowRef<Error | undefined>>
+  /** 宿主页面是否处于全屏。 */
+  isFullscreen: ComputedRef<boolean>
+  /** 当前 Artplayer 实例，销毁或重建期间为 `null`。 */
+  player: Readonly<ShallowRef<Artplayer | null>>
+  /** 重新加载播放器（递增内部 token 触发重建）。 */
+  reload: () => void
 }
 
 const unlockScreenOrientation = async () => {
@@ -37,7 +58,16 @@ const unlockScreenOrientation = async () => {
   }
 }
 
-export const useArtplayer = (options: UseArtplayerOptions) => {
+/**
+ * Artplayer 播放器组合式函数。
+ *
+ * 监听 `container`/`config`/`reloadToken` 变化重建播放器（按代际
+ * 编号丢弃过期创建结果），并同步宿主全屏状态：播放器全屏事件驱动
+ * 宿主页面全屏，宿主全屏变化反向同步回播放器。
+ *
+ * @since 0.9.0
+ */
+export const useArtplayer = (options: UseArtplayerOptions): UseArtplayerReturn => {
   const runtime = options.runtime ?? artplayerRuntime
   const fullscreen = useFullscreen()
   const router = useRouter()
@@ -78,14 +108,16 @@ export const useArtplayer = (options: UseArtplayerOptions) => {
           runtime.destroy(created)
           return
         }
-        created.on('control', state => (controlsVisible.value = state))
-        created.on('fullscreen', state => void setHostFullscreen(state))
-        created.on('fullscreenWeb', state => void setHostFullscreen(state))
-        created.on('video:error', value => {
+        if (!created) return
+        const instance = created
+        instance.on('control', state => (controlsVisible.value = state))
+        instance.on('fullscreen', state => void setHostFullscreen(state))
+        instance.on('fullscreenWeb', state => void setHostFullscreen(state))
+        instance.on('video:error', value => {
           error.value = value
-          created!.notice.show = options.labels.videoLoadFailed
+          instance.notice.show = options.labels.videoLoadFailed
         })
-        player.value = created
+        player.value = instance
       } catch (value) {
         error.value = value instanceof Error ? value : new Error(String(value))
       }

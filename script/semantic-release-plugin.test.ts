@@ -26,7 +26,7 @@ async function createPluginDist(version: string) {
     entry: { cssPath: 'index.css', jsPath: 'index.js' },
     name: { display: 'Layout', id: 'layout' },
     require: [{ id: 'core' }],
-    version: { plugin: version, supportCore: '>=3.0.0-next.10 <4.0.0' },
+    version: { plugin: version, supportCore: '>=3.0.0-next.12 <4.0.0' },
   }
   const archive = new JSZip()
   archive.file('manifest.json', JSON.stringify(manifest))
