@@ -1,5 +1,17 @@
 <script setup lang="ts">
-import type { FormDefaultValue, FormSingleConfigure } from '@delta-comic/model'
+import type {
+  FormDefaultValue,
+  FormSingleConfigure,
+  FormSingleResult,
+  FormCheckbox,
+  FormDate,
+  FormDateRange,
+  FormNumber,
+  FormPairs,
+  FormRadio,
+  FormString,
+  FormSwitch,
+} from '@delta-comic/model'
 import { useConfig } from '@delta-comic/plugin'
 import { DcCell, DcCellGroup } from '@delta-comic/ui'
 
@@ -11,20 +23,62 @@ type ConfigValue = FormDefaultValue[keyof FormDefaultValue]
 const setConfigValue = (values: Record<string, ConfigValue>, field: string, value: ConfigValue) =>
   (values[field] = value)
 
-const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
-  const localized: FormSingleConfigure = {
-    ...config,
-    info: translate(config.info),
-    placeholder: config.placeholder ? translate(config.placeholder) : undefined,
+const isStringArray = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every(item => typeof item === 'string')
+
+const isDateRange = (value: unknown): value is [string, string] =>
+  Array.isArray(value) && value.length === 2 && value.every(item => typeof item === 'string')
+
+const isPair = (value: unknown): value is { key: string; value: string } =>
+  typeof value === 'object' &&
+  value !== null &&
+  'key' in value &&
+  typeof value.key === 'string' &&
+  'value' in value &&
+  typeof value.value === 'string'
+
+const isPairs = (value: unknown): value is { key: string; value: string }[] =>
+  Array.isArray(value) && value.every(isPair)
+
+function getConfigValue(
+  config: FormString | FormDate | FormRadio,
+  value: ConfigValue | undefined,
+): string
+function getConfigValue(config: FormNumber, value: ConfigValue | undefined): number
+function getConfigValue(config: FormSwitch, value: ConfigValue | undefined): boolean
+function getConfigValue(config: FormCheckbox, value: ConfigValue | undefined): string[]
+function getConfigValue(config: FormDateRange, value: ConfigValue | undefined): [string, string]
+function getConfigValue(
+  config: FormPairs,
+  value: ConfigValue | undefined,
+): FormSingleResult<FormPairs>
+function getConfigValue(config: FormSingleConfigure, value: ConfigValue | undefined): ConfigValue {
+  switch (config.type) {
+    case 'string':
+    case 'date':
+    case 'radio':
+      return typeof value === 'string' ? value : (config.defaultValue ?? '')
+    case 'number':
+      return typeof value === 'number' ? value : (config.defaultValue ?? 0)
+    case 'switch':
+      return typeof value === 'boolean' ? value : (config.defaultValue ?? false)
+    case 'checkbox':
+      return isStringArray(value) ? value : (config.defaultValue ?? [])
+    case 'dateRange':
+      return isDateRange(value) ? value : (config.defaultValue ?? ['', ''])
+    case 'pairs':
+      return isPairs(value) ? value : (config.defaultValue ?? [])
   }
-  if (localized.type === 'radio' || localized.type === 'checkbox') {
-    localized.selects = localized.selects.map(option => ({
-      ...option,
-      label: translate(option.label),
-    }))
-  }
-  return localized as T
 }
+
+const localizeConfig = <T extends FormSingleConfigure>(config: T): T => ({
+  ...config,
+  info: translate(config.info),
+  placeholder: config.placeholder ? translate(config.placeholder) : undefined,
+  ...(config.type === 'radio' || config.type === 'checkbox'
+    ? { selects: config.selects.map(option => ({ ...option, label: translate(option.label) })) }
+    : {}),
+})
 </script>
 
 <template>
@@ -39,7 +93,7 @@ const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
           <template #right-icon>
             <DcFormSwitch
               :config="localizeConfig(config)"
-              :model-value="data.value[field] as boolean"
+              :model-value="getConfigValue(config, data.value[field])"
               @update:model-value="setConfigValue(data.value, field, $event)"
             />
           </template>
@@ -48,7 +102,7 @@ const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
           <DcCell center clickable :title="translate(config.info)">{{ data.value[field] }}</DcCell>
           <template #empty>
             <DcFormString
-              :model-value="data.value[field] as string"
+              :model-value="getConfigValue(config, data.value[field])"
               class="max-w-[80vw]!"
               :config="localizeConfig(config)"
               @update:model-value="setConfigValue(data.value, field, $event)"
@@ -59,7 +113,7 @@ const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
           <DcCell center clickable :title="translate(config.info)">{{ data.value[field] }}</DcCell>
           <template #empty>
             <DcFormNumber
-              :model-value="data.value[field] as number"
+              :model-value="getConfigValue(config, data.value[field])"
               class="max-w-[80vw]!"
               :config="localizeConfig(config)"
               @update:model-value="setConfigValue(data.value, field, $event)"
@@ -68,7 +122,7 @@ const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
         </NPopselect>
         <NPopselect
           v-else-if="config.type === 'radio'"
-          :value="data.value[field] as string"
+          :value="getConfigValue(config, data.value[field])"
           :options="localizeConfig(config).selects"
           placement="bottom-end"
           size="huge"
@@ -81,7 +135,7 @@ const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
         </NPopselect>
         <NPopselect
           v-else-if="config.type === 'checkbox'"
-          :value="data.value[field] as string[]"
+          :value="getConfigValue(config, data.value[field])"
           multiple
           :options="localizeConfig(config).selects"
           placement="bottom-end"
@@ -98,21 +152,21 @@ const localizeConfig = <T extends FormSingleConfigure>(config: T): T => {
           <NModal v-model:show="value.show" preset="dialog" :title="translate(config.info)">
             <DcFormDate
               v-if="config.type === 'date'"
-              :model-value="data.value[field] as string"
+              :model-value="getConfigValue(config, data.value[field])"
               class="max-w-[80vw]!"
               :config="localizeConfig(config)"
               @update:model-value="setConfigValue(data.value, field, $event)"
             />
             <DcFormDateRange
               v-else-if="config.type === 'dateRange'"
-              :model-value="data.value[field] as [string, string]"
+              :model-value="getConfigValue(config, data.value[field])"
               class="max-w-[80vw]!"
               :config="localizeConfig(config)"
               @update:model-value="setConfigValue(data.value, field, $event)"
             />
             <DcFormPairs
               v-else-if="config.type === 'pairs'"
-              :model-value="data.value[field] as { key: string; value: string }[]"
+              :model-value="getConfigValue(config, data.value[field])"
               class="max-w-[80vw]!"
               :config="localizeConfig(config)"
               @update:model-value="setConfigValue(data.value, field, $event)"
