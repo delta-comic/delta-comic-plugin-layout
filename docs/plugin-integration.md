@@ -253,7 +253,6 @@ export default defineDeltaComicPlugin({
   name: 'my-content',
   i18n: {
     'zh-CN': { 'my-content.name': '我的视频' },
-    'en-US': { 'my-content.name': 'My Video' },
   },
 })
 ```
@@ -274,6 +273,6 @@ export default defineDeltaComicPlugin({
    不得 import 子路径；`@delta-comic/plugin-layout` 的源码包仅内置插件（与宿主同仓库
    构建）可直接引用。
 4. **i18n**：插件内所有用户可见字符串必须使用 `pluginI18n.translate(key)`，不要直接
-   使用布局插件导出的中文/英文文案。
+    使用布局插件导出的简体中文文案。
 5. **版本匹配**：`require.download` 应指向与 `supportCore` 兼容的布局插件版本；
    预览版（`-next.N`）与稳定版契约可能不同，升级前先核对 §5 中的签名。
