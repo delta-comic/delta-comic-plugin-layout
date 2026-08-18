@@ -3,7 +3,7 @@ import type { Swiper as SwiperClass } from 'swiper'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { createApp, h, nextTick, shallowRef } from 'vue'
 
-import { useImageReader } from './useImageReader'
+import { useImageReader } from '../../../src/view/image/useImageReader'
 
 const flush = async () => {
   await nextTick()
@@ -18,7 +18,7 @@ afterEach(() => {
 })
 
 const mountReader = (continuous = false) => {
-  const images = shallowRef(['one', 'two', 'three'] as unknown as UniImage[])
+  const images = shallowRef(['one', 'two', 'three'] as UniImage[])
   const isContinuous = shallowRef(continuous)
   const pageKey = shallowRef('page-1')
   let reader!: ReturnType<typeof useImageReader>
@@ -47,11 +47,7 @@ const createContinuousContainer = () => {
 describe('useImageReader', () => {
   it('coordinates paged navigation, selection, progress, and page resets', async () => {
     const mounted = mountReader()
-    const swiper = {
-      slideNext: vi.fn(),
-      slidePrev: vi.fn(),
-      slideTo: vi.fn(),
-    } as unknown as SwiperClass
+    const swiper = { slideNext: vi.fn(), slidePrev: vi.fn(), slideTo: vi.fn() } as SwiperClass
     mounted.reader.setSwiper(swiper)
 
     mounted.reader.setCurrentIndex(1)
@@ -116,8 +112,8 @@ describe('useImageReader', () => {
           rootBounds: { top: 0 },
           target: elements[1],
         },
-      ] as unknown as IntersectionObserverEntry[],
-      observer as unknown as IntersectionObserver,
+      ] as IntersectionObserverEntry[],
+      observer as IntersectionObserver,
     )
     expect(mounted.reader.currentIndex.value).toBe(1)
 

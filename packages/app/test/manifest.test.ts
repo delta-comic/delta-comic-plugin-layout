@@ -1,10 +1,10 @@
 import { DELTA_COMIC_PLUGIN_API_VERSION } from '@delta-comic/model'
 import { describe, expect, it } from 'vitest'
 
-import { createPluginManifest } from './manifest'
+import { createPluginManifest } from '../src/manifest'
 
 describe('plugin manifest', () => {
-  it('targets the next.11 API v1 host contract', () => {
+  it('targets the next.13 API v1 host contract', () => {
     const manifest = createPluginManifest('1.2.3')
 
     expect(manifest).toMatchObject({

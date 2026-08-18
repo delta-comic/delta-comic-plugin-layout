@@ -31,8 +31,8 @@
     "release:preview:dry-run": "node ./script/release-branches.mts preview --dry-run",
     "release:stable": "node ./script/release-branches.mts stable",
     "release:stable:dry-run": "node ./script/release-branches.mts stable --dry-run",
-    "test": "vp test",
-    "test:coverage": "vp test run --coverage",
+    "test": "node ./script/test.mts",
+    "test:coverage": "node ./script/test.mts --coverage",
     "typecheck": "tsc -p tsconfig.json --noEmit && vp run --filter @delta-comic/plugin-layout typecheck",
     "vp:install": "vp install"
   },

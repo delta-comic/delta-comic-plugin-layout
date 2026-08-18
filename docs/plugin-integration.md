@@ -22,7 +22,7 @@
 2. 通过 module augmentation 声明 `layout` 暴露的契约类型；
 3. 在运行时经 `pluginModelChannels.expose` 读取暴露值。
 
-> 版本基线：本文示例针对插件 API v1、布局插件 `0.10.0-next.5+`。跨版本时请以
+> 版本基线：本文示例针对插件 API v1、布局插件 `0.9.2+`。跨版本时请以
 > 实际安装版本的 `LayoutPluginExpose` 声明为准。
 
 ## 2. 声明依赖
@@ -41,7 +41,7 @@
     { "id": "core" },
     {
       "id": "layout",
-      "download": "https://github.com/delta-comic/delta-comic-plugin-layout/releases/download/0.10.0-next.5/plugin.zip"
+      "download": "https://github.com/delta-comic/delta-comic-plugin-layout/releases/download/0.9.2/plugin.zip"
     }
   ]
 }
@@ -268,8 +268,9 @@ export default defineDeltaComicPlugin({
 1. **依赖顺序**：宿主按 `require` 依赖图串行激活，`layout` 一定先于你的插件激活，
    但 `onBooted` 之前不保证注册表已就绪；读取失败应降级而非崩溃。
 2. **只读契约**：`LayoutPluginExpose` 全部字段为 `readonly`，不要修改暴露值；
-   跨插件调用请用 `SharedFunction.callWitch(name, 'layout', ...args)`。
-3. **导入约束**：远程插件只能从 `@delta-comic/{plugin,model,utils,ui}` 顶层导入，
+   跨插件调用请用实际存在的 `SharedFunction.call(name, ...args)`；需要按插件筛选时，
+   使用宿主提供的按插件调用 API。
+3. **导入约束**：远程插件只能从 `@delta-comic/{plugin,model,utils,ui,db,logger}` 顶层导入，
    不得 import 子路径；`@delta-comic/plugin-layout` 的源码包仅内置插件（与宿主同仓库
    构建）可直接引用。
 4. **i18n**：插件内所有用户可见字符串必须使用 `pluginI18n.translate(key)`，不要直接

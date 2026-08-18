@@ -4,7 +4,7 @@ vi.mock('@delta-comic/plugin', () => ({ pluginI18n: { translate: vi.fn((key: str
 
 import { pluginI18n } from '@delta-comic/plugin'
 
-import { layoutMessages, translate } from '.'
+import { layoutMessages, translate } from '../../src/i18n'
 
 const entries = (value: object, prefix = ''): [string, string][] =>
   Object.entries(value).flatMap(([key, child]) => {

@@ -68,6 +68,6 @@ export default defineConfig(({ command, mode }) => ({
   }),
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { host: true, port: 6174, strictPort: true },
-  test: { environment: 'happy-dom', include: ['src/**/*.test.ts'] },
+  test: { environment: 'happy-dom', include: ['test/**/*.test.ts'] },
   oxc: { exclude: [/\.js$/, /\.d\.[cm]?ts$/] },
 }))

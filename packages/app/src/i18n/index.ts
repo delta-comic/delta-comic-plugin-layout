@@ -48,6 +48,7 @@ const zhCN = {
         vertical: '垂直翻页',
       },
     },
+    manifest: { description: 'Delta Comic 的基础内容布局插件', displayName: '基础布局组件' },
     content: {
       comments: '评论',
       episode: '选集',
@@ -143,6 +144,7 @@ const zhTW = {
         vertical: '垂直翻頁',
       },
     },
+    manifest: { description: 'Delta Comic 的基礎內容佈局外掛', displayName: '基礎佈局元件' },
     content: {
       comments: '留言',
       episode: '選集',
@@ -237,6 +239,10 @@ const enUS = {
         title: 'Image reader',
         vertical: 'Vertical paging',
       },
+    },
+    manifest: {
+      description: 'The basic content layout plugin for Delta Comic',
+      displayName: 'Basic Layout Components',
     },
     content: {
       comments: 'Comments',

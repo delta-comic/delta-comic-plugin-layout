@@ -5,9 +5,9 @@ import { pluginName } from './symbol.js'
 export const pluginManifestBase = {
   apiVersion: DELTA_COMIC_PLUGIN_API_VERSION,
   author: 'wenxig',
-  description: 'Delta Comic 的基础内容布局插件',
+  description: 'layout.manifest.description',
   entry: { cssPath: 'index.css', jsPath: 'index.js' },
-  name: { display: '基础布局组件', id: pluginName },
+  name: { display: 'layout.manifest.displayName', id: pluginName },
   require: [{ id: 'core' }],
 } satisfies Omit<PluginManifest, 'version'>
 
