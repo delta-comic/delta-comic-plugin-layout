@@ -26,7 +26,7 @@ export const createPluginManifest = (version: string): PluginManifest => ({
   version: { plugin: version, supportCore: '>=3.0.0-next.14 <4.0.0' },
 })
 
-export default defineConfig(({ command }) => ({
+export default defineConfig(({ command, mode }) => ({
   base: './',
   build: {
     emptyOutDir: true,
@@ -64,6 +64,16 @@ export default defineConfig(({ command }) => ({
       import('rolldown-plugin-dts'),
     ])
 
+    const pluginHelpers =
+      mode === 'test'
+        ? []
+        : [
+            deltaComic(
+              createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version),
+              command,
+            ),
+          ]
+
     return [
       vue(),
       Components({
@@ -81,10 +91,7 @@ export default defineConfig(({ command }) => ({
             }),
           ]
         : []),
-      deltaComic(
-        createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version),
-        command,
-      ),
+      ...pluginHelpers,
     ]
   }),
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
