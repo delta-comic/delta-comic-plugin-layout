@@ -1,0 +1,6 @@
+- Formatting: 2 spaces, no semicolons, single quotes, max 100 columns; run `vp fmt`/`vp lint` rather than manual reformatting.
+- Use Tailwind for UI styling; ordinary CSS only for dynamic values, `@apply`, or lightweight startup styles.
+- Vue/component tags use PascalCase. New visible strings must use `@delta-comic/plugin` i18n.
+- Avoid unsafe type assertions, especially `as unknown as` and `any`; prefer typed APIs and constraints.
+- Tests mirror production paths outside production dirs, generally under `packages/*/test` or `script`.
+- Never manually edit generated `components.d.ts` or `typed-router.d.ts`.

@@ -66,8 +66,8 @@ export async function validatePluginArtifacts(distDirectory = resolve('packages/
   const manifest = parsePluginManifest(JSON.parse(await readFile(manifestPath, 'utf8')))
 
   await Promise.all([
-    access(join(distDirectory, manifest.entry.cssPath)),
-    access(join(distDirectory, manifest.entry.jsPath)),
+    access(join(distDirectory, 'index.css')),
+    access(join(distDirectory, 'index.js')),
   ])
 
   const archive = await JSZip.loadAsync(await readFile(archivePath))
@@ -75,7 +75,7 @@ export async function validatePluginArtifacts(distDirectory = resolve('packages/
     .filter(file => !file.dir)
     .map(file => file.name)
     .toSorted()
-  const requiredFiles = ['manifest.json', manifest.entry.cssPath, manifest.entry.jsPath]
+  const requiredFiles = ['manifest.json', 'index.css', 'index.js']
   for (const file of requiredFiles) {
     if (!archive.file(file)) throw new Error(`plugin.zip is missing ${file}`)
   }

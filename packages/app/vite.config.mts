@@ -26,9 +26,21 @@ export const createPluginManifest = (version: string): PluginManifest => ({
   version: { plugin: version, supportCore: '>=3.0.0-next.14 <4.0.0' },
 })
 
-export default defineConfig(({ command, mode }) => ({
+export default defineConfig(({ command }) => ({
   base: './',
-  build: { emptyOutDir: true, minify: 'oxc', outDir: 'dist', sourcemap: false, target: 'es2022' },
+  build: {
+    emptyOutDir: true,
+    minify: 'oxc',
+    outDir: 'dist',
+    rollupOptions: {
+      output: {
+        chunkFileNames: '[name]-[hash].js',
+        entryFileNames: chunk => (chunk.name.endsWith('.d') ? 'index.d.ts' : 'index.js'),
+      },
+    },
+    sourcemap: false,
+    target: 'es2022',
+  },
   css: {
     lightningcss: { targets: browserslistToTargets(browserslist('> 1%, last 2 versions')) },
     transformer: 'lightningcss',
@@ -52,28 +64,7 @@ export default defineConfig(({ command, mode }) => ({
       import('rolldown-plugin-dts'),
     ])
 
-    // The host helper resolves its Vite types from the plugin peer tree, while Vite+ exposes
-    // its own compatible copy. Keep the cast at this single integration boundary.
-    const pluginHelpers =
-      mode === 'test'
-        ? []
-        : deltaComic(
-            createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version),
-            command,
-          )
-
-    const typeGen =
-      command === 'build'
-        ? [
-            dts({
-              vue: true,
-              tsconfig: resolve(import.meta.dirname, './tsconfig.app.json'),
-              sourcemap: true,
-            }),
-          ]
-        : []
-
-    const frameworkPlugins = [
+    return [
       vue(),
       Components({
         dts: true,
@@ -81,8 +72,20 @@ export default defineConfig(({ command, mode }) => ({
         resolvers: [NaiveUiResolver(), DeltaComicUiResolver()],
       }),
       tailwindcss(),
+      ...(command === 'build'
+        ? [
+            dts({
+              vue: true,
+              tsconfig: resolve(import.meta.dirname, './tsconfig.app.json'),
+              sourcemap: true,
+            }),
+          ]
+        : []),
+      deltaComic(
+        createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version),
+        command,
+      ),
     ]
-    return [...frameworkPlugins, ...pluginHelpers, ...typeGen]
   }),
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { host: true, port: 6174, strictPort: true },
