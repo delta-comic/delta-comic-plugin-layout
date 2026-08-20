@@ -1,0 +1,5 @@
+- TypeScript + Vue 3 Composition API; Vue SFCs under `packages/app/src`.
+- Vite+ (`vp`) wraps Vite/Rolldown, Vitest, Oxlint/Oxfmt, and task runner. Do not invoke raw `pnpm`, `vite`, `vitest`, `oxlint`, or `oxfmt` for project workflows.
+- Package manager/runtime pins: Node `25.9.0`, pnpm `12.0.0-rc.3`; use global `vp`.
+- App declaration generation uses `rolldown-plugin-dts` with Vue/Volar support and `tsconfig.app.json`.
+- Styling uses Tailwind CSS; i18n is required for new user-visible app strings.
