@@ -1,18 +1,18 @@
 import { DELTA_COMIC_PLUGIN_API_VERSION } from '@delta-comic/model'
 import { describe, expect, it } from 'vitest'
 
-import { createPluginManifest } from './manifest'
+import { createPluginManifest } from '../vite.config'
 
 describe('plugin manifest', () => {
-  it('targets the next.11 API v1 host contract', () => {
+  it('targets the next.14 API v1 host contract', () => {
     const manifest = createPluginManifest('1.2.3')
 
     expect(manifest).toMatchObject({
       apiVersion: DELTA_COMIC_PLUGIN_API_VERSION,
-      entry: { cssPath: 'index.css', jsPath: 'index.js' },
+      entry: { cssPath: 'src/index.css', jsPath: 'src/main.ts' },
       name: { id: 'layout' },
       require: [{ id: 'core' }],
-      version: { plugin: '1.2.3', supportCore: '>=3.0.0-next.12 <4.0.0' },
+      version: { plugin: '1.2.3', supportCore: '>=3.0.0-next.14 <4.0.0' },
     })
   })
 

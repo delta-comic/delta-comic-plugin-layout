@@ -8,9 +8,13 @@ const serviceMocks = vi.hoisted(() => ({
   refetch: vi.fn(),
   routerBack: vi.fn(),
   useQuery: vi.fn(),
+  useInfiniteQuery: vi.fn(),
 }))
 
-vi.mock('@pinia/colada', () => ({ useQuery: serviceMocks.useQuery }))
+vi.mock('@pinia/colada', () => ({
+  useInfiniteQuery: serviceMocks.useInfiniteQuery,
+  useQuery: serviceMocks.useQuery,
+}))
 vi.mock('@delta-comic/plugin', async () => {
   const { shallowRef } = await import('vue')
   return {
@@ -40,7 +44,7 @@ vi.mock('@delta-comic/utils', async () => {
 vi.mock('vue-router', () => ({ useRouter: () => ({ back: serviceMocks.routerBack }) }))
 vi.mock('@/i18n', () => ({ translate: (key: string) => key }))
 vi.mock('@/utils/content', () => ({ useLike: () => ({ likeItem: serviceMocks.likeItem }) }))
-vi.mock('./image/ImageStage.vue', async () => {
+vi.mock('../../src/view/image/ImageStage.vue', async () => {
   const { defineComponent, h } = await import('vue')
   return {
     default: defineComponent({
@@ -50,7 +54,7 @@ vi.mock('./image/ImageStage.vue', async () => {
     }),
   }
 })
-vi.mock('./image/ImageOverlay.vue', async () => {
+vi.mock('../../src/view/image/ImageOverlay.vue', async () => {
   const { defineComponent, h } = await import('vue')
   return {
     default: defineComponent({
@@ -67,14 +71,14 @@ vi.mock('./image/ImageOverlay.vue', async () => {
 
 import type { ContentImagePage } from '@/model'
 
-import ImageView from './Image.vue'
+import ImageView from '../../src/view/Image.vue'
 
 const page = {
   contentType: ['reader', 'comic'],
   ep: 'episode-1',
   fetchImages: vi.fn(),
   id: 'item-1',
-} as unknown as ContentImagePage
+} as ContentImagePage
 
 const apps: ReturnType<typeof createApp>[] = []
 let query: {
@@ -137,7 +141,7 @@ describe('Image view states', () => {
   })
 
   it('forwards existing extension slots through the split components', async () => {
-    query.data.value = ['image'] as unknown as UniImage[]
+    query.data.value = ['image'] as UniImage[]
     const root = await mountView()
 
     expect(root.querySelector('#content-extension')).not.toBeNull()

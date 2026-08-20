@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { describe, expect, it } from 'vitest'
 
-import { createDateString, type DateFormatLabels } from './date'
+import { createDateString, type DateFormatLabels } from '../../src/utils/date'
 
 const labels: DateFormatLabels = {
   differentYearFormat: '[different] YYYY-MM-DD HH:mm',

@@ -1,7 +1,7 @@
 import type { Swiper } from 'swiper'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { useSwipeDbClick } from './ui'
+import { useSwipeDbClick } from '../../src/utils/ui'
 
 const swiper = {} as Swiper
 const pointer = (pageX: number, pageY: number) => ({ pageX, pageY }) as PointerEvent
@@ -73,7 +73,7 @@ describe('useSwipeDbClick', () => {
     const click = vi.fn()
     const gesture = useSwipeDbClick(click, undefined, { moveThreshold: 5 })
     const touch = (touches: { pageX: number; pageY: number }[], changedTouches = touches) =>
-      ({ changedTouches, touches }) as unknown as TouchEvent
+      ({ changedTouches, touches }) as TouchEvent
 
     gesture.handleTouchstart(swiper, touch([], [{ pageX: 4, pageY: 8 }]))
     gesture.handleTouchmove(swiper, touch([{ pageX: 5, pageY: 9 }]))

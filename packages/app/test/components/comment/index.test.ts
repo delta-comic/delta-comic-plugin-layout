@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { createChildrenCommentQueryKey, createMainCommentQueryKey } from '.'
+import {
+  createChildrenCommentQueryKey,
+  createMainCommentQueryKey,
+} from '../../../src/components/comment'
 
 describe('comment query keys', () => {
   it('separates top-level comments by item and content page implementation', () => {

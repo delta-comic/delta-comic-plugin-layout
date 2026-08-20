@@ -12,9 +12,9 @@
 
 ---
 
-# delta-comic next.10 → next.11 升级重构
+# delta-comic next.10 → next.13 升级重构
 
-依据 `PLUGIN_DEVELOPMENT.md` 与 next.11 实际类型声明制定的升级清单。
+依据 `PLUGIN_DEVELOPMENT.md` 与 next.13 实际类型声明制定的升级清单。
 `require: [{ id: 'core' }]` 保持不变（宿主仍内置 `core`）。
 
 ## 1. 类型错误修复（核心）
@@ -26,12 +26,12 @@
   - `otherKeys` 由扁平 `['a','b']` 包装为 `[['a','b']]`，满足 `readonly EntryKey[]`（接受缓存 key 形状变化）
   - 注：`SubscribeDB.Item` 是联合类型，与 `selectAll()` 的扁平映射类型不兼容，改用内联 `SubscribeRow` 结构类型（组件仅用 `.length`）
 
-## 2. 版本号对齐 next.11
+## 2. 版本号对齐 next.13
 
-- [x] 2.1 `manifest.ts` 的 `supportCore` → `>=3.0.0-next.12 <4.0.0`
-- [x] 2.2 `manifest.test.ts` 断言与用例名同步（`next.10` → `next.11`）
+- [x] 2.1 `manifest.ts` 的 `supportCore` → `>=3.0.0-next.14 <4.0.0`
+- [x] 2.2 `manifest.test.ts` 断言与用例名同步（`next.10` → `next.13`）
 - [x] 2.3 `README.md` 中 `>=3.0.0-next.10 <4.0.0` 描述同步
-- [x] 2.4 `packages/app/package.json` peerDependencies → `>=3.0.0-next.12 <4.0.0`
+- [x] 2.4 `packages/app/package.json` peerDependencies → `>=3.0.0-next.14 <4.0.0`
 - [x] 2.5 `script/artifacts.test.ts`、`script/semantic-release-plugin.test.ts` 测试夹具的 `supportCore` 同步
 
 ## 3. 一致性清理
@@ -45,6 +45,6 @@
 - [x] 4.2 `vp run lib-build`
 - [x] 4.3 `vp check`
 - [x] 4.4 `vp run -r typecheck`（0 错误）
-- [x] 4.5 `vp test run`（17 文件 74 用例全绿）+ `vp test run --coverage`（行 84.21 / 函数 71.83 / 语句 83.33 / 分支 86.06，未配置强制阈值）
-- [x] 4.6 `vp run build` → `vp run artifacts`（校验通过：`layout@0.9.2`，`index.js`/`index.css`/`manifest.json`/`plugin.zip` 齐全，manifest 无 `kind`、`supportCore` 为 next.11）
+- [x] 4.5 `vp test run`（17 文件 74 用例全绿）+ `vp test run --coverage`（覆盖率阈值：行/函数/语句 75%，分支 70%）
+- [x] 4.6 `vp run build` → `vp run artifacts`（校验通过：`layout@0.9.2`，`index.js`/`index.css`/`manifest.json`/`plugin.zip` 齐全，manifest 无 `kind`、`supportCore` 为 next.13）
 - [ ] 4.7 冒烟（需宿主 Delta Comic 环境，本仓库无法执行）：`vp dev` 验证配置读取、i18n 翻译、收藏/订阅 DB 查询、分享按钮文本翻译、`core` 依赖

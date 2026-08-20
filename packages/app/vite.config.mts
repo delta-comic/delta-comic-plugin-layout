@@ -1,12 +1,30 @@
 import { resolve } from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 
+import { DELTA_COMIC_PLUGIN_API_VERSION, type PluginManifest } from '@delta-comic/model'
 import browserslist from 'browserslist'
 import { browserslistToTargets } from 'lightningcss'
 import { defineConfig, lazyPlugins } from 'vite-plus'
 
 import packageJson from './package.json' with { type: 'json' }
-import { createPluginManifest } from './src/manifest.js'
+import { pluginName } from './src/symbol.js'
+
+export const pluginManifestBase = {
+  apiVersion: DELTA_COMIC_PLUGIN_API_VERSION,
+  author: 'wenxig',
+  description: 'layout.manifest.description',
+  entry: { cssPath: 'src/index.css', jsPath: 'src/main.ts' },
+  name: { display: 'layout.manifest.displayName', id: pluginName },
+  require: [{ id: 'core' }],
+} satisfies Omit<PluginManifest, 'version'>
+
+export const createPluginManifest = (version: string): PluginManifest => ({
+  ...pluginManifestBase,
+  entry: { ...pluginManifestBase.entry },
+  name: { ...pluginManifestBase.name },
+  require: pluginManifestBase.require.map(dependency => ({ ...dependency })),
+  version: { plugin: version, supportCore: '>=3.0.0-next.14 <4.0.0' },
+})
 
 export default defineConfig(({ command, mode }) => ({
   base: './',
@@ -68,6 +86,6 @@ export default defineConfig(({ command, mode }) => ({
   }),
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { host: true, port: 6174, strictPort: true },
-  test: { environment: 'happy-dom', include: ['src/**/*.test.ts'] },
+  test: { environment: 'happy-dom', include: ['test/**/*.test.ts'] },
   oxc: { exclude: [/\.js$/, /\.d\.[cm]?ts$/] },
 }))

@@ -4,14 +4,14 @@ import { createApp, h, nextTick, shallowRef } from 'vue'
 
 import type { VideoConfig } from '@/model'
 
-import type { ArtplayerRuntime, PlayerLabels } from './player'
+import type { ArtplayerRuntime, PlayerLabels } from '../../../src/view/video/player'
 
 const serviceMocks = vi.hoisted(() => ({ useFullscreen: vi.fn(), useRouter: vi.fn() }))
 
 vi.mock('@delta-comic/utils', () => ({ useFullscreen: serviceMocks.useFullscreen }))
 vi.mock('vue-router', () => ({ useRouter: serviceMocks.useRouter }))
 
-import { useArtplayer } from './useArtplayer'
+import { useArtplayer } from '../../../src/view/video/useArtplayer'
 
 const labels: PlayerLabels = {
   line: index => `Source ${index}`,
@@ -88,11 +88,11 @@ describe('useArtplayer', () => {
   it('creates the player, forwards control/errors, and reloads it', async () => {
     const player = new FakePlayer()
     const runtime = {
-      create: vi.fn(async () => player as unknown as Artplayer),
+      create: vi.fn(async () => player as Artplayer),
       destroy: vi.fn((value?: FakePlayer | null) => {
         if (value) value.isDestroy = true
       }),
-    } as unknown as ArtplayerRuntime
+    } as ArtplayerRuntime
     const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
@@ -115,9 +115,9 @@ describe('useArtplayer', () => {
   it('synchronizes Artplayer and host fullscreen state', async () => {
     const player = new FakePlayer()
     const runtime = {
-      create: vi.fn(async () => player as unknown as Artplayer),
+      create: vi.fn(async () => player as Artplayer),
       destroy: vi.fn(),
-    } as unknown as ArtplayerRuntime
+    } as ArtplayerRuntime
     const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
@@ -136,9 +136,9 @@ describe('useArtplayer', () => {
   it('updates the poster in place without rebuilding the player', async () => {
     const player = new FakePlayer()
     const runtime = {
-      create: vi.fn(async () => player as unknown as Artplayer),
+      create: vi.fn(async () => player as Artplayer),
       destroy: vi.fn(),
-    } as unknown as ArtplayerRuntime
+    } as ArtplayerRuntime
     const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
@@ -152,9 +152,9 @@ describe('useArtplayer', () => {
   it('rebuilds the player when the video configuration changes', async () => {
     const players = [new FakePlayer(), new FakePlayer()]
     const runtime = {
-      create: vi.fn(async () => players.shift() as unknown as Artplayer),
+      create: vi.fn(async () => players.shift() as Artplayer),
       destroy: vi.fn(),
-    } as unknown as ArtplayerRuntime
+    } as ArtplayerRuntime
     const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 
@@ -170,7 +170,7 @@ describe('useArtplayer', () => {
     const runtime = {
       create: vi.fn(async () => Promise.reject(failure)),
       destroy: vi.fn(),
-    } as unknown as ArtplayerRuntime
+    } as ArtplayerRuntime
     const mounted = mountComposable(runtime)
     await flush()
     expect(runtime.create).not.toHaveBeenCalled()
@@ -183,9 +183,9 @@ describe('useArtplayer', () => {
   it('cleans up the player, route guard, fullscreen, and orientation on unmount', async () => {
     const player = new FakePlayer()
     const runtime = {
-      create: vi.fn(async () => player as unknown as Artplayer),
+      create: vi.fn(async () => player as Artplayer),
       destroy: vi.fn(),
-    } as unknown as ArtplayerRuntime
+    } as ArtplayerRuntime
     const mounted = mountComposable(runtime, { sources: [{ src: 'video.mp4' }] })
     await flush()
 

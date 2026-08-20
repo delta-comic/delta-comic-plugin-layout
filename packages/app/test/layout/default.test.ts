@@ -1,7 +1,7 @@
 import type { UniContentPage, UniItem } from '@delta-comic/model'
 import { describe, expect, it } from 'vitest'
 
-import { createPageQueryKey } from './default'
+import { createPageQueryKey } from '../../src/layout/default'
 
 describe('createPageQueryKey', () => {
   it('includes both the item id and sourced content type', () => {
@@ -9,7 +9,7 @@ describe('createPageQueryKey', () => {
       contentType: ['reader', 'comic'],
       id: 'item-1',
       thisEp: { id: 'episode-2' },
-    } as unknown as UniItem
+    } as UniItem
 
     expect(createPageQueryKey(page)).toEqual({
       contentType: 'reader:comic',
@@ -23,7 +23,7 @@ describe('createPageQueryKey', () => {
       contentType: ['reader', 'comic'],
       ep: 'episode-3',
       id: 'item-1',
-    } as unknown as UniContentPage
+    } as UniContentPage
 
     expect(createPageQueryKey(page)).toEqual({
       contentType: 'reader:comic',

@@ -33,7 +33,7 @@ vi.mock('@/i18n', () => ({ translate: (key: string) => key }))
 
 import type { ContentImagePage } from '@/model'
 
-import ImageStage from './ImageStage.vue'
+import ImageStage from '../../../src/view/image/ImageStage.vue'
 
 const apps: ReturnType<typeof createApp>[] = []
 
@@ -53,7 +53,7 @@ const mountStage = async (isFollowView: boolean, currentIndex = 0) => {
           canGoPrevious: currentIndex > 0,
           config: { doubleImage: false, isFollowView, preloadImages: 2, vertical: false },
           currentIndex,
-          images: ['one', 'two', 'three'] as unknown as UniImage[],
+          images: ['one', 'two', 'three'] as UniImage[],
           onContinuousReaderChange,
           page: {} as ContentImagePage,
         },

@@ -11,7 +11,7 @@ import {
   getArtplayerType,
   normalizeVideoConfig,
   type PlayerLabels,
-} from './player'
+} from '../../../src/view/video/player'
 
 const labels: PlayerLabels = {
   line: number => `Source ${number}`,
@@ -149,7 +149,7 @@ describe('Artplayer video adapter', () => {
     const fake = { subtitle: { show: true, switch: vi.fn() } }
 
     setting?.onSelect?.call(
-      fake as unknown as Artplayer,
+      fake as Artplayer,
       { html: 'Off', url: '' } as never,
       {} as never,
       new Event('click'),
@@ -157,7 +157,7 @@ describe('Artplayer video adapter', () => {
     expect(fake.subtitle.show).toBe(false)
 
     setting?.onSelect?.call(
-      fake as unknown as Artplayer,
+      fake as Artplayer,
       { encoding: 'gbk', html: '中文', type: 'srt', url: 'zh.srt' } as never,
       {} as never,
       new Event('click'),
@@ -176,7 +176,7 @@ describe('Artplayer video adapter', () => {
       const style = document.createElement('style')
       style.id = 'artplayer-style'
       document.head.append(style)
-      return { default: FakeArtplayer as unknown as typeof Artplayer }
+      return { default: FakeArtplayer as typeof Artplayer }
     })
     const runtime = new ArtplayerRuntime(loader)
     const option = createPlayerOptions(
@@ -210,7 +210,7 @@ describe('Artplayer video adapter', () => {
     style.id = 'artplayer-style'
     document.head.append(style)
     const runtime = new ArtplayerRuntime(async () => ({
-      default: FakeArtplayer as unknown as typeof Artplayer,
+      default: FakeArtplayer as typeof Artplayer,
     }))
 
     const art = await runtime.create(

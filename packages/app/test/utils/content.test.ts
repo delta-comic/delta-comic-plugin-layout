@@ -26,7 +26,7 @@ vi.mock('@/layout/default', () => ({
   QueryKey: { Detail: 'layout::detail' },
 }))
 
-import { toggledLikeSnapshot, useLike } from './content'
+import { toggledLikeSnapshot, useLike } from '../../src/utils/content'
 
 interface LikeMutationOptions {
   mutation(item: UniItem): Promise<unknown>
@@ -47,7 +47,7 @@ const createItem = () =>
     isLiked: false,
     like: vi.fn().mockResolvedValue(undefined),
     likeNumber: 4,
-  }) as unknown as UniItem
+  }) as UniItem
 
 const mutationOptions = () => mocks.options as LikeMutationOptions
 
