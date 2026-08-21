@@ -26,7 +26,7 @@ export const createPluginManifest = (version: string): PluginManifest => ({
   version: { plugin: version, supportCore: '>=3.0.0-next.15 <4.0.0' },
 })
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
   base: './',
   build: {
     emptyOutDir: true,
@@ -73,19 +73,15 @@ export default defineConfig(({ command }) => ({
       }),
       tailwindcss(),
       deltaComic(createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version)),
-      ...(command === 'build'
-        ? [
-            dts({
-              vue: true,
-              tsconfig: resolve(import.meta.dirname, './tsconfig.app.json'),
-              sourcemap: true,
-            }),
-          ]
-        : []),
+      dts({
+        vue: true,
+        tsconfig: resolve(import.meta.dirname, './tsconfig.app.json'),
+        sourcemap: true,
+      }),
     ]
   }),
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   server: { host: true, port: 6174, strictPort: true },
   test: { environment: 'happy-dom', include: ['test/**/*.test.ts'] },
   oxc: { exclude: [/\.js$/, /\.d\.[cm]?ts$/] },
-}))
+})
