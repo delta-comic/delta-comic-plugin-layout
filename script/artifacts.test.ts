@@ -14,7 +14,7 @@ const manifest = {
   entry: { cssPath: 'index.css', jsPath: 'index.js' },
   name: { display: 'Layout', id: 'layout' },
   require: [{ id: 'core' }],
-  version: { plugin: '1.0.0-next.1', supportCore: '>=3.0.0-next.14 <4.0.0' },
+  version: { plugin: '1.0.0-next.1', supportCore: '>=3.0.0-next.15 <4.0.0' },
 }
 
 async function createFixture(archiveManifest = manifest, includeCss = true) {

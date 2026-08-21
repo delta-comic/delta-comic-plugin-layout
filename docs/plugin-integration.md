@@ -34,7 +34,7 @@
 {
   "apiVersion": 1,
   "name": { "id": "my-content", "display": "My Content" },
-  "version": { "plugin": "1.0.0", "supportCore": ">=3.0.0-next.14 <4.0.0" },
+  "version": { "plugin": "1.0.0", "supportCore": ">=3.0.0-next.15 <4.0.0" },
   "author": "you",
   "description": "demo",
   "require": [

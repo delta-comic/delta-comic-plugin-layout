@@ -23,10 +23,10 @@ export const createPluginManifest = (version: string): PluginManifest => ({
   entry: { ...pluginManifestBase.entry },
   name: { ...pluginManifestBase.name },
   require: pluginManifestBase.require.map(dependency => ({ ...dependency })),
-  version: { plugin: version, supportCore: '>=3.0.0-next.14 <4.0.0' },
+  version: { plugin: version, supportCore: '>=3.0.0-next.15 <4.0.0' },
 })
 
-export default defineConfig(({ command, mode }) => ({
+export default defineConfig(({ command }) => ({
   base: './',
   build: {
     emptyOutDir: true,
@@ -64,16 +64,6 @@ export default defineConfig(({ command, mode }) => ({
       import('rolldown-plugin-dts'),
     ])
 
-    const pluginHelpers =
-      mode === 'test'
-        ? []
-        : [
-            deltaComic(
-              createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version),
-              command,
-            ),
-          ]
-
     return [
       vue(),
       Components({
@@ -82,6 +72,7 @@ export default defineConfig(({ command, mode }) => ({
         resolvers: [NaiveUiResolver(), DeltaComicUiResolver()],
       }),
       tailwindcss(),
+      deltaComic(createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version)),
       ...(command === 'build'
         ? [
             dts({
@@ -91,7 +82,6 @@ export default defineConfig(({ command, mode }) => ({
             }),
           ]
         : []),
-      ...pluginHelpers,
     ]
   }),
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
