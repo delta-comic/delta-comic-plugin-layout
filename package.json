@@ -18,7 +18,6 @@
   },
   "type": "module",
   "scripts": {
-    "artifacts": "node ./script/artifacts.mts",
     "branch:develop": "node ./script/release-branches.mts develop",
     "branch:develop:dry-run": "node ./script/release-branches.mts develop --dry-run",
     "build": "vp run --filter @delta-comic/plugin-layout build",
@@ -47,7 +46,6 @@
     "commitlint-plugin-cspell": "catalog:",
     "cspell": "catalog:",
     "happy-dom": "catalog:",
-    "jszip": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "semantic-release": "catalog:",
     "typescript": "catalog:",

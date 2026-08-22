@@ -1,6 +1,6 @@
 # 发布流程
 
-项目使用 Conventional Commits 与 semantic-release 计算版本。每次发布由同一个 semantic-release 生命周期同时创建 GitHub Package 和 GitHub Release，二者使用完全相同的版本号。
+项目使用 Conventional Commits 与 semantic-release 计算版本。每次发布由同一个 semantic-release 生命周期直接发布 `packages/app` workspace 包，并同时创建 GitHub Release，二者使用完全相同的版本号。
 
 | 分支 | 用途 | 发布结果 |
 | --- | --- | --- |
@@ -15,9 +15,9 @@
 - `manifest.json`：供市场或安装器直接读取的元数据；
 - `plugin.zip`：包含 `manifest.json`、`index.js` 与 `index.css` 的可安装插件包。
 
-GitHub Package 名称为 `@delta-comic/delta-comic-plugin-layout`，只包含上述插件产物；发布时使用 `next` 或 `latest` dist-tag。
+GitHub Package 名称为 `@delta-comic/plugin-layout`，由 `packages/app/package.json` 直接定义并发布，只包含该包声明的 `dist` 目录；发布时使用 `next` 或 `latest` dist-tag。
 
-发布脚本会在上传前检查版本一致性、入口文件存在性及压缩包内容，并用 semantic-release 计算的版本生成 GitHub Package；任何一项不匹配都会终止发布。源码中的 `packages/app/package.json` 只提供本地开发构建的基准版本，发布版本以 semantic-release 及产物 manifest 为准，不生成发布提交。
+semantic-release 会把计算出的版本写入 `packages/app/package.json`，再构建并直接发布该 workspace 包。插件构建目录始终是 `packages/app/dist`，不会再复制到根目录的临时 `dist/release` 或 `dist/package`。
 
 ## 分支晋级
 
@@ -53,7 +53,6 @@ vp check
 vp run typecheck
 vp test run --coverage
 vp run build
-vp run artifacts
 ```
 
 在 `main` 或 `next` 分支上可以单独预演 semantic-release 的版本判定（不会创建 tag 或 Release）：
@@ -62,4 +61,4 @@ vp run artifacts
 vp run release:dry-run
 ```
 
-GitHub Actions 的“自动发布”也支持手动重跑，但所选 ref 必须是 `main` 或 `next`。工作流只需要 `contents: write`，不需要 npm token、Rust/Android 工具链或包仓库权限。
+GitHub Actions 的“自动发布”也支持手动重跑，但所选 ref 必须是 `main` 或 `next`。工作流需要 `contents: write` 和 `packages: write`，不需要 npm token、Rust/Android 工具链。
