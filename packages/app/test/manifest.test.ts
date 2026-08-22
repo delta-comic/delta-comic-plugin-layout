@@ -4,12 +4,12 @@ import { describe, expect, it } from 'vitest'
 import { createPluginManifest } from '../vite.config'
 
 describe('plugin manifest', () => {
-  it('targets the next.14 API v1 host contract', () => {
+  it('targets the next.16 API v1 host contract', () => {
     const manifest = createPluginManifest('1.2.3')
 
     expect(manifest).toMatchObject({
       apiVersion: DELTA_COMIC_PLUGIN_API_VERSION,
-      entry: { cssPath: 'src/index.css', jsPath: 'src/main.ts' },
+      entry: { cssPath: 'index.css', jsPath: 'index.js' },
       name: { id: 'layout' },
       require: [{ id: 'core' }],
       version: { plugin: '1.2.3', supportCore: '>=3.0.0-next.16 <4.0.0' },
