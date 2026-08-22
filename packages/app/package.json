@@ -1,7 +1,6 @@
 {
   "name": "@delta-comic/plugin-layout",
   "version": "0.9.2",
-  "private": true,
   "description": "Delta Comic 的基础内容布局插件",
   "homepage": "https://github.com/delta-comic/delta-comic-plugin-layout",
   "bugs": {
@@ -21,6 +20,11 @@
     "./dist"
   ],
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "vp build",
     "dev": "vp dev",

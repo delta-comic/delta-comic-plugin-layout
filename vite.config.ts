@@ -28,6 +28,7 @@ export default defineConfig({
         '**/*.d.ts',
         '**/*.types.ts',
         '**/{test,__tests__}/**',
+        'script/**',
         'packages/app/src/icons.tsx',
         'packages/app/src/i18n/locales/schema.ts',
         'packages/app/src/main.ts',

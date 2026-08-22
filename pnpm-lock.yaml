@@ -188,9 +188,6 @@ catalogs:
     hls.js:
       specifier: ^1.7.0-rc.3
       version: 1.7.1
-    jszip:
-      specifier: ^3.10.1
-      version: 3.10.1
     lightningcss:
       specifier: ^1.33.0
       version: 1.33.0
@@ -273,9 +270,6 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 20.11.6
-      jszip:
-        specifier: 'catalog:'
-        version: 3.10.1
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 7.0.2001

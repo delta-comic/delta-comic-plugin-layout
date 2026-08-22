@@ -2,6 +2,5 @@
 - Build app/library prerequisites: `vp run lib-build` (root script filters app build).
 - App build directly: `vp run --filter @delta-comic/plugin-layout build`.
 - Full checks: `vp check`, `vp run -r typecheck`, `vp test run`.
-- Single test: `vp test run packages/app/test/src/path/file.test.ts` or add `-t 'test name'`.
-- Artifact validation: `vp run artifacts`.
+- Build output sanity check: inspect `packages/app/dist/manifest.json`, `packages/app/dist/plugin.zip`, and entry files; there is no `vp run artifacts` command.
 - Inspect worktree with `git status --short`; use non-interactive git commands.

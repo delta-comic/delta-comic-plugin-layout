@@ -46,6 +46,27 @@ describe('useEpisodes', () => {
     expect(firstOptions.key()).toEqual(secondOptions.key())
   })
 
+  it('configures pagination and fetches the requested page', async () => {
+    const controller = new AbortController()
+    const result = useEpisodes({ page })
+    const options = serviceMocks.useInfiniteQuery.mock.calls[0]![0]
+
+    expect(options.getNextPageParam({ nextPage: 'next' })).toBe('next')
+    expect(options.getPreviousPageParam({ lastPage: 'previous' })).toBe('previous')
+    expect(options.initialPageParam()).toBe('first')
+    await options.query({ pageParam: 'next', signal: controller.signal })
+    expect(page.fetchEps.query).toHaveBeenCalledWith({}, 'next', controller.signal)
+    expect(result.currentEpisodeId.value).toBe('episode-2')
+  })
+
+  it('falls back to the numbered title and reports an unknown episode', () => {
+    const result = useEpisodes({ page })
+
+    expect(result.episodeTitle(episodes[0], 0)).toBe('One')
+    expect(result.episodeTitle(undefined, 2)).toBe('layout.content.episodeFallback:3')
+    expect(result.currentEpisodeIndex.value).toBe(1)
+  })
+
   it('routes with a preloaded item and reports when no union is available', () => {
     const preload = {
       contentType: ['reader', 'comic'],

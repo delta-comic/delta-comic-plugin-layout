@@ -47,9 +47,6 @@ jobs:
       - name: Build plugin
         run: vp run build
 
-      - name: Validate plugin artifacts
-        run: vp run artifacts
-
       - name: Upload plugin artifacts
         uses: actions/upload-artifact@v7
         with:

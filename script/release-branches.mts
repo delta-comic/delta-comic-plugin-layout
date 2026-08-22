@@ -1,8 +1,9 @@
 import { execFile } from 'node:child_process'
+import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { promisify } from 'node:util'
 
-import { rootDir } from './artifacts.mts'
+const rootDir = join(import.meta.dirname, '..')
 
 const execFileAsync = promisify(execFile)
 
