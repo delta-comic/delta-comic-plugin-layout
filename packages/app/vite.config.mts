@@ -13,7 +13,7 @@ export const pluginManifestBase = {
   apiVersion: DELTA_COMIC_PLUGIN_API_VERSION,
   author: 'wenxig',
   description: 'layout.manifest.description',
-  entry: { cssPath: 'src/index.css', jsPath: 'src/main.ts' },
+  entry: { cssPath: 'index.css', jsPath: 'index.js' },
   name: { display: 'layout.manifest.displayName', id: pluginName },
   require: [{ id: 'core' }],
 } satisfies Omit<PluginManifest, 'version'>
@@ -73,6 +73,11 @@ export default defineConfig(({ mode }) => ({
       }),
       tailwindcss(),
       deltaComic(createPluginManifest(process.env.DELTA_PLUGIN_VERSION ?? packageJson.version)),
+      {
+        name: 'layout-source-entry',
+        enforce: 'post',
+        config: () => ({ build: { lib: { entry: 'src/main.ts' } } }),
+      },
       ...(mode === 'test'
         ? []
         : [
