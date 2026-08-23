@@ -28,10 +28,10 @@
 
 ## 2. 版本号对齐 next.13
 
-- [x] 2.1 `manifest.ts` 的 `supportCore` → `>=3.0.0-next.16 <4.0.0`
+- [x] 2.1 `manifest.ts` 的 `supportCore` → `>=3.0.0-next.17 <4.0.0`
 - [x] 2.2 `manifest.test.ts` 断言与用例名同步（`next.10` → `next.13`）
 - [x] 2.3 `README.md` 中 `>=3.0.0-next.10 <4.0.0` 描述同步
-- [x] 2.4 `packages/app/package.json` peerDependencies → `>=3.0.0-next.16 <4.0.0`
+- [x] 2.4 `packages/app/package.json` peerDependencies → `>=3.0.0-next.17 <4.0.0`
 - [x] 2.5 发布测试夹具的 `supportCore` 同步
 
 ## 3. 一致性清理
