@@ -18,3 +18,5 @@ const plugin = defineDeltaComicPlugin(() => ({
 }))
 
 export default plugin
+
+export { pluginName as PLUGIN_LAYOUT_ID } from './symbol'
