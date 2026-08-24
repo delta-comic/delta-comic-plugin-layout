@@ -6,14 +6,14 @@ import { DcImage } from '@delta-comic/ui'
 import { SharedFunction } from '@delta-comic/utils'
 import { MoreVertRound } from '@vicons/material'
 import { createReusableTemplate } from '@vueuse/core'
-import { NButton, NIcon, NPopconfirm } from 'naive-ui'
-import { computed, type HTMLAttributes, type StyleValue, useTemplateRef } from 'vue'
+import { NPopconfirm } from 'naive-ui'
+import { computed, type StyleValue, type ClassValue, useTemplateRef } from 'vue'
 
 import { translate } from '@/i18n'
 
-const props = withDefaults(
+const $props = withDefaults(
   defineProps<{
-    class?: HTMLAttributes['class']
+    class?: ClassValue
     disabled?: boolean
     freeHeight?: boolean
     item: UniItem | UniItemRaw
@@ -22,23 +22,22 @@ const props = withDefaults(
   }>(),
   { type: 'default' },
 )
-const emit = defineEmits<{ click: [] }>()
-const coverElement = useTemplateRef<InstanceType<typeof DcImage>>('cover')
-const cover = computed(() =>
-  UniItem.is(props.item) ? props.item.$cover : UniImage.create(props.item.cover),
+const $emit = defineEmits<{ click: [] }>()
+const cover = useTemplateRef<InstanceType<typeof DcImage>>('cover')
+const $cover = computed(() =>
+  UniItem.is($props.item) ? $props.item.$cover : UniImage.create($props.item.cover),
 )
-const imageRatio = computed(() => {
-  if (coverElement.value?.isLoaded) return undefined
-  const width = cover.value.aspect?.width ?? coverElement.value?.imageEl?.clientWidth ?? 3
-  const height = cover.value.aspect?.height ?? coverElement.value?.imageEl?.clientHeight ?? 4
-  return `${width} / ${height}`
-})
+const imageRatio = computed(() =>
+  cover.value?.isLoaded
+    ? 'unset'
+    : `${$cover.value.aspect?.width || cover.value?.imageEl?.getBoundingClientRect().width || 3} / ${$cover.value.aspect?.height || cover.value?.imageEl?.getBoundingClientRect().height || 4}`,
+)
 
-defineSlots<{ cover(): unknown; default(): unknown; smallTopInfo(): unknown }>()
-const [DefineActions, Actions] = createReusableTemplate()
+defineSlots<{ default(): void; smallTopInfo(): void; cover(): void }>()
+const [TemplateIns, ComponentIns] = createReusableTemplate()
 const { upsert } = RecentDB.useUpsert()
-const addToRecent = () => {
-  if (UniItem.is(props.item)) return upsert({ item: props.item })
+const handlePositiveClick = () => {
+  if (UniItem.is($props.item)) return upsert({ item: $props.item })
 }
 
 const configStore = useConfig()
@@ -47,104 +46,101 @@ const appConfig = computed(() => {
   const pointer = pluginStore.plugins.get('core')?.config
   return pointer ? configStore.load(pointer).data.value : undefined
 })
+
 const processedTitle = computed(() =>
   appConfig.value?.easilyTitle === true
-    ? props.item.title.replace(/(（[^）]+）|\[[^\]]+\]|\([^)]+\)|【[^】]+】)+?/gi, '').trim()
-    : props.item.title,
+    ? $props.item.title.replace(/(（[^）]+）|\[[^\]]+\]|\([^)]+\)|【[^】]+】)+?/gi, '').trim()
+    : $props.item.title,
 )
-const isUnavailable = computed(() => props.disabled)
+const isUnavailable = computed(() => $props.disabled)
 
 const handleClick = () => {
   if (isUnavailable.value) return
   void SharedFunction.call(
     'routeToContent',
-    props.item.contentType,
-    props.item.id,
-    props.item.thisEp.id,
-    UniItem.is(props.item) ? props.item : undefined,
+    $props.item.contentType,
+    $props.item.id,
+    $props.item.thisEp.id,
+    UniItem.is($props.item) ? $props.item : undefined,
   )
-  emit('click')
+  $emit('click')
 }
-
-const heightStyle = computed(() => (props.freeHeight ? 'auto' : '140px'))
 </script>
 
 <template>
-  <DefineActions>
-    <NPopconfirm @positive-click="addToRecent">
+  <TemplateIns>
+    <NPopconfirm @positive-click="handlePositiveClick">
       <template #trigger>
-        <NButton class="absolute! right-2 bottom-1.5" text @click.stop>
-          <template #icon>
-            <NIcon color="var(--dc-color-text-secondary)" size="1rem"><MoreVertRound /></NIcon>
-          </template>
+        <NButton @click.stop text class="absolute! right-2 bottom-1.5">
+          <NIcon color="var(--van-text-color-2)" size="1rem">
+            <MoreVertRound />
+          </NIcon>
         </NButton>
       </template>
       {{ translate('layout.actions.addToRecent') }}
     </NPopconfirm>
-  </DefineActions>
-
-  <article
-    v-if="type !== 'small'"
-    :aria-disabled="isUnavailable"
-    class="dc-hairline-top-bottom relative flex w-full overflow-hidden bg-(--dc-color-surface) p-2 text-(--dc-color-text)"
-    :class="[
-      { 'dc-haptics-feedback': !isUnavailable, 'cursor-not-allowed opacity-60': isUnavailable },
-      props.class,
-    ]"
-    :style="[{ height: heightStyle }, style]"
+  </TemplateIns>
+  <div
+    ref="container"
     @click="handleClick"
+    :disabled
+    v-if="type != 'small'"
+    class="van-hairline--top-bottom relative flex w-full overflow-hidden bg-(--van-background-2) p-2 text-(--van-text-color)"
+    :style="[{ height: freeHeight ? 'auto' : '140px' }, style]"
+    :class="[{ 'van-haptics-feedback': !disabled }, $props.class]"
   >
     <DcImage
+      :src="$cover"
       v-if="type === 'big'"
       class="absolute top-0 left-0 h-full w-full blur-lg"
       fit="cover"
-      :src="cover"
     />
-    <DcImage
-      ref="cover"
-      class="z-2 w-3/10 rounded-lg!"
-      fit="contain"
-      :src="cover"
-      :style="{ aspectRatio: imageRatio }"
-    />
-    <div class="absolute bottom-0 z-3 h-fit w-3/10"><slot name="cover" /></div>
-    <div class="absolute right-2 flex h-[calc(100%-8px)] w-[calc(70%-18px)] flex-col">
-      <span class="dc-clamp-2">{{ processedTitle }}</span>
-      <div class="absolute bottom-2 text-sm text-(--dc-color-text-secondary)"><slot /></div>
+    <DcImage :src="$cover" class="image-size z-2 w-3/10 rounded-lg!" fit="contain" ref="cover" />
+    <div class="absolute bottom-0 z-3 h-fit w-3/10">
+      <slot name="cover" />
     </div>
-    <Actions />
-  </article>
+    <div
+      class="absolute right-2 flex h-[calc(100%-8px)] w-[calc(70%-18px)] flex-col *:text-justify"
+    >
+      <span class="van-multi-ellipsis--l2">{{ processedTitle }}</span>
+      <div class="absolute bottom-2 text-sm text-(--van-text-color-2)">
+        <slot />
+      </div>
+    </div>
+    <ComponentIns />
+  </div>
 
-  <article
+  <div
+    :style="[{ height: freeHeight ? 'auto' : '140px' }, style]"
     v-else
-    :aria-disabled="isUnavailable"
-    class="dc-hairline-top-bottom relative block w-full overflow-hidden rounded-lg bg-(--dc-color-surface) text-(--dc-color-text)"
-    :class="[
-      { 'dc-haptics-feedback': !isUnavailable, 'cursor-not-allowed opacity-60': isUnavailable },
-      props.class,
-    ]"
-    :style="[{ height: heightStyle }, style]"
     @click="handleClick"
+    :disabled
+    :class="[{ 'van-haptics-feedback': !disabled }, $props.class]"
+    ref="container"
+    class="van-hairline--top-bottom relative block w-full items-center overflow-hidden rounded-lg border-none bg-(--van-background-2) bg-center p-0 text-(--van-text-color)"
   >
     <div class="relative flex w-full items-center">
-      <DcImage
-        ref="cover"
-        class="w-full rounded-t-lg"
-        fit="cover"
-        :src="cover"
-        :style="{ aspectRatio: imageRatio }"
-      />
+      <DcImage :src="$cover" class="image-size w-full rounded-t-lg" fit="cover" ref="cover" />
       <slot name="cover" />
       <div
-        class="absolute bottom-0 flex h-6 w-full items-end gap-1 bg-[linear-gradient(transparent,rgba(0,0,0,0.9))] pb-0.5 pl-1 text-[10px]! text-white"
+        class="absolute bottom-0 flex h-6 w-full items-end justify-start gap-1 bg-[linear-gradient(transparent,rgba(0,0,0,0.9))] pb-0.5 pl-1 text-[10px]! text-white *:flex *:items-center"
       >
         <slot name="smallTopInfo" />
       </div>
     </div>
-    <div class="flex w-full flex-col overflow-hidden p-1">
-      <span class="text-start text-sm">{{ processedTitle }}</span>
-      <div class="my-1 flex h-auto w-full flex-nowrap items-center"><slot /></div>
+    <div class="flex w-full flex-col overflow-hidden p-1 text-(--van-text-color)">
+      <div class="flex flex-nowrap">
+        <span class="text-start text-sm">{{ processedTitle }}</span>
+      </div>
+      <div class="my-1 flex h-auto w-full flex-nowrap items-center">
+        <slot />
+      </div>
     </div>
-    <Actions />
-  </article>
+    <ComponentIns />
+  </div>
 </template>
+<style scoped lang="css">
+:deep(.image-size) {
+  aspect-ratio: v-bind('imageRatio');
+}
+</style>
