@@ -9,14 +9,12 @@ import { artplayerRuntime } from './view/video/player'
 
 export { expose, type LayoutPluginExpose, type LibLayout } from './expose'
 
-const plugin = defineDeltaComicPlugin(() => ({
+export default defineDeltaComicPlugin(() => ({
   config: imageViewConfig,
   hooks: { onUnload: () => artplayerRuntime.disposeAll() },
   i18n: layoutMessages,
   model: { expose },
   name: pluginName,
 }))
-
-export default plugin
 
 export { pluginName as PLUGIN_LAYOUT_ID } from './symbol'
