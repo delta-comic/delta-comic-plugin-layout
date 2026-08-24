@@ -2,6 +2,38 @@ import type Artplayer from 'artplayer'
 import type { Option } from 'artplayer'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+const hlsInstances: Array<{
+  loadSource: ReturnType<typeof vi.fn>
+  attachMedia: ReturnType<typeof vi.fn>
+  startLoad: ReturnType<typeof vi.fn>
+  recoverMediaError: ReturnType<typeof vi.fn>
+  destroy: ReturnType<typeof vi.fn>
+  on: ReturnType<typeof vi.fn>
+}> = []
+
+vi.mock('hls.js', () => {
+  class FakeHls {
+    static Events = { ERROR: 'error' }
+    static ErrorTypes = { NETWORK_ERROR: 'networkError', MEDIA_ERROR: 'mediaError' }
+    static supported = true
+    static isSupported = vi.fn(() => FakeHls.supported)
+    loadSource = vi.fn()
+    attachMedia = vi.fn()
+    startLoad = vi.fn()
+    recoverMediaError = vi.fn()
+    destroy = vi.fn()
+    on = vi.fn()
+
+    constructor() {
+      hlsInstances.push(this)
+    }
+  }
+
+  return { default: FakeHls }
+})
+
+import Hls from 'hls.js'
+
 import type { VideoConfig } from '@/model'
 
 import {
@@ -50,6 +82,8 @@ class FakeArtplayer {
 }
 
 afterEach(() => {
+  hlsInstances.length = 0
+  vi.mocked(Hls.isSupported).mockReturnValue(true)
   Reflect.deleteProperty(window, 'Artplayer')
   document.querySelector('#artplayer-style')?.remove()
 })
@@ -170,6 +204,12 @@ describe('Artplayer video adapter', () => {
     })
   })
 
+  it('returns empty subtitle settings when no tracks are available', () => {
+    expect(
+      createPlayerOptions(document.createElement('div'), videoConfig({ src: 'video.mp4' }), labels),
+    ).toMatchObject({ settings: [], subtitle: undefined, subtitleOffset: false })
+  })
+
   it('owns Artplayer instances and restores module globals on unload', async () => {
     const loader = vi.fn(async () => {
       ;(window as Window & { Artplayer?: unknown }).Artplayer = FakeArtplayer
@@ -224,5 +264,37 @@ describe('Artplayer video adapter', () => {
 
     expect((window as Window & { Artplayer?: unknown }).Artplayer).toBe(previous)
     expect(document.querySelector('#artplayer-style')).toBe(style)
+  })
+
+  it('handles unsupported and recoverable HLS errors', async () => {
+    const runtime = new ArtplayerRuntime(async () => ({
+      default: FakeArtplayer as typeof Artplayer,
+    }))
+    const art = await runtime.create(
+      createPlayerOptions(document.createElement('div'), videoConfig({ src: 'video.mp4' }), labels),
+      labels,
+    )
+    const video = document.createElement('video')
+    vi.mocked(Hls.isSupported).mockReturnValue(false)
+    await art.option.customType?.m3u8?.call(art, video, 'unsupported.m3u8', art)
+    expect(art.notice.show).toBe('Failed')
+
+    vi.mocked(Hls.isSupported).mockReturnValue(true)
+    await art.option.customType?.m3u8?.call(art, video, 'stream.m3u8', art)
+    const hls = hlsInstances[0]!
+    const handler = hls.on.mock.calls[0]?.[1] as (
+      event: string,
+      data: { fatal: boolean; type: string },
+    ) => void
+    handler('error', { fatal: false, type: 'other' })
+    handler('error', { fatal: true, type: 'networkError' })
+    handler('error', { fatal: true, type: 'mediaError' })
+    expect(hls.loadSource).toHaveBeenCalledWith('stream.m3u8')
+    expect(hls.attachMedia).toHaveBeenCalledWith(video)
+
+    handler('error', { fatal: true, type: 'other' })
+    expect(art.notice.show).toBe('Failed')
+    expect(hls.destroy).toHaveBeenCalledOnce()
+    runtime.disposeAll()
   })
 })
