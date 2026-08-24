@@ -7,8 +7,6 @@ import { layoutMessages } from './i18n'
 import { pluginName } from './symbol'
 import { artplayerRuntime } from './view/video/player'
 
-export { expose, type LayoutPluginExpose, type LibLayout } from './expose'
-
 export default defineDeltaComicPlugin(() => ({
   config: imageViewConfig,
   hooks: { onUnload: () => artplayerRuntime.disposeAll() },
@@ -18,3 +16,5 @@ export default defineDeltaComicPlugin(() => ({
 }))
 
 export { pluginName as PLUGIN_LAYOUT_ID } from './symbol'
+
+export { type LibLayout } from './expose'
